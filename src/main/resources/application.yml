@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: advanced-software
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lms
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
