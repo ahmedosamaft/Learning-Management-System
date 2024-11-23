@@ -3,9 +3,9 @@ spring:
     name: advanced-software
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/lms
-    username: postgres
-    password: password
+    url: jdbc:postgresql://pg-swe-ahmedosamaft-b177.j.aivencloud.com:17641/lms?ssl=require&user=avnadmin&password=AVNS_eqCAEXHlcDKjgmeC8lL
+    username: avnadmin
+    password: AVNS_eqCAEXHlcDKjgmeC8lL
     driver-class-name: org.postgresql.Driver
 
   jpa:

@@ -1,16 +1,4 @@
 services:
-  postgres:
-    image: postgres:17-alpine
-    container_name: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: lms
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
 #    To connect to the db: host.docker.internal:5432
   pgadmin:
     image: dpage/pgadmin4:8.12.0
@@ -20,8 +8,6 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "5050:80"
-    depends_on:
-      - postgres
 
   redis:
     image: redis:7.4-alpine
