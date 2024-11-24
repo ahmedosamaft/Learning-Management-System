@@ -130,89 +130,218 @@ Enhancing modularization within the monolithic codebase to simplify updates and 
 ## 3. Viewpoints
 
 ### 3.1 Logical Viewpoint
-
 #### Overview
-The logical viewpoint describes the functional components of the system and their relationships.
+The logical viewpoint describes the functional organization of the LMS, focusing on the system’s components and their responsibilities. It illustrates how the main modules interact to deliver core functionalities such as user management, course management, assessments, and notifications.
 
 #### Concerns Addressed
-- System structure and organization
-- Component responsibilities
-- Data flow between components
-- System boundaries
+- Functional decomposition of the system into modules.
+- Interactions between components.
+- Role-based access to functionalities.
+- Data flow and process synchronization.
 
 #### Typical Stakeholders
-- Developers
-- Architects
-- System Administrators
+- **Developers**: Understand functional dependencies and system organization.
+- **Architects**: Ensure modular and maintainable design.
+- **System Administrators**: Manage configurations and dependencies.
 
-### 3.2 Implementation Viewpoint
+#### Model Kinds
+- **Use Case Diagram**: Depicts system functionalities for each user role (Admin, Instructor, Student).
+- **Sequence Diagram**: Illustrates workflows such as student enrollment, instructor grading, and notification generation.
 
+#### Operations on Views
+- **Construction Methods**:  
+  Use process guidance to break the LMS into modules such as User Management, Course Management, Assessment, and Notification. Apply UML-based patterns for creating use case and sequence diagrams.
+- **Interpretation Methods**:  
+  Provide stakeholders with a guide to trace workflows (e.g., student enrollment) across modules and interpret interactions in sequence diagrams.
+- **Analysis Methods**:  
+  Evaluate the logical consistency of functional decomposition and ensure workflows do not introduce redundant or conflicting operations.
+- **Implementation Methods**:  
+  Use the logical view as a blueprint for implementing system components in Spring Boot.
+
+#### Correspondence Rules
+- Each functional component in the logical view must map directly to a corresponding module in the implementation view.
+- Interactions between components in the sequence diagrams must match the APIs defined in the implementation.
+
+---
+
+### 3.2 Data Viewpoint
 #### Overview
-The implementation viewpoint describes how the system is implemented using Spring Boot and related technologies.
+The data viewpoint focuses on how data is structured, stored, and exchanged within the system. It defines the relationships between entities such as users, courses, and assessments, ensuring data consistency and integrity.
 
 #### Concerns Addressed
-- Code organization
-- Framework usage
-- Database implementation
-- Security implementation
+- Structure of data and database schemas.
+- Relationships between entities (e.g., users, courses, assessments).
+- Data flow between modules for various operations like enrollment, grading, and notifications.
 
 #### Typical Stakeholders
-- Developers
-- QA Engineers
-- System Operators
+- **Database Administrators**: Optimize data schemas and manage integrity.
+- **Developers**: Interact with data through APIs and ensure proper CRUD operations.
+- **System Architects**: Verify that data structures meet functional and performance requirements.
 
-## 4. Views
+#### Model Kinds
+- **Entity-Relationship Diagram (ERD)**: Illustrates data entities such as users, courses, assessments, and their relationships.
+- **Data Flow Diagram (DFD)**: Shows the flow of data between system components such as enrollment processes and grading.
 
-### 4.1 Logical View
+#### Operations on Views
+- **Construction Methods**:  
+  Use entity-relationship modeling techniques to create ERDs for key entities (Users, Courses, Assessments, Notifications). Develop data flow diagrams to map how data is exchanged between modules.
+- **Interpretation Methods**:  
+  Provide a walkthrough of how each entity (e.g., Users) interacts with others and how data flows between operations (e.g., student enrollment, grading).
+- **Analysis Methods**:  
+  Validate referential integrity between related entities (e.g., Users ↔ Courses) and ensure the data flow supports operational needs.
+- **Implementation Methods**:  
+  Use the data view as the basis for designing database schemas and defining APIs for CRUD operations.
 
-#### Components
-1. User Management Module
-   - Authentication Controller
-   - User Service
-   - Profile Management
-   - Role Management
+#### Correspondence Rules
+- Each entity in the ERD must have a corresponding table in the database schema.
+- Data flows defined in the DFD must align with the methods and data operations implemented in the backend.
 
-2. Course Management Module
-   - Course Controller
-   - Enrollment Service
-   - Content Management
-   - Attendance Service
+---
 
-3. Assessment Module
-   - Quiz Controller
-   - Assignment Controller
-   - Grading Service
-   - Progress Tracking
+### 3.3 Deployment Viewpoint
+#### Overview
+The deployment viewpoint describes the physical deployment of the LMS system, including servers, databases, and network infrastructure.
 
-4. Notification Module
-   - Notification Controller
-   - Email Service
-   - System Notification Service
+#### Concerns Addressed
+- Physical placement of system components (frontend, backend, database).
+- Scalability and availability considerations.
+- Security of network communication and data storage.
 
-### 4.2 Implementation View
+#### Typical Stakeholders
+- **System Administrators**: Responsible for managing server infrastructure and deployments.
+- **Network Engineers**: Ensure secure and efficient communication between system components.
+- **Users**: Indirect stakeholders relying on a reliable and secure system.
 
-#### Technology Stack
-- Backend: Spring Boot
-- Database: MySQL
-- Security: Spring Security
-- Testing: JUnit
-- Version Control: Git
+#### Model Kinds
+- **Deployment Diagram**: Depicts how the LMS components are deployed across servers and databases.
+- **Network Topology Diagram**: Visualizes the network setup and communication flow between components.
 
-#### Layer Organization
-1. Presentation Layer
-   - REST Controllers
-   - Request/Response DTOs
-   - Validation
+#### Operations on Views
+- **Construction Methods**:  
+  Use deployment modeling tools to define the allocation of components (e.g., frontend, backend, database) to servers. Specify communication paths in network topology diagrams.
+- **Interpretation Methods**:  
+  Help system administrators and network engineers understand how components communicate and interact physically.
+- **Analysis Methods**:  
+  Evaluate the deployment setup for potential bottlenecks and security vulnerabilities.
+- **Implementation Methods**:  
+  Use the deployment view to guide server configurations, load balancing, and setting up secure communication channels.
 
-2. Business Layer
-   - Services
-   - Business Logic
-   - Domain Models
+#### Correspondence Rules
+- Each logical module must be allocated to a specific deployment node in the deployment diagram.
+- Communication paths in the network topology must reflect the interactions defined in the sequence diagrams.
 
-3. Data Access Layer
-   - Repositories
-   - Entity Models
-   - Database Connections
+---
+
+## 4. Views+
+
+Much of the material in an Architecture Description (AD) is presented through its architecture views. Each view adheres to the conventions of its governing viewpoint. A view is composed of architecture models that address the concerns framed by the governing viewpoint.
+
+---
+
+### 4.1 View: Logical View
+#### Identifying Information
+- **Name**: Logical View
+- **Purpose**: To define the functional decomposition of the LMS and describe how the system’s components interact to fulfill requirements.
+- **Scope**: Covers the major modules of the system, such as User Management, Course Management, Assessment, and Notification.
+- **Viewpoint**: Logical Viewpoint (Section 3.1)
+
+---
+
+#### 4.1.1 Models+
+- **Use Case Diagram**
+    - **Description**: Depicts the interactions between the primary actors (Admins, Instructors, Students) and the system.
+    - **Governing Model Kind**: Use Case Model (Section 3.1).
+    - **Version**: 1.0
+    - **Details**:
+        - Admins can create users and manage courses.
+        - Instructors can create courses, grade assessments, and track student progress.
+        - Students can enroll in courses, submit assignments, and view notifications.
+
+- **Sequence Diagram**
+    - **Description**: Illustrates workflows such as student enrollment, assignment grading, and notification delivery.
+    - **Governing Model Kind**: Sequence Model (Section 3.1).
+    - **Version**: 1.0
+    - **Details**:
+        - Students enroll in courses → Enrollment Service updates database → Notification is generated for the student.
+        - Instructors grade assignments → Grading Service updates database → Notification is sent to the student.
+
+---
+
+#### 4.1.2 Known Issues with View
+- No inconsistencies identified in version 1.0.
+- Future iterations may need to refine interactions if new modules are added.
+
+---
+
+### 4.2 View: Data View
+#### Identifying Information
+- **Name**: Data View
+- **Purpose**: To define the structure of the data within the LMS, including relationships between key entities.
+- **Scope**: Includes Users, Courses, Assessments, and Notifications.
+- **Viewpoint**: Data Viewpoint (Section 3.2)
+
+---
+
+#### 4.2.1 Models+
+- **Entity-Relationship Diagram (ERD)**
+    - **Description**: Illustrates the relationships between key entities in the LMS.
+    - **Governing Model Kind**: ERD Model (Section 3.2).
+    - **Version**: 1.0
+    - **Details**:
+        - Users can have multiple roles (e.g., Admin, Instructor, Student).
+        - Courses are managed by Instructors and enrolled in by Students.
+        - Assessments are tied to courses and can include quizzes and assignments.
+
+- **Data Flow Diagram (DFD)**
+    - **Description**: Visualizes the flow of data between modules such as Enrollment, Grading, and Notification.
+    - **Governing Model Kind**: DFD Model (Section 3.2).
+    - **Version**: 1.0
+    - **Details**:
+        - Enrollment: Data flows from the Enrollment Service to update the database and generate notifications.
+        - Grading: Data flows from the Grading Service to update assignment scores and notify students.
+
+---
+
+#### 4.2.2 Known Issues with View
+- None identified for version 1.0.
+- Future improvements may include enhanced normalization of database schemas.
+
+---
+
+### 4.3 View: Deployment View
+#### Identifying Information
+- **Name**: Deployment View
+- **Purpose**: To describe the physical deployment of LMS components on servers and their communication paths.
+- **Scope**: Includes frontend, backend, and database deployment.
+- **Viewpoint**: Deployment Viewpoint (Section 3.3)
+
+---
+
+#### 4.3.1 Models+
+- **Deployment Diagram**
+    - **Description**: Visualizes the allocation of LMS components to physical nodes.
+    - **Governing Model Kind**: Deployment Model (Section 3.3).
+    - **Version**: 1.0
+    - **Details**:
+        - Frontend: Deployed on a web server.
+        - Backend: Deployed as a Spring Boot service on an application server.
+        - Database: Hosted on a dedicated database server (MySQL/PostgreSQL).
+
+- **Network Topology Diagram**
+    - **Description**: Depicts communication paths between system components and external users.
+    - **Governing Model Kind**: Topology Model (Section 3.3).
+    - **Version**: 1.0
+    - **Details**:
+        - HTTPS is used for secure communication between frontend and backend.
+        - Backend communicates with the database over a private network.
+
+---
+
+#### 4.3.2 Known Issues with View
+- None identified for version 1.0.
+- Scalability strategies may require revisiting deployment configurations.
+
+---
 
 ## 5. Consistency and Correspondences
 
