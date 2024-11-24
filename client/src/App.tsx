@@ -6,8 +6,11 @@ import { AuthGuard } from '@/components/AuthGuard';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { useAuthStore } from '@/store/auth';
+import { useWebSocket } from './hooks/useWebSocket';
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const userId = "user123";
+  useWebSocket(userId);
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />

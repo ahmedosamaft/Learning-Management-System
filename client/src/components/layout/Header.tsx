@@ -1,8 +1,15 @@
-import React from 'react';
-import { Bell, Search } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import React, { useState } from 'react';
+import { Bell, Search,BookOpen, Menu, X  } from 'lucide-react';
+import { formatDistanceToNow } from '../../utils/dateUtils';
+import { useNotificationStore } from '../../store/notificationStore'; // Import the Zustand store
+import NotificationPanel from './NotificationPanel';
 
 export function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const unreadCount = useNotificationStore((state) => state.unreadCount);
+
+
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-6">
       <div className="flex flex-1 items-center">
@@ -18,14 +25,25 @@ export function Header() {
         </div>
       </div>
       
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" className="relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-            3
-          </span>
-        </Button>
-      </div>
+      <div className="flex items-center">
+            <div className="relative">
+              <button
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                className="p-2 rounded-full text-indigo-200 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-white"
+                aria-label="View notifications"
+              >
+                <Bell className="h-6 w-6" aria-hidden="true" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 block h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+              {isNotificationOpen && (
+                <NotificationPanel onClose={() => setIsNotificationOpen(false)} />
+              )}
+            </div>
+          </div>
     </header>
   );
 }
