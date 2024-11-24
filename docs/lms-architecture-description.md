@@ -15,31 +15,34 @@
 ### 1.3 Other Information
 
 #### 1.3.1 Overview
-The Learning Management System (LMS) is designed as a monolithic web application that provides comprehensive course management, assessment, and user management capabilities. The system serves three main user types: administrators, instructors, and students, each with specific roles and permissions.
+The Learning Management System (LMS) is designed as a monolithic web application that provides functionalities for course management, user management, and assessment handling. The primary stakeholders interact with the system as follows:
+- Administrators: Manage system settings, users, and overall functionality.
+- Instructors: Create and manage courses, assign tasks, and assess student progress.
+- Students: Enroll in courses, submit assignments, and view progress reports.
 
 Key architectural characteristics:
-- Centralized deployment and management
-- Single codebase
-- Shared database
-- Integrated components
-- Synchronized data processing
+- Centralized deployment and management: All components are deployed together, simplifying management.
+- Single codebase: Ensures consistency and ease of maintenance.
+- Shared database: A unified repository for all system data.
+- Integrated components: Seamless interaction between modules
+- Synchronized data processing: Ensures real-time data updates.
 
 #### 1.3.2 Architecture Evaluations
-The architecture has been evaluated against the following quality attributes:
-- Scalability
-- Maintainability
-- Security
-- Performance
-- Reliability
-- Modifiability
+The monolithic architecture was evaluated for the following quality attributes:
+- Scalability: Limited to vertical scaling; suitable for small to medium-scale use cases.
+- Maintainability: Single codebase reduces overhead for smaller teams but may challenge larger systems as they grow.
+- Security: Centralized control of authentication and authorization simplifies security implementation.
+- Performance: Efficient for integrated workflows due to the absence of inter-service communication
+- Reliability: Simplified testing and debugging improve reliability for smaller systems.
+- Modifiability: Changes in one part of the system require testing the entire system, a potential trade-off.
 
 #### 1.3.3 Rationale for Key Decisions
-The monolithic architecture was chosen for the following reasons:
-1. Simplified development and deployment process
-2. Easier debugging and testing
-3. Reduced complexity in team coordination
-4. Straightforward transaction management
-5. Better performance for small to medium-scale applications
+The decision to adopt a monolithic architecture is supported by the following considerations:
+- Simplified Development and Deployment: Ideal for early-stage or small-scale applications where fast iteration is crucial.
+- Ease of Debugging and Testing: A single codebase facilitates debugging and end-to-end testing.
+- Reduced Complexity in Team Coordination: Suitable for teams with limited resources or experience in distributed systems.
+- Transaction Management: Monolithic designs simplify database transaction handling, avoiding the complexity of distributed systems.
+- Performance Suitability: Effective for tightly integrated workflows common in small to medium-scale systems
 
 ## 2. Stakeholders and Concerns
 
