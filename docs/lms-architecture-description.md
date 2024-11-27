@@ -243,33 +243,80 @@ The implementation viewpoint describes how the system is implemented using Sprin
 ## 5. Consistency and Correspondences
 
 ### 5.1 Known Inconsistencies
-- None identified at this stage
+- **Current Status**: No known inconsistencies have been identified at this stage of the architecture.
+- **Future Management**: 
+  - Any detected inconsistencies will be documented, including:
+    - The affected components or models.
+    - The reasons for the inconsistency (e.g., limited time, evolving requirements).
+    - Proposed resolutions and their timelines.
+
+---
 
 ### 5.2 Correspondences
-- Each logical component maps to specific Spring Boot components
-- Database entities correspond to domain models
-- REST endpoints correspond to service operations
+Correspondences ensure consistency between the various elements of the AD and their implementation. Below are the key correspondences for the LMS:
 
-## Appendix A: Architecture Decisions and Rationale
+- **Logical Components ↔ Spring Boot Components**:
+  - Each logical feature (e.g., authentication, course management) is implemented using specific Spring Boot components (e.g., controllers, services, repositories).
+  - Example: `AuthenticationService` ↔ `AuthenticationController`.
 
-### A.1 Key Decisions
+- **Database Entities ↔ Domain Models**:
+  - Database tables are directly mapped to domain model classes for data representation.
+  - Example: `users` table ↔ `User` entity.
 
-1. Monolithic Architecture
-   - Decision: Use a monolithic architecture instead of microservices
-   - Rationale: Simpler development, deployment, and maintenance for the initial scope
-   - Impact: Lower initial complexity, faster development
+- **REST Endpoints ↔ Service Operations**:
+  - Each REST API endpoint corresponds to a defined service operation.
+  - Example: `GET /api/courses` ↔ `CourseService.getAllCourses()`.
 
-2. Spring Boot Framework
-   - Decision: Use Spring Boot for backend development
-   - Rationale: Robust ecosystem, built-in security, ease of development
-   - Impact: Standardized development practices, better maintainability
+- **Stakeholder Needs ↔ Functional Modules**:
+  - Stakeholder concerns are addressed through corresponding functional modules.
+  - Example: "Course Management" (Instructor need) ↔ `CourseModule`.
 
-3. MySQL Database
-   - Decision: Use MySQL as the primary database
-   - Rationale: ACID compliance, strong consistency, familiar to team
-   - Impact: Reliable data storage, easier maintenance
+- **Views ↔ Code Implementation**:
+  - The functional and logical views of the system map directly to modules in the codebase.
+  - Example: "Assessment View" ↔ `AssessmentService` + `AssessmentController`.
 
-4. Spring Security
-   - Decision: Implement authentication using Spring Security
-   - Rationale: Built-in security features, integration with Spring Boot
-   - Impact: Robust security implementation, standard security practices
+---
+
+### 5.3 Correspondence Rules
+- **Layered Rule**:
+  - Each layer (Presentation, Business Logic, Data) must only interact with its adjacent layer.
+  - Example: Controllers can call services, but not directly access repositories.
+
+- **Service Consistency Rule**:
+  - Every service method should align with a specific business requirement and be documented.
+  - Example: `registerStudent()` ↔ Registration requirements.
+
+- **Database-Model Rule**:
+  - Every database table must map to a domain model class.
+  - Example: `grades` table ↔ `Grade` class.
+
+- **Traceability Rule**:
+  - All implemented features must trace back to documented stakeholder needs and concerns.
+  - Example: "Progress Tracking" (Student need) ↔ `ProgressService`.
+
+- **Deployment Rule**:
+  - Deployment artifacts (e.g., JAR file) must include all modules defined in the architecture.
+
+**Violation Handling**:
+- Any violation of correspondence rules will be documented with:
+  - A description of the inconsistency.
+  - The affected AD elements.
+  - Proposed mitigation strategies and timelines.
+
+
+# A. Architecture Decisions and Rationale
+
+
+## A.1 Decisions
+
+### Key Architectural Decisions for LMS
+The following decisions are considered key to the architecture of the LMS:
+
+- **Choice of Monolithic Architecture**:
+  - A monolithic architecture was chosen for simplicity in development and deployment.
+  
+- **Technology Stack (Java with Spring Boot)**:
+  - The decision to use Java and Spring Boot ensures a solid, widely-used framework with a large development community.
+
+- **Relational Database (PostgreSQL)**:
+  - A relational database like PostgreSQL was selected to manage the structured data for courses, assessments, and user profiles.
