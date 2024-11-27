@@ -116,16 +116,42 @@ Enhancing modularization within the monolithic codebase to simplify updates and 
 
    - **Maintainability**: Clean coding practices, adherence to design patterns, and a clear separation of concerns reduce maintenance overhead.
 
-### 2.3 Concern-Stakeholder Traceability
+### 2.3 Concern–Stakeholder Traceability
 
-| Concern / Stakeholder | Administrators | Instructors | Students | Developers |
-|----------------------|----------------|-------------|----------|------------|
-| Authentication       | X              | X           | X        | X          |
-| Course Management    | X              | X           | X        | X          |
-| Assessment          | X              | X           | X        | X          |
-| Performance         | X              | X           | X        | X          |
-| Security            | X              | X           | X        | X          |
-| Maintenance         | X              |             |          | X          |
+This section associates the identified concerns from 2.2 with the stakeholders from 2.1 who have those concerns.
+
+| **Concern**                                   | **Stakeholders**                                                                                            |
+|-----------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| **Purposes of the System-of-Interest**         | System Users (Administrators, Instructors, Students), Development Team (Software Developers, Architects)     |
+| **Suitability of the Architecture**           | Development Team (Software Architects, Software Developers)                                                 |
+| **Feasibility of Construction and Deployment**| Development Team (Software Developers, Software Architects)                                                 |
+| **Risks and Impacts**                         | System Users (Administrators, Instructors, Students), Development Team (Software Architects)                |
+| **Maintenance and Evolution**                 | Development Team (Software Developers, Software Architects)                                                 |
+| **Functional Concerns**                       | System Users (Administrators, Instructors, Students), Development Team (Software Developers)                |
+| **Quality Attribute Concerns**                | System Users (Administrators, Instructors, Students), Development Team (Software Architects, Software Developers) |
+
+#### Example showing association of stakeholders to concerns in an AD
+-
+   | Concern / Stakeholder | Administrators | Instructors | Students | Developers |
+   |----------------------|----------------|-------------|----------|------------|
+   | Authentication       | X              | X           | X        | X          |
+   | Course Management    | X              | X           | X        | X          |
+   | Assessment          | X              | X           | X        | X          |
+   | Performance         | X              | X           | X        | X          |
+   | Security            | X              | X           | X        | X          |
+   | Maintenance         | X              |             |          | X          |
+
+
+#### Additional Details
+1. **System Users:**
+   - **Administrators** are concerned with functional aspects like user authentication, course management, attendance tracking, and system reliability.
+   - **Instructors** focus on ease of use for course management, grading, and performance tracking.
+   - **Students** prioritize accessibility, performance, and availability for their learning materials and progress tracking.
+
+2. **Development Team:**
+   - **Software Developers** are responsible for implementing features while ensuring maintainability and performance.
+   - **Software Architects** focus on architecture suitability, scalability, and risk mitigation for long-term evolution.
+
 
 ## 3. Viewpoints
 
