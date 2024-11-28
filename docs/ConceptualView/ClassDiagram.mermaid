@@ -1,0 +1,257 @@
+classDiagram
+    namespace CourseManagement {
+        class Course {
+            +id: String
+            +title: String
+            +description: String
+            +media: List<Media>
+            +lessons: List<Lesson>
+        }
+
+        class Media {
+            +id: String
+            +type: String
+            +url: String
+        }
+
+        class Lesson {
+            +id: String
+            +title: String
+            +courseId: String
+            +otp: String
+        }
+
+        class CourseService {
+            +createCourse(title: String, description: String): void
+            +uploadMedia(courseId: String, media: Media): void
+            +addLesson(courseId: String, lesson: Lesson): void
+        }
+    }
+
+    namespace AttendanceManagement {
+        class Attendance {
+            +id: String
+            +userId: String
+            +lessonId: String
+            +date: Date
+        }
+
+        class AttendanceService {
+            +generateOTP(lessonId: String): String
+            +markAttendance(userId: String, lessonId: String, otp: String): void
+        }
+    }
+
+    namespace UserManagement {
+        class User {
+            +id: String
+            +name: String
+            +email: String
+            +profile: Profile
+        }
+
+        class Admin {
+            +manageSystem(): void
+            +addUser(user: User): void
+            +removeUser(userId: String): void
+            +updateUser(userId: String, user: User): void
+            +getUser(userId: String): User
+            +listUsers(): List<User>
+            +addCourse(course: Course): void
+            +removeCourse(courseId: String): void
+            +updateCourse(courseId: String, course: Course): void
+            +getCourse(courseId: String): Course
+            +listCourses(): List<Course>
+        }
+
+        class Instructor {
+            +createCourse(course: Course): void
+            +manageCourseContent(courseId: String): void
+            +gradeStudent(studentId: String, assessmentId: String): void
+            +createAssessment(assessment: Assessment): void
+            +reviewSubmission(submission: Submission): void
+            +sendNotification(userId: String, notification: Notification): void
+            +sendNotificationToAll(courseId: String, notification: Notification): void
+        }
+
+        class Student {
+            +enrollCourse(courseId: String): void
+            +submitAssignment(assignmentId: String, file: File): void
+            +attemptAssessment(assessment: Assessment, submission: Submission): void
+        }
+
+        class Profile {
+            +id: String
+            +userId: String
+            +bio: String
+            +image: String
+        }
+
+        class UserService {
+            +enrollCourse(userId: String, courseId: String): void
+            +getEnrolledCourses(userId: String): List<Course>
+            +viewProfile(userId: String): Profile
+            +updateProfile(userId: String, profile: Profile): void
+        }
+    }
+
+    namespace NotificationManagement {
+        class Notification {
+            +id: String
+            +userId: String
+            +title: String
+            +message: String
+            +timestamp: Date
+        }
+
+        class SystemNotification {
+            +isRead: Boolean
+        }
+
+        class EmailNotification {
+        }
+
+        class NotificationService {
+            +sendSystemNotification(userId: String, message: String): void
+            +sendSystemNotificationToAll(courseId: String, message: String): void
+            +sendEmailNotification(userId: String, subject: String, body: String): void
+            +markNotificationAsRead(notificationId: String): void
+            +getUnreadNotifications(userId: String): List<Notification>
+        }
+    }
+
+    namespace PerformanceTracking {
+        class Progress {
+            +id: String
+            +userId: String
+            +courseId: String
+            +percentage: Float
+        }
+
+        class Report {
+            +id: String
+            +userId: String
+            +feedbackDetails: List<Feedback>
+        }
+
+        class PerformanceService {
+            +trackProgress(userId: String, courseId: String): Progress
+            +generatePerformanceReport(userId: String): Report
+        }
+    }
+
+    namespace AssessmentAndGrading {
+        class Assessment {
+            +id: String
+            +courseId: String
+            +instructions: String
+            +questions: List<Question>
+            +maxScore: Float
+            +startTime: Date
+        }
+
+        class Quiz {
+            +duration: Duration
+        }
+
+        class Assignment {
+            +dueDate: Date
+        }
+
+        class Question {
+            +id: String
+            +text: String
+            +type: String
+            +modelAnswer: Answer
+            +options: List<String>
+        }
+
+        class Answer {
+            +id: String
+            +questionId: String
+        }
+
+        class MCQAnswer {
+            +selectedOption: Integer
+        }
+
+        class TrueFalseAnswer {
+            +selectedAnswer: Boolean
+        }
+
+        class WrittenAnswer {
+            +writtenText: String
+        }
+
+        class Submission {
+            +id: String
+            +assessmentId: String
+            +studentId: String
+            +answers: List<Answer>
+        }
+
+        class Feedback {
+            +id: String
+            +assessmentId: String
+            +userId: String
+            +comments: Map<Integer, String>
+            +score: Float
+            +timestamp: Date
+        }
+
+        class AutomatedFeedback {
+            +algorithmDetails: String
+        }
+
+        class ManualFeedback {
+            +reviewerId: String
+        }
+
+        class AssessmentService {
+            +createAssessment(courseId: String, assessment: Assessment): void
+            +gradeQuiz(quizId: String, userId: String, answers: List<Answer>): Grade
+            +submitAssignment(courseId: String, userId: String, file: File): void
+            +reviewSubmission(assessmentId: String, submission: Submission): void
+            +provideFeedback(assignmentId: String, feedback: String): void
+        }
+
+    }
+
+%% Relationships
+    UserService --> User : manages
+    User <|-- Admin : manages
+    User <|-- Instructor : teaches
+    User <|-- Student : learns
+    Feedback <|-- AutomatedFeedback : specializes
+    Feedback <|-- ManualFeedback : specializes
+    Notification <|-- SystemNotification : inherits
+    Notification <|-- EmailNotification : inherits
+    Answer <|-- MCQAnswer : specializes
+    Answer <|-- TrueFalseAnswer : specializes
+    Answer <|-- WrittenAnswer : specializes
+    Assessment <|-- Quiz : extends
+    Assessment <|-- Assignment : extends
+    Question *-- Answer : has
+    CourseService --> Course : operates
+    Course *-- Media : contains
+    Course *-- Lesson : includes
+    AttendanceService --> Attendance : handles
+    Attendance --> Lesson : references
+    User *-- Profile : owns
+    NotificationService --> Notification : sends
+    Notification --> User : targets
+    PerformanceService --> Progress : monitors
+    PerformanceService --> Report : generates
+    Report o-- Feedback : aggregates
+    Assessment *-- Question : contains
+    AssessmentService --> Feedback : evaluates
+    AssessmentService --> Assessment : manages
+    Submission --> Assessment : relates
+    Submission *-- Answer : encapsulates
+    Instructor --> Course : manages
+    Instructor --> Submission : reviews
+    Instructor ..> NotificationService : utilizes
+    Student --> Submission : creates
+    PerformanceService o-- User : aggregates
+    Progress o-- Course : tracks
+    Report o-- User : summarizes
