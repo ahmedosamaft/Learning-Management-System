@@ -1,0 +1,208 @@
+classDiagram
+
+    namespace CourseManagement {
+        class Course {
+            +id: String
+            +title: String
+            +description: String
+            +announcements: List<Announcement>
+            +lessons: List<Lesson>
+        }
+        class Announcement {
+            +id: String
+            +course_id: String
+            +user_id: String
+            +title: String
+            +content: String
+            +media: List<Media>
+            +created_at: Timestamp
+        }
+        class Media {
+            +id: String
+            +real_name: String
+            +url: String
+            +announcement: Announcement
+        }
+        class Lesson {
+            +id: String
+            +title: String
+            +courseId: String
+            +otp: String
+        }
+        class CourseService {
+            +createCourse(title: String, description: String): void
+            +uploadMedia(courseId: String, media: Media): void
+            +addLesson(courseId: String, lesson: Lesson): void
+        }
+    }
+
+    namespace AttendanceManagement {
+        class Attendance {
+            +id: String
+            +userId: String
+            +lessonId: String
+            +date: Date
+        }
+        class AttendanceService {
+            +generateOTP(lessonId: String): String
+            +markAttendance(userId: String, lessonId: String, otp: String): void
+        }
+    }
+
+    namespace UserManagement {
+        class User {
+            +id: String
+            +name: String
+            +email: String
+            +role: Enum
+        }
+
+        class Admin {
+
+        }
+
+        class Instructor {
+
+        }
+
+        class Student {
+        }
+
+        class AdminService {
+            +manageSystem(): void
+            +addUser(user: User): void
+            +removeUser(userId: String): void
+            +updateUser(userId: String, user: User): void
+            +getUser(userId: String): User
+            +listUsers(): List<User>
+            +addCourse(course: Course): void
+            +removeCourse(courseId: String): void
+            +updateCourse(courseId: String, course: Course): void
+            +getCourse(courseId: String): Course
+            +listCourses(): List<Course>
+        }
+        class InstructorService {
+            +createCourse(course: Course): void
+            +manageCourseContent(courseId: String): void
+            +gradeStudent(studentId: String, assessmentId: String): void
+            +createAssessment(assessment: Assessment): void
+            +reviewSubmission(submission: Submission): void
+            +sendNotification(userId: String, notification: Notification): void
+            +sendNotificationToAll(courseId: String, notification: Notification): void
+        }
+        class StudentService {
+            +enrollCourse(courseId: String): void
+            +submitAssignment(assignmentId: String, file: File): void
+            +attemptAssessment(assessment: Assessment, submission: Submission): void
+        }
+    }
+
+    namespace NotificationManagement {
+        class Notification {
+            +id: String
+            +userId: String
+            +title: String
+            +message: String
+            +timestamp: Date
+            +isRead: Boolean
+        }
+        class NotificationService {
+            +send(userId: String, message: String): void
+            +boradcast(courseId: String, message: String): void
+            +sendEmailNotification(userId: String, subject: String, body: String): void
+            +markNotificationAsRead(notificationId: String): void
+            +getUnreadNotifications(userId: String): List<Notification>
+        }
+    }
+
+    namespace PerformanceTracking {
+        class Report {
+            +id: String
+            +userId: String
+            +courseId: String
+            +overallScore: Float
+            +created_at: Timestamp
+        }
+        class PerformanceService {
+            +trackProgress(userId: String, courseId: String): Progress
+            +generatePerformanceReport(userId: String): Report
+        }
+    }
+
+    namespace AssessmentAndGrading {
+        class Assessment {
+            +id: String
+            +courseId: String
+            +instructions: String
+            +type: enum
+            +questions: List<Question>
+            +maxScore: Float
+            +startTime: Date
+            +endTime: Date
+        }
+        class Quiz {
+        }
+        class Assignment {
+        }
+        class Question {
+            +id: String
+            +text: String
+            +type: String
+            +modelAnswer: String
+            +options: List<String>
+            +assessmentId: String
+        }
+        class Submission {
+            +id: String
+            +assessment: Assessment
+            +question: Question
+            +type: enum
+            +student: Student
+            +created_at: Timestamp
+            +answers: String
+        }
+        class Feedback {
+            +id: String
+            +submission: Submission
+            +student: Student
+            +comments: String
+            +score: Float
+            +timestamp: Date
+        }
+        class AssignmentService {
+            +createAssessment(courseId: String, assessment: Assessment): void
+            +submitAssignment(courseId: String, userId: String, file: File): void
+            +reviewSubmission(assessmentId: String, submission: Submission): void
+            +provideFeedback(assignmentId: String, feedback: String): void
+        }
+        class QuizService {
+            +submitQuiz(quizId: String, userId: String, answers: List<String>): Grade
+            +reviewSubmission(quizId: String, submission: Submission): void
+        }
+
+    }
+
+    User <|-- Admin : extend
+    User <|-- Instructor : extend
+    User <|-- Student : extend
+    Assessment <|-- Quiz : extends
+    Assessment <-- Assignment : extends
+    CourseService --> Course : operates
+    Course *-- Media : contains
+    Course *-- Lesson : includes
+    AttendanceService --> Attendance : handles
+    Attendance --> Lesson : references
+    NotificationService --> Notification : sends
+    Notification --> User : targets
+    PerformanceService --> Progress : monitors
+    PerformanceService --> Report : generates
+    Report o-- Feedback : aggregates
+    Assessment <-- Question : extend
+    Submission --> Assessment : relates
+    Instructor --> Course : manages
+    Instructor --> Submission : reviews
+    Instructor ..> NotificationService : utilizes
+    Student --> Submission : creates
+    PerformanceService o-- User : aggregates
+    Progress o-- Course : tracks
+    Report o-- User : summarizes
