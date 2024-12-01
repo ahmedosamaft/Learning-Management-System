@@ -51,7 +51,7 @@ erDiagram
         string assesment_id
     }
 
-    Assesment {
+    Assessment {
         string id
         enum type
         string course_id
@@ -66,10 +66,11 @@ erDiagram
         enum type
         string assesment_id
         string student_id
+        string question_id
         timestamp created_at
     }
 
-    Attendence {
+    Attendance {
         string id
         string user_id
         string lesson_id
@@ -99,14 +100,15 @@ erDiagram
     Course ||--o{ Report: "has"
     User ||--o{ Report: "has"
     Course ||--o{ Lesson: "contains"
-    Course ||--o{ Assesment: "includes"
-    Lesson ||--o{ Attendence: "records"
-    Assesment ||--o{ Question: "includes"
-    Assesment ||--o{ Submission: "is attempted in"
+    Course ||--o{ Assessment: "includes"
+    Lesson ||--o{ Attendance: "records"
+    Assessment ||--o{ Question: "includes"
+    Assessment ||--o{ Submission: "has"
+    Submission }o--|| Question: "has"
     Submission ||--|| Feedback: "has"
     User ||--o{ Submission: "makes"
     User ||--o{ Notification: "has"
-    User ||--o{ Attendence: "attends"
+    User ||--o{ Attendance: "attends"
     User ||--o{ Feedback: "has"
     Course ||--o{ Announcement: "has"
     Announcement ||--o{ Media: "has"
