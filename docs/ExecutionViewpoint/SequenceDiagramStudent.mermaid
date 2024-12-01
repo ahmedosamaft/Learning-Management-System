@@ -1,0 +1,68 @@
+sequenceDiagram
+    actor Student
+    participant UserService
+    participant CourseService
+    participant Course
+    participant Submission
+    participant AssessmentService
+    participant Assessment
+    participant Feedback
+    participant PerformanceService
+    participant Report
+    participant AttendanceService
+    participant Attendance
+
+%% Student enrolling in a course
+    Student ->> UserService: enrollCourse(userId, courseId)
+    UserService ->> CourseService: enrollStudent(userId, courseId)
+    CourseService ->> Course: checkIfCourseExists(courseId)
+    alt Course exists
+        CourseService ->> Course: updateEnrollment(courseId)
+        CourseService ->> Student: confirmEnrollment(course)
+    else
+        CourseService ->> Student: rejectEnrollment("Course not found")
+    end
+
+%% Student marking attendance
+    Student ->> AttendanceService: requestAttendance(lessonId, otp)
+    AttendanceService ->> Attendance: validateOTP(lessonId, otp)
+    alt OTP is valid
+        Attendance ->> Attendance: markAttendance(userId, lessonId)
+        AttendanceService ->> Student: confirmAttendance(lessonId)
+    else
+        AttendanceService ->> Student: rejectAttendance("Invalid OTP")
+    end
+
+%% Student submitting an assignment
+    Student ->> Submission: submitAssignment(assignmentId, file)
+    Submission ->> Submission: validateFileFormat(file)
+    alt File format valid
+        Submission ->> Submission: storeFile(file)
+        Submission ->> Student: confirmSubmission(assignmentId)
+    else
+        Submission ->> Student: rejectSubmission("Invalid file format")
+    end
+
+%% Student attempting assessment
+    Student ->> AssessmentService: attemptAssessment(assessmentId, submission)
+    AssessmentService ->> Assessment: validateAssessment(assessmentId)
+    alt Assessment exists
+        Assessment ->> Assessment: storeSubmission(submission)
+        AssessmentService ->> Student: confirmAssessmentAttempt(assessmentId)
+    else
+        AssessmentService ->> Student: rejectAssessmentAttempt("Assessment not found")
+    end
+
+%% Student viewing performance report
+    Student ->> PerformanceService: generatePerformanceReport(userId)
+    PerformanceService ->> Report: generateReport(userId)
+    PerformanceService ->> Student: deliverReport(report)
+
+%% Student receiving feedback
+    Student ->> Feedback: requestFeedback(assignmentId)
+    Feedback ->> Feedback: checkIfFeedbackAvailable(assignmentId)
+    alt Feedback available
+        Feedback ->> Student: deliverFeedback(feedback)
+    else
+        Feedback ->> Student: rejectFeedback("No feedback available")
+    end

@@ -158,90 +158,55 @@ This section associates the identified concerns from 2.2 with the stakeholders f
 
 ## 3. Viewpoints
 
-### 3.1 Logical Viewpoint
-
+### 3.1 Conceptual Viewpoint
 #### Overview
-The logical viewpoint describes the functional components of the system and their relationships.
+The Conceptual viewpoint describes the functional organization of the LMS, focusing on the system’s components and their responsibilities. It illustrates how the main modules interact to deliver core functionalities such as user management, course management, assessments, and notifications.
 
 #### Concerns Addressed
-- System structure and organization
-- Component responsibilities
-- Data flow between components
-- System boundaries
+- Functional decomposition of the system into modules.
+- Interactions between components.
+- Role-based access to functionalities.
+- Data flow and process synchronization.
 
 #### Typical Stakeholders
-- Developers
-- Architects
-- System Administrators
+- **Developers**: Understand functional dependencies and system organization.
+- **Architects**: Ensure modular and maintainable design.
+- **System Administrators**: Manage configurations and dependencies.
 
-### 3.2 Implementation Viewpoint
+---
 
+### 3.2 Execution Viewpoint
 #### Overview
-The implementation viewpoint describes how the system is implemented using Spring Boot and related technologies.
+The deployment viewpoint describes the physical deployment of the LMS system, including servers, databases, and network infrastructure.
 
 #### Concerns Addressed
-- Code organization
-- Framework usage
-- Database implementation
-- Security implementation
+- Physical placement of system components (frontend, backend, database).
+- Scalability and availability considerations.
+- Security of network communication and data storage.
 
 #### Typical Stakeholders
-- Developers
-- QA Engineers
-- System Operators
+- **Developers**: Understand functional dependencies and system organization.
+- **Architects**: Ensure modular and maintainable design.
+- **System Administrators**: Responsible for managing server infrastructure and deployments.
+- **Users**: Indirect stakeholders relying on a reliable and secure system.
 
-## 4. Views
+---
 
-### 4.1 Logical View
+### 3.3 Data Viewpoint
+#### Overview
+The data viewpoint focuses on how data is structured, stored, and exchanged within the system. It defines the relationships between entities such as users, courses, and assessments, ensuring data consistency and integrity.
 
-#### Components
-1. User Management Module
-   - Authentication Controller
-   - User Service
-   - Profile Management
-   - Role Management
+#### Concerns Addressed
+- Structure of data and database schemas.
+- Relationships between entities (e.g., users, courses, assessments).
+- Data flow between modules for various operations like enrollment, grading, and notifications.
 
-2. Course Management Module
-   - Course Controller
-   - Enrollment Service
-   - Content Management
-   - Attendance Service
+#### Typical Stakeholders
+- **Database Administrators**: Optimize data schemas and manage integrity.
+- **Developers**: Interact with data through APIs and ensure proper CRUD operations.
+- **System Architects**: Verify that data structures meet functional and performance requirements.
 
-3. Assessment Module
-   - Quiz Controller
-   - Assignment Controller
-   - Grading Service
-   - Progress Tracking
-
-4. Notification Module
-   - Notification Controller
-   - Email Service
-   - System Notification Service
-
-### 4.2 Implementation View
-
-#### Technology Stack
-- Backend: Spring Boot
-- Database: MySQL
-- Security: Spring Security
-- Testing: JUnit
-- Version Control: Git
-
-#### Layer Organization
-1. Presentation Layer
-   - REST Controllers
-   - Request/Response DTOs
-   - Validation
-
-2. Business Layer
-   - Services
-   - Business Logic
-   - Domain Models
-
-3. Data Access Layer
-   - Repositories
-   - Entity Models
-   - Database Connections
+---
 
 ## 5. Consistency and Correspondences
 

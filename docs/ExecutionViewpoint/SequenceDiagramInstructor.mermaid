@@ -1,0 +1,50 @@
+sequenceDiagram
+    actor Instructor
+    participant CourseService
+    participant Course
+    participant AssessmentService
+    participant Quiz
+    participant Assignment
+    participant Submission
+    participant Feedback
+
+    %% Instructor managing courses
+    Instructor ->> CourseService: createCourse(title, description)
+    CourseService ->> Course: saveCourse(title, description)
+    CourseService ->> Instructor: confirmCourseCreation(title)
+
+    Instructor ->> CourseService: deleteCourse(courseId)
+    CourseService ->> Course: removeCourse(courseId)
+    CourseService ->> Instructor: confirmCourseDeletion(courseId)
+
+    %% Instructor creating quizzes
+    Instructor ->> AssessmentService: createQuiz(courseId, quizDetails)
+    AssessmentService ->> Quiz: saveQuiz(courseId, quizDetails)
+    alt quizDetails.type == "True/False"
+        Quiz ->> Quiz: configureTFQuestions(questions)
+    else quizDetails.type == "MCQ"
+        Quiz ->> Quiz: configureMCQQuestions(questions)
+    end
+    AssessmentService ->> Instructor: confirmQuizCreation(quizDetails)
+
+    %% Instructor creating assignments
+    Instructor ->> AssessmentService: createAssignment(courseId, assignmentDetails)
+    AssessmentService ->> Assignment: saveAssignment(courseId, assignmentDetails)
+    AssessmentService ->> Instructor: confirmAssignmentCreation(assignmentDetails)
+
+    %% Submission and feedback process
+    Instructor ->> Submission: reviewSubmission(assessmentId, submissionId)
+    Submission ->> Submission: getSubmission(submissionId)
+    Submission ->> Instructor: deliverSubmissionForReview(submission)
+
+    %% Feedback (Manual or Automated)
+    alt feedback.type == "Manual"
+        Instructor ->> Feedback: provideManualFeedback(submissionId, feedbackDetails)
+        Feedback ->> Feedback: saveFeedback(submissionId, feedbackDetails)
+        Feedback ->> Instructor: confirmFeedbackProvided(submissionId)
+    else feedback.type == "Automated"
+        AssessmentService ->> Feedback: generateAutomatedFeedback(submissionId)
+        Feedback ->> Feedback: saveFeedback(submissionId, generatedFeedback)
+        Feedback ->> Instructor: notifyAutomatedFeedbackGenerated(submissionId)
+    end
+
