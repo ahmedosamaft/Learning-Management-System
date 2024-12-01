@@ -1,0 +1,43 @@
+sequenceDiagram
+    actor Admin
+    participant UserService
+    participant CourseService
+    participant Course
+
+%% Admin managing users
+    Admin ->> UserService: addUser(user)
+    UserService ->> UserService: checkIfUserExists(user)
+    alt User does not exist
+        UserService ->> UserService: createUser(user)
+        UserService ->> Admin: confirmUserCreation(user)
+    else User already exists
+        UserService ->> Admin: rejectUserCreation("User already exists")
+    end
+
+    Admin ->> UserService: removeUser(userId)
+    UserService ->> UserService: checkIfUserExists(userId)
+    alt User exists
+        UserService ->> UserService: deleteUser(userId)
+        UserService ->> Admin: confirmUserDeletion(userId)
+    else User does not exist
+        UserService ->> Admin: rejectUserDeletion("User not found")
+    end
+
+%% Admin managing courses
+    Admin ->> CourseService: createCourse(title, description)
+    CourseService ->> CourseService: checkIfCourseExists(title)
+    alt Course does not exist
+        CourseService ->> Course: createCourse(title, description)
+        CourseService ->> Admin: confirmCourseCreation(course)
+    else Course already exists
+        CourseService ->> Admin: rejectCourseCreation("Course already exists")
+    end
+
+    Admin ->> CourseService: removeCourse(courseId)
+    CourseService ->> CourseService: checkIfCourseExists(courseId)
+    alt Course exists
+        CourseService ->> CourseService: deleteCourse(courseId)
+        CourseService ->> Admin: confirmCourseDeletion(courseId)
+    else Course does not exist
+        CourseService ->> Admin: rejectCourseDeletion("Course not found")
+    end
