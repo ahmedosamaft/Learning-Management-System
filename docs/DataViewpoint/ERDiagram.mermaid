@@ -1,0 +1,112 @@
+erDiagram
+    User {
+        string id
+        string name
+        string email
+        enum role
+        string hashed_password
+    }
+    Notification {
+        string id
+        string user_id
+        string title
+        string body
+        timestamp created_at
+        boolean is_read
+    }
+    Course {
+        string id
+        string code
+        string title
+        string description
+        string instructor_id
+    }
+    Announcement {
+        string id
+        string course_id
+        string user_id
+        string title
+        string content
+        timestamp created_at
+    }
+    Lesson {
+        string id
+        string title
+        string course_id
+        string otp
+    }
+    Media {
+        string id
+        string real_name
+        string url
+        string announcement_id
+    }
+    Question {
+        string id
+        string text
+        string image_url
+        enum type
+        string model_answer
+        json options
+        string assesment_id
+    }
+
+    Assesment {
+        string id
+        enum type
+        string course_id
+        string instructions
+        float max_score
+        timestamp start_at
+        timestamp end_at
+    }
+
+    Submission {
+        string id
+        enum type
+        string assesment_id
+        string student_id
+        timestamp created_at
+    }
+
+    Attendence {
+        string id
+        string user_id
+        string lesson_id
+        timestamp created_at
+    }
+
+    Feedback {
+        string id
+        string submission_id
+        string student_id
+        enum type
+        float score
+        string comments
+        string created_by
+        timestamp created_at
+    }
+
+    Report {
+        string id
+        string user_id
+        string course_id
+        float overall_score
+        timestamp created_at
+    }
+
+    User ||--o{ Course: "enrolls/teaches"
+    Course ||--o{ Report: "has"
+    User ||--o{ Report: "has"
+    Course ||--o{ Lesson: "contains"
+    Course ||--o{ Assesment: "includes"
+    Lesson ||--o{ Attendence: "records"
+    Assesment ||--o{ Question: "includes"
+    Assesment ||--o{ Submission: "is attempted in"
+    Submission ||--|| Feedback: "has"
+    User ||--o{ Submission: "makes"
+    User ||--o{ Notification: "has"
+    User ||--o{ Attendence: "attends"
+    User ||--o{ Feedback: "has"
+    Course ||--o{ Announcement: "has"
+    Announcement ||--o{ Media: "has"
