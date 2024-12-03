@@ -1,18 +1,12 @@
-package fci.swe.advanced_software.models;
+package fci.swe.advanced_software.models.users;
 
+import fci.swe.advanced_software.models.AbstractEntity;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class User extends AbstractEntity {
+public abstract class AbstractUser extends AbstractEntity {
     @Column(nullable = false)
     private String name;
 

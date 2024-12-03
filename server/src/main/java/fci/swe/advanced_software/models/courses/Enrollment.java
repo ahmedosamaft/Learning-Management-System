@@ -1,5 +1,7 @@
-package fci.swe.advanced_software.models;
+package fci.swe.advanced_software.models.courses;
 
+import fci.swe.advanced_software.models.AbstractEntity;
+import fci.swe.advanced_software.models.users.Student;
 import jakarta.persistence.*;
 
 @Entity

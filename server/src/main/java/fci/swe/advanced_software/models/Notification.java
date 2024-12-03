@@ -1,7 +1,7 @@
 package fci.swe.advanced_software.models;
 
+import fci.swe.advanced_software.models.users.AbstractUser;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 public class Notification extends AbstractEntity {
@@ -16,5 +16,5 @@ public class Notification extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User recipient;
+    private AbstractUser recipient;
 }

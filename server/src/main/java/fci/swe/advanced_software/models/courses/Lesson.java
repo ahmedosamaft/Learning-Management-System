@@ -1,6 +1,10 @@
-package fci.swe.advanced_software.models;
+package fci.swe.advanced_software.models.courses;
 
+import fci.swe.advanced_software.models.AbstractEntity;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Lesson extends AbstractEntity {
@@ -14,5 +18,9 @@ public class Lesson extends AbstractEntity {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
+    @Column(nullable = false)
     private String otp;
+
+    @OneToMany(mappedBy = "lesson_id", cascade = CascadeType.ALL)
+    private Set<Media> media = new HashSet<>();
 }

@@ -1,14 +1,12 @@
-package fci.swe.advanced_software.models;
+package fci.swe.advanced_software.models.users;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @DiscriminatorValue("ADMIN")
-@Data
 @EqualsAndHashCode(callSuper = true)
-public class Admin extends User {
+public class Admin extends AbstractUser {
 
 }
