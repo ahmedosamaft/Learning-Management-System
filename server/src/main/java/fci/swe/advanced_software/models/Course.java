@@ -5,12 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "courses")
-public class Course {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Course extends AbstractEntity {
     @Column(nullable = false)
     private String title;
 
@@ -19,7 +14,7 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "instructor_id", nullable = false)
-    private User instructor;
+    private Instructor instructor;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Lesson> lessons = new HashSet<>();

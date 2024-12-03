@@ -1,16 +1,18 @@
 package fci.swe.advanced_software.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class User extends AbstractEntity {
     @Column(nullable = false)
     private String name;
 
@@ -19,15 +21,4 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
-    private String role; // Admin, Instructor, Student
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<Enrollment> enrollments = new HashSet<>();
-
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
-    private Set<Course> courses = new HashSet<>();
-
-    // Getters and setters
 }

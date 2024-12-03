@@ -3,12 +3,7 @@ package fci.swe.advanced_software.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "lessons")
-public class Lesson {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Lesson extends AbstractEntity {
     @Column(nullable = false)
     private String title;
 
@@ -19,5 +14,5 @@ public class Lesson {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    // Getters and setters
+    private String otp;
 }

@@ -4,12 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notifications")
-public class Notification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Notification extends AbstractEntity {
     @Column(nullable = false)
     private String title;
 
@@ -17,14 +12,9 @@ public class Notification {
     private String content;
 
     @Column(nullable = false)
-    private boolean isRead;
+    private Boolean isRead;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User recipient;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    // Getters and setters
 }
