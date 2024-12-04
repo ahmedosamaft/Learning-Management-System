@@ -8,10 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaRepository<T, String> {
-    Optional<T> findById(String id);
-    void deleteById(String id);
-    void delete(T entity);
-    void deleteAll();
-    boolean existsById(String id);
-    long count();
 }
