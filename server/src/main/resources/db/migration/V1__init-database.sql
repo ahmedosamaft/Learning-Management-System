@@ -50,7 +50,7 @@ alter table if exists submission
     drop constraint if exists FKjskf22duewv7lid6te7nnixdq;
 alter table if exists submission
     drop constraint if exists FK4wri2v9ubotjb7y9gu9fkxgal;
-drop table if exists "user" cascade;
+drop table if exists abstract_user cascade;
 drop table if exists announcement cascade;
 drop table if exists announcement_comment cascade;
 drop table if exists assessment cascade;
@@ -64,7 +64,7 @@ drop table if exists media cascade;
 drop table if exists notification cascade;
 drop table if exists question cascade;
 drop table if exists submission cascade;
-create table "user"
+create table abstract_user
 (
     created_at timestamp(6) with time zone,
     updated_at timestamp(6) with time zone,
@@ -244,33 +244,33 @@ create table submission
 alter table if exists announcement
     add constraint FKnxopiti7syvupku89mwxpckmq foreign key (course_id) references course;
 alter table if exists announcement
-    add constraint FKdrch2s0c5ii9a11gojk8kceva foreign key (posted_by) references "user";
+    add constraint FKdrch2s0c5ii9a11gojk8kceva foreign key (posted_by) references abstract_user;
 alter table if exists announcement_comment
     add constraint FKi72u02fqknowb9i0h8d13qcis foreign key (announcement_id) references announcement;
 alter table if exists announcement_comment
-    add constraint FKlpu61vni6pg431dnk2bdth5jr foreign key (student_id) references "user";
+    add constraint FKlpu61vni6pg431dnk2bdth5jr foreign key (student_id) references abstract_user;
 alter table if exists assessment
     add constraint FKrd2iqvu852eg13sql0micl26a foreign key (course_id) references course;
 alter table if exists attempt
     add constraint FKfms5vrt70k4hbw0115b5h3gur foreign key (assessment_id) references assessment;
 alter table if exists attempt
-    add constraint FKot81pl0sxrusdj24cpmqm26cj foreign key (student_id) references "user";
+    add constraint FKot81pl0sxrusdj24cpmqm26cj foreign key (student_id) references abstract_user;
 alter table if exists attendance
     add constraint FKam01ddvne08oa3exny156v7al foreign key (lesson_id) references lesson;
 alter table if exists attendance
-    add constraint FK8mfruisg1gjmo8eeib2ujfomr foreign key (student_id) references "user";
+    add constraint FK8mfruisg1gjmo8eeib2ujfomr foreign key (student_id) references abstract_user;
 alter table if exists course
-    add constraint FKb4a7exw2hlc62ijnxo0329vwc foreign key (instructor_id) references "user";
+    add constraint FKb4a7exw2hlc62ijnxo0329vwc foreign key (instructor_id) references abstract_user;
 alter table if exists enrollment
     add constraint FKbhhcqkw1px6yljqg92m0sh2gt foreign key (course_id) references course;
 alter table if exists enrollment
-    add constraint FKmqxbgg901872j7414qpsdlr4x foreign key (student_id) references "user";
+    add constraint FKmqxbgg901872j7414qpsdlr4x foreign key (student_id) references abstract_user;
 alter table if exists feedback
     add constraint FKo4dg9d4wtcqpyga73spxdkbei foreign key (attempt_id) references attempt;
 alter table if exists feedback
-    add constraint FK4e6343505rpjdnih2a4bg69cd foreign key (instructor_id) references "user";
+    add constraint FK4e6343505rpjdnih2a4bg69cd foreign key (instructor_id) references abstract_user;
 alter table if exists feedback
-    add constraint FKdoirxkh4ub4y9skl7cxmsjee4 foreign key (student_id) references "user";
+    add constraint FKdoirxkh4ub4y9skl7cxmsjee4 foreign key (student_id) references abstract_user;
 alter table if exists lesson
     add constraint FKjs3c7skmg8bvdddok5lc7s807 foreign key (course_id) references course;
 alter table if exists media
@@ -282,7 +282,7 @@ alter table if exists media
 alter table if exists notification
     add constraint FK2qvynpew0iu557b4qk9go0u0c foreign key (course_id) references course;
 alter table if exists notification
-    add constraint FKm5wtmevqd8qoosl2nvufc011v foreign key (recipient) references "user";
+    add constraint FKm5wtmevqd8qoosl2nvufc011v foreign key (recipient) references abstract_user;
 alter table if exists question
     add constraint FK3o4lvvgwxo832sjpoucsw1fr3 foreign key (assessment_id) references assessment;
 alter table if exists submission
@@ -292,4 +292,4 @@ alter table if exists submission
 alter table if exists submission
     add constraint FKjskf22duewv7lid6te7nnixdq foreign key (question_id) references question;
 alter table if exists submission
-    add constraint FK4wri2v9ubotjb7y9gu9fkxgal foreign key (student_id) references "user";
+    add constraint FK4wri2v9ubotjb7y9gu9fkxgal foreign key (student_id) references abstract_user;
