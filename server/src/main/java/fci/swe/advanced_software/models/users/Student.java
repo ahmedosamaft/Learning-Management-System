@@ -16,19 +16,19 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("STUDENT")
 public class Student extends AbstractUser {
-    @OneToMany(mappedBy = "student_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Set<Enrollment> enrollments = new HashSet<>();
 
-    @OneToMany(mappedBy = "student_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "commenter", cascade = CascadeType.ALL)
     private Set<AnnouncementComment> comments = new HashSet<>();
 
-    @OneToMany(mappedBy = "student_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Set<Attendance> attendances = new HashSet<>();
 
-    @OneToMany(mappedBy = "student_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Set<Submission> submissions = new HashSet<>();
 
-    @OneToMany(mappedBy = "student_id")
+    @OneToMany(mappedBy = "student")
     private Set<Attempt> attempts = new HashSet<>();
 
 

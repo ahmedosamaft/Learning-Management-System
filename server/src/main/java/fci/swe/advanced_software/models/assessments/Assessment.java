@@ -19,10 +19,10 @@ public class Assessment extends AbstractEntity {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @OneToMany(mappedBy = "assessment_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
     private Set<Question> questions = new HashSet<>();
 
-    @OneToMany(mappedBy = "assessment_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
     private Set<Attempt> attempts = new HashSet<>();
 
     @Column(nullable = false)

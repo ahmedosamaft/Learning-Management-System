@@ -11,6 +11,6 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("ASSIGNMENT")
 public class Assignment extends Assessment {
-    @OneToMany(mappedBy = "assignment_id")
+    @OneToMany(mappedBy = "assignment")
     private Set<Media> media = new HashSet<>();
 }

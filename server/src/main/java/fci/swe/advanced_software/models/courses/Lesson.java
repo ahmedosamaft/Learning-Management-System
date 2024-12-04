@@ -21,6 +21,6 @@ public class Lesson extends AbstractEntity {
     @Column(nullable = false)
     private String otp;
 
-    @OneToMany(mappedBy = "lesson_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
     private Set<Media> media = new HashSet<>();
 }

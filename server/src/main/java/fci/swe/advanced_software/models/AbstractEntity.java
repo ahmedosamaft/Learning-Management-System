@@ -12,7 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-public abstract class AbstractEntity {
+public class AbstractEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true, length = 36)
     @GeneratedValue(strategy = GenerationType.UUID)

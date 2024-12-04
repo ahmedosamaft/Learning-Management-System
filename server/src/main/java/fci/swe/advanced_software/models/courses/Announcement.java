@@ -26,9 +26,9 @@ public class Announcement extends AbstractEntity {
     @Column(nullable = false)
     private Timestamp postedAt;
 
-    @OneToMany(mappedBy = "announcement_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "announcement", cascade = CascadeType.ALL)
     private List<Media> media;
 
-    @OneToMany(mappedBy = "announcement_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "announcement", cascade = CascadeType.ALL)
     private List<AnnouncementComment> comments;
 }
