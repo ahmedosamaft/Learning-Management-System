@@ -174,7 +174,6 @@ The Conceptual viewpoint describes the functional organization of the LMS, focus
 - **System Administrators**: Manage configurations and dependencies.
 
 ---
-
 ### 3.2 Execution Viewpoint
 #### Overview
 The deployment viewpoint describes the physical deployment of the LMS system, including servers, databases, and network infrastructure.
