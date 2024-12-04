@@ -10,7 +10,7 @@ import java.util.TreeSet;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
-public abstract class AbstractUser extends AbstractEntity {
+public class AbstractUser extends AbstractEntity {
     @Column(nullable = false)
     private String name;
 

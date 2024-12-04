@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Entity
 public class Attempt extends AbstractEntity {
+
     @ManyToOne
     @JoinColumn(name = "assessment_id", nullable = false)
     private Assessment assessment;

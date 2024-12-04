@@ -24,15 +24,15 @@ public class Course extends AbstractEntity {
     @JoinColumn(name = "instructor_id", nullable = false)
     private Instructor instructor;
 
-    @OneToMany(mappedBy = "course_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Lesson> lessons = new HashSet<>();
 
-    @OneToMany(mappedBy = "course_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Enrollment> enrollments = new HashSet<>();
 
-    @OneToMany(mappedBy = "course_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Assignment> assignments = new HashSet<>();
 
-    @OneToMany(mappedBy = "course_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Quiz> quizzes = new HashSet<>();
 }

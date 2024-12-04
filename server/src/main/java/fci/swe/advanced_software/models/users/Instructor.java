@@ -14,6 +14,6 @@ import java.util.Set;
 @DiscriminatorValue("INSTRUCTOR")
 @Data
 public class Instructor extends AbstractUser {
-    @OneToMany(mappedBy = "instructor_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
     private Set<Course> courses = new HashSet<>();
 }
