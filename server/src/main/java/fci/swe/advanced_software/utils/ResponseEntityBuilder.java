@@ -14,6 +14,7 @@ public class ResponseEntityBuilder {
 
     private ResponseEntityBuilder() {
         this.headers = new HttpHeaders();
+        this.status = HttpStatus.OK;
     }
 
     public static ResponseEntityBuilder create() {
