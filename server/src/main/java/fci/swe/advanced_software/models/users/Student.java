@@ -41,5 +41,4 @@ public class Student extends AbstractUser {
     @OneToMany(mappedBy = "student")
     private Set<Attempt> attempts = new HashSet<>();
 
-
 }

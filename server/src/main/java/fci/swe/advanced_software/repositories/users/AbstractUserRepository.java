@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface AbstractUserRepository<T extends AbstractUser> extends AbstractEntityRepository<T> {
     Optional<T> findByEmail(String email);
+    boolean existsByEmail(String email);
 }
