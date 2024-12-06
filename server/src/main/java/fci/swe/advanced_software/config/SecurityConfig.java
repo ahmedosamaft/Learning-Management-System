@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.config;
 
+import fci.swe.advanced_software.models.users.Roles;
 import jakarta.servlet.DispatcherType;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
-@EnableMethodSecurity
+@EnableMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true
+)
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -31,9 +35,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/students/**").hasAnyRole("STUDENT", "ADMIN", "INSTRUCTOR")
-                        .requestMatchers("/api/v1/instructors/**").hasAnyRole("INSTRUCTOR", "ADMIN")
-                        .requestMatchers("/api/v1/admins/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/students/**").hasAnyRole(Roles.STUDENT, Roles.ADMIN, Roles.INSTRUCTOR)
+                        .requestMatchers("/api/v1/instructors/**").hasAnyRole(Roles.INSTRUCTOR, Roles.ADMIN)
+                        .requestMatchers("/api/v1/admins/**").hasRole(Roles.ADMIN)
                         .anyRequest().authenticated()
                 ).sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -2,10 +2,11 @@ package fci.swe.advanced_software.controllers.auth;
 
 import fci.swe.advanced_software.dtos.auth.AuthDto;
 import fci.swe.advanced_software.dtos.auth.RegisterDto;
+import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.auth.IAuthService;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ public class AuthController {
     private final IAuthService authService;
 
     @PostMapping("admin")
-    @PreAuthorize("hasRole(T(fci.swe.advanced_software.models.users.Roles).ADMIN)")
+    @RolesAllowed(Roles.ADMIN)
     public ResponseEntity<?> adminRegister(@RequestBody RegisterDto registerDto) {
         return authService.register(registerDto, true);
     }
