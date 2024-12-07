@@ -48,9 +48,7 @@ public class AuthService implements IAuthService {
         }
 
         AbstractUser user = createUser(registerDto, role.get());
-        AbstractUserRepository repository = getRepository(role.get().getName());
-
-        user = (AbstractUser) repository.save(user);
+        user = userRepository.save(user);
 
         String token = jwtService.generateToken(new UserDetailsAdapter(user));
 
@@ -112,15 +110,6 @@ public class AuthService implements IAuthService {
                 .email(user.getEmail())
                 .token(token)
                 .build();
-    }
-
-    private AbstractUserRepository getRepository(String role) {
-        return switch (role) {
-            case Roles.ADMIN -> adminRepository;
-            case Roles.STUDENT -> studentRepository;
-            case Roles.INSTRUCTOR -> instructorRepository;
-            default -> null;
-        };
     }
 
     private AbstractUser.AbstractUserBuilder<?, ?> getBuilder(String role) {

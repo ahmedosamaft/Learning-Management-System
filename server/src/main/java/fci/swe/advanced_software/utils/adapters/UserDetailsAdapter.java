@@ -24,7 +24,7 @@ public record UserDetailsAdapter(AbstractUser user) implements UserDetails, Cred
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return user.getId();
     }
 
     @Override
