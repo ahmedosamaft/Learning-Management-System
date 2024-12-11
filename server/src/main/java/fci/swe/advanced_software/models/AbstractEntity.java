@@ -1,7 +1,10 @@
 package fci.swe.advanced_software.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
@@ -13,7 +16,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @SuperBuilder
-@Data
 public class AbstractEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true, length = 36)

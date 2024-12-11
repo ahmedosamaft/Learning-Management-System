@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AssignmentMapper {
 
+    @Mapping(target = "media", ignore = true)
     Assignment toEntity(AssignmentRequestDto requestDto);
 
     @Mapping(target = "createdAt", ignore = true)

@@ -1,10 +1,10 @@
 package fci.swe.advanced_software.dtos.assessments;
 
+import fci.swe.advanced_software.utils.Constants;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.sql.Timestamp;
 
@@ -13,10 +13,11 @@ import java.sql.Timestamp;
 public class AssignmentRequestDto {
 
     @NotBlank(message = "Instructions cannot be blank.")
-    @Size(max = 500, message = "Instructions cannot exceed 500 characters.")
+    @Length(max = 255, message = "Instructions cannot exceed 500 characters.")
     private String instructions;
 
     @NotBlank(message = "Course ID is required.")
+    @Length(min = Constants.ID_LENGTH, max = Constants.ID_LENGTH, message = "Course ID must be 24 characters long.")
     private String courseId;
 
     @NotNull(message = "Max score is required.")
