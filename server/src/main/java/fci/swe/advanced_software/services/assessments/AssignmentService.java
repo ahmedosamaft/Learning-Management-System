@@ -5,14 +5,15 @@ import fci.swe.advanced_software.dtos.assessments.AssignmentResponseDto;
 import fci.swe.advanced_software.models.assessments.Assignment;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.repositories.assessments.AssignmentRepository;
-import fci.swe.advanced_software.utils.mappers.assessments.AssignmentMapper;
+import fci.swe.advanced_software.repositories.course.CourseRepository;
+import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
+import fci.swe.advanced_software.utils.mappers.assessments.AssignmentMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,17 +22,19 @@ import java.util.Optional;
 public class AssignmentService implements IAssignmentService {
 
     private final AssignmentRepository assignmentRepository;
+    private final CourseRepository courseRepository;
     private final AssignmentMapper assignmentMapper;
 
     @Override
     public ResponseEntity<?> createAssignment(AssignmentRequestDto requestDto) {
-        Assignment assignment = assignmentMapper.toEntity(requestDto);
-        assignmentRepository.save(assignment);
+        Assignment assignment = assignmentMapper.toEntity(requestDto, courseRepository);
+        assignment = assignmentRepository.save(assignment);
 
         AssignmentResponseDto responseDto = assignmentMapper.toResponseDto(assignment);
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
+                .withLocation(Constants.API_VERSION + "/assignments/" + assignment.getId())
                 .withData(responseDto)
                 .withMessage("Assignment created successfully!")
                 .build();
@@ -39,28 +42,24 @@ public class AssignmentService implements IAssignmentService {
 
     @Override
     public ResponseEntity<?> updateAssignment(String id, AssignmentRequestDto requestDto) {
-        Optional<Assignment> existingAssignmentOpt = assignmentRepository.findById(id);
+        Assignment assignment = assignmentRepository.findById(id).orElse(null);
 
-        if (existingAssignmentOpt.isEmpty()) {
+        if (assignment == null) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
                     .withMessage("Assignment not found!")
                     .build();
         }
 
-        Assignment existingAssignment = existingAssignmentOpt.get();
+        assignment.setInstructions(requestDto.getInstructions());
+        assignment.setMaxScore(requestDto.getMaxScore());
+        assignment.setStartsAt(requestDto.getStartsAt());
+        assignment.setEndsAt(requestDto.getEndsAt());
 
-        existingAssignment = existingAssignment.builder()
-                .instructions(requestDto.getInstructions())
-                .maxScore(requestDto.getMaxScore())
-                .startsAt(requestDto.getStartsAt())
-                .endsAt(requestDto.getEndsAt())
-                .updatedAt(Instant.now())
-                .build();
 
-        assignmentRepository.save(existingAssignment);
+        assignmentRepository.save(assignment);
 
-        AssignmentResponseDto responseDto = assignmentMapper.toResponseDto(existingAssignment);
+        AssignmentResponseDto responseDto = assignmentMapper.toResponseDto(assignment);
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)

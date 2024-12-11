@@ -14,6 +14,8 @@ import java.util.Set;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "assessment_type", discriminatorType = DiscriminatorType.STRING)
 public class Assessment extends AbstractEntity {

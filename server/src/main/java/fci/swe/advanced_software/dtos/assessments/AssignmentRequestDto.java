@@ -1,6 +1,5 @@
 package fci.swe.advanced_software.dtos.assessments;
 
-import fci.swe.advanced_software.utils.Constants;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class AssignmentRequestDto {
     private String instructions;
 
     @NotBlank(message = "Course ID is required.")
-    @Length(min = Constants.ID_LENGTH, max = Constants.ID_LENGTH, message = "Course ID must be 24 characters long.")
+    @Length(min = 36, max = 36, message = "Course ID must be 24 characters long.")
     private String courseId;
 
     @NotNull(message = "Max score is required.")

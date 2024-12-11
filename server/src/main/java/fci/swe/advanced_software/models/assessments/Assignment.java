@@ -5,7 +5,9 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
@@ -15,6 +17,8 @@ import java.util.Set;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @DiscriminatorValue("ASSIGNMENT")
 public class Assignment extends Assessment {
     @OneToMany(mappedBy = "assignment")
