@@ -13,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @SuperBuilder
+@Data
 public class AbstractEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true, length = 36)
