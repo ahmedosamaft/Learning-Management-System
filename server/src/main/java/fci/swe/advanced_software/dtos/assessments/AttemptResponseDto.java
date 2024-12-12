@@ -1,12 +1,16 @@
 package fci.swe.advanced_software.dtos.assessments;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class AttemptResponseDto {
 
