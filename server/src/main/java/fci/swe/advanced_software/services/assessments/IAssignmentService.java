@@ -9,7 +9,7 @@ public interface IAssignmentService {
 
     ResponseEntity<?> updateAssignment(String id, AssignmentRequestDto requestDto);
 
-    ResponseEntity<?> getAssignmentById(String id);
+    ResponseEntity<?> getAssignment(String id);
 
     ResponseEntity<?> getAssignmentsByCourse(Course course);
 

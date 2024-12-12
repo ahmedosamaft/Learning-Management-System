@@ -48,7 +48,7 @@ public class AttemptService implements IAttemptService {
                     .build();
         }
 
-        Attempt attempt = attemptMapper.toEntity(requestDto, assessmentRepository, studentRepository);
+        Attempt attempt = attemptMapper.toEntity(requestDto);
         attempt.setAttemptedAt(Timestamp.valueOf(LocalDateTime.now()));
 
         attempt = attemptRepository.save(attempt);
