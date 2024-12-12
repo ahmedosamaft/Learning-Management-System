@@ -5,7 +5,6 @@ import fci.swe.advanced_software.dtos.assessments.AssignmentResponseDto;
 import fci.swe.advanced_software.models.assessments.Assignment;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.repositories.assessments.AssignmentRepository;
-import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AssignmentMapper;
@@ -22,12 +21,11 @@ import java.util.Optional;
 public class AssignmentService implements IAssignmentService {
 
     private final AssignmentRepository assignmentRepository;
-    private final CourseRepository courseRepository;
     private final AssignmentMapper assignmentMapper;
 
     @Override
     public ResponseEntity<?> createAssignment(AssignmentRequestDto requestDto) {
-        Assignment assignment = assignmentMapper.toEntity(requestDto, courseRepository);
+        Assignment assignment = assignmentMapper.toEntity(requestDto);
         assignment = assignmentRepository.save(assignment);
 
         AssignmentResponseDto responseDto = assignmentMapper.toResponseDto(assignment);
@@ -69,7 +67,7 @@ public class AssignmentService implements IAssignmentService {
     }
 
     @Override
-    public ResponseEntity<?> getAssignmentById(String id) {
+    public ResponseEntity<?> getAssignment(String id) {
         Optional<Assignment> assignmentOpt = assignmentRepository.findById(id);
 
         if (assignmentOpt.isEmpty()) {

@@ -1,6 +1,5 @@
 package fci.swe.advanced_software.dtos.assessments;
 
-import fci.swe.advanced_software.models.assessments.Assignment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,9 +18,6 @@ public class AssignmentResponseDto {
     private Integer maxScore;
     private Timestamp startsAt;
     private Timestamp endsAt;
-    private Integer submissionLimit;
-    private Boolean manualGrading;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-
 }

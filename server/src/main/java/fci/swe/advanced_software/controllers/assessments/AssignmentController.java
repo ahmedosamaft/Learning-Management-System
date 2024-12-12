@@ -6,10 +6,7 @@ import fci.swe.advanced_software.utils.Constants;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.API_VERSION + "/assignments")
@@ -20,6 +17,11 @@ public class AssignmentController {
     @PostMapping
     public ResponseEntity<?> createAssignment(@Valid @RequestBody AssignmentRequestDto assignment) {
         return assignmentService.createAssignment(assignment);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAssignment(@PathVariable String id) {
+        return assignmentService.getAssignment(id);
     }
 
 }

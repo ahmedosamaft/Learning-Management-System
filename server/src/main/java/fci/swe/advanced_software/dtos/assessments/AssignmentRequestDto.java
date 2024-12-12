@@ -35,12 +35,4 @@ public class AssignmentRequestDto {
     private boolean isEndAfterStart() {
         return endsAt != null && startsAt != null && endsAt.after(startsAt);
     }
-
-    @NotNull(message = "Submission limit is required.")
-    @Min(value = 1, message = "Submission limit must be at least 1.")
-    @Max(value = 10, message = "Submission limit cannot exceed 10.")
-    private Integer submissionLimit;
-
-    @NotNull(message = "Manual grading flag is required.")
-    private Boolean manualGrading;
 }

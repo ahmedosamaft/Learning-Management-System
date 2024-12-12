@@ -2,12 +2,14 @@ package fci.swe.advanced_software.dtos.assessments;
 
 import jakarta.validation.constraints.*;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import java.sql.Timestamp;
 
-@Data
+@Getter
+@Setter
 @Builder
 public class AttemptRequestDto {
 
