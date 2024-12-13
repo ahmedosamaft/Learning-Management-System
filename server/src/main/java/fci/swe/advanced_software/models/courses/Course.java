@@ -14,12 +14,11 @@ import lombok.experimental.SuperBuilder;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuperBuilder
 @Entity
 @Getter
 @Setter
-@SuperBuilder
 @AllArgsConstructor
-@NoArgsConstructor
 public class Course extends AbstractEntity {
     @Column(nullable = false)
     private String code;
@@ -45,4 +44,8 @@ public class Course extends AbstractEntity {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Quiz> quizzes = new HashSet<>();
+
+    public Course() {
+
+    }
 }

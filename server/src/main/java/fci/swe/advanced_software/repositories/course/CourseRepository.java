@@ -9,9 +9,7 @@ import java.util.List;
 
 @Repository
 public interface CourseRepository extends AbstractEntityRepository<Course> {
+
+    // Custom method not provided by JpaRepository
     List<Course> findByInstructor(Instructor instructor);
-
-    Course findByCode(String code);
-
-    boolean existsByName(String name);
 }
