@@ -1,4 +1,4 @@
-package fci.swe.advanced_software.utils.validators;
+package fci.swe.advanced_software.utils.validators.question;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

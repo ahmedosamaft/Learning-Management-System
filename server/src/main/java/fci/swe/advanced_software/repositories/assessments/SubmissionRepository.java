@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface SubmissionRepository extends AbstractEntityRepository<Submission> {
-
     List<Submission> findByAttempt(Attempt attempt);
 
     List<Submission> findByAssessment(Assessment assessment);

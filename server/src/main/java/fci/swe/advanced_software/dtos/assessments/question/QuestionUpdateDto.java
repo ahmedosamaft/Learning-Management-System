@@ -1,8 +1,8 @@
 package fci.swe.advanced_software.dtos.assessments.question;
 
 import fci.swe.advanced_software.models.assessments.QuestionType;
-import fci.swe.advanced_software.utils.validators.ValidAnswer;
-import fci.swe.advanced_software.utils.validators.ValidQuestionOptions;
+import fci.swe.advanced_software.utils.validators.question.ValidAnswer;
+import fci.swe.advanced_software.utils.validators.question.ValidQuestionOptions;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
