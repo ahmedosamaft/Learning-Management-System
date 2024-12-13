@@ -1,7 +1,7 @@
 package fci.swe.advanced_software.utils.mappers.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.QuestionRequestDto;
-import fci.swe.advanced_software.dtos.assessments.QuestionResponseDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.Question;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
@@ -18,6 +18,7 @@ public abstract class QuestionMapper {
     @Mapping(target = "assessment", source = "assessmentId", qualifiedByName = "assessmentDtoToAssessment")
     public abstract Question toEntity(QuestionRequestDto requestDto);
 
+    @Mapping(target = "id", source = "question.id")
     @Mapping(target = "assessmentId", source = "assessment.id")
     public abstract QuestionResponseDto toResponseDto(Question question);
 

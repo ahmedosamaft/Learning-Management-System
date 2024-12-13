@@ -1,4 +1,4 @@
-package fci.swe.advanced_software.dtos.assessments;
+package fci.swe.advanced_software.dtos.assessments.question;
 
 import fci.swe.advanced_software.models.assessments.QuestionType;
 import lombok.AllArgsConstructor;
@@ -13,6 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Builder
 public class QuestionResponseDto {
+    private String id;
     private String assessmentId;
     private String text;
     private String imageUrl;

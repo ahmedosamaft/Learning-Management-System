@@ -1,8 +1,10 @@
 package fci.swe.advanced_software.services.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.QuestionRequestDto;
-import fci.swe.advanced_software.dtos.assessments.QuestionResponseDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionUpdateDto;
 import fci.swe.advanced_software.models.assessments.Question;
+import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -18,6 +20,7 @@ public class QuestionService implements IQuestionService {
 
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
+    private final AssessmentRepository assessmentRepository;
 
     public ResponseEntity<?> createQuestion(QuestionRequestDto requestDto) {
         Question question = questionMapper.toEntity(requestDto);
@@ -33,7 +36,7 @@ public class QuestionService implements IQuestionService {
                 .build();
     }
 
-    public ResponseEntity<?> updateQuestion(String id, QuestionRequestDto requestDto){
+    public ResponseEntity<?> updateQuestion(String id, QuestionUpdateDto requestDto) {
         Question question = questionRepository.findById(id).orElse(null);
 
         if (question == null) {
@@ -43,11 +46,28 @@ public class QuestionService implements IQuestionService {
                     .build();
         }
 
-        question.setQuestionType(requestDto.getQuestionType());
-        question.setOptions(requestDto.getOptions());
-        question.setCorrectAnswer(requestDto.getCorrectAnswer());
+        if (requestDto.getAssessmentId() != null) {
+            question.setAssessment(assessmentRepository.findById(requestDto.getAssessmentId()).orElseThrow(() -> new IllegalArgumentException("Invalid assessment ID: " + requestDto.getAssessmentId())));
+        }
 
-        questionRepository.save(question);
+        if (requestDto.getText() != null) {
+            question.setText(requestDto.getText());
+        }
+
+        if (requestDto.getImageUrl() != null) {
+            question.setImageUrl(requestDto.getImageUrl());
+        }
+
+        if (requestDto.getCorrectAnswer() != null) {
+            question.setCorrectAnswer(requestDto.getCorrectAnswer());
+        }
+
+        if (requestDto.getQuestionType() != null) {
+            question.setQuestionType(requestDto.getQuestionType());
+            question.setOptions(requestDto.getOptions());
+        }
+
+        question = questionRepository.save(question);
 
         QuestionResponseDto responseDto = questionMapper.toResponseDto(question);
 
@@ -58,7 +78,7 @@ public class QuestionService implements IQuestionService {
                 .build();
     }
 
-    public ResponseEntity<?> getQuestion(String id){
+    public ResponseEntity<?> getQuestion(String id) {
         Question question = questionRepository.findById(id).orElse(null);
 
         if (question == null) {
@@ -73,10 +93,11 @@ public class QuestionService implements IQuestionService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
                 .withData(responseDto)
+                .withMessage("Question found successfully!")
                 .build();
     }
 
-    public ResponseEntity<?> deleteQuestion(String id){
+    public ResponseEntity<?> deleteQuestion(String id) {
         Question question = questionRepository.findById(id).orElse(null);
 
         if (question == null) {
@@ -89,7 +110,7 @@ public class QuestionService implements IQuestionService {
         questionRepository.delete(question);
 
         return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
+                .withStatus(HttpStatus.NO_CONTENT)
                 .withMessage("Question deleted successfully!")
                 .build();
     }

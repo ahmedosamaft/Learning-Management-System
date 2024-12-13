@@ -1,6 +1,7 @@
 package fci.swe.advanced_software.controllers.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.QuestionRequestDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionUpdateDto;
 import fci.swe.advanced_software.services.assessments.IQuestionService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.validation.Valid;
@@ -20,7 +21,7 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateQuestion(@PathVariable String id, @Valid @RequestBody QuestionRequestDto questionRequestDto) {
+    public ResponseEntity<?> updateQuestion(@PathVariable String id,@Valid @RequestBody QuestionUpdateDto questionRequestDto) {
         return questionService.updateQuestion(id, questionRequestDto);
     }
 

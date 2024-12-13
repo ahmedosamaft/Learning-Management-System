@@ -1,4 +1,4 @@
-package fci.swe.advanced_software.dtos.assessments;
+package fci.swe.advanced_software.dtos.assessments.question;
 
 import fci.swe.advanced_software.models.assessments.QuestionType;
 import fci.swe.advanced_software.utils.validators.ValidAnswer;
@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 import org.hibernate.validator.constraints.UUID;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Builder
 @ValidQuestionOptions
 @ValidAnswer
-public class QuestionRequestDto {
+public class QuestionRequestDto implements IQuestionDto {
 
     @NotNull(message = "Assessment ID is required.")
     @NotBlank(message = "Assessment ID cannot be blank.")
@@ -29,7 +30,7 @@ public class QuestionRequestDto {
     @Length(max = 255, message = "Question text cannot exceed 500 characters.")
     private String text;
 
-    @Length(max = 255, message = "Image URL cannot exceed 255 characters.")
+    @URL
     private String imageUrl;
 
     @NotNull(message = "Correct answer is required.")
