@@ -27,6 +27,12 @@ public abstract class CourseMapper {
     @Mapping(target = "instructorName", source = "instructor.name")
     public abstract CourseDto toDto(Course course);
 
+    // Update existing Course entity from CourseDto
+    @Mapping(target = "instructor", ignore = true) // Instructor will be set separately
+    @Mapping(target = "id", ignore = true)         // Prevent changing the ID
+    @Mapping(target = "version", ignore = true)    // Prevent changing the version field
+    public abstract void updateEntityFromDto(CourseDto courseDto, @MappingTarget Course course);
+
     // Convert instructorId to Instructor entity using InstructorRepository
     @Named("instructorDtoToInstructor")
     public Instructor instructorDtoToInstructor(String instructorId) {

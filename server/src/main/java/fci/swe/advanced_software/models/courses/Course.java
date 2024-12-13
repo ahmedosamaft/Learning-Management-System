@@ -18,9 +18,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@SuperBuilder
 @AllArgsConstructor
-@NoArgsConstructor
 public class Course extends AbstractEntity {
     @Column(nullable = false)
     private String code;

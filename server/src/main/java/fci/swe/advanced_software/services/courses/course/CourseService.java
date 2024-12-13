@@ -5,6 +5,7 @@ import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
+import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
 import lombok.AllArgsConstructor;
@@ -64,14 +65,14 @@ public class CourseService implements ICourseService {
 
         Course savedCourse = courseRepository.save(course);
 
-        // Build the location URI
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(savedCourse.getId())
-                .toUri();
+        String location = Constants.API_VERSION + "/courses/" + savedCourse.getId();
 
-        return ResponseEntity.created(location)
-                .body(buildSuccessResponse("Course created successfully", courseMapper.toDto(savedCourse), HttpStatus.CREATED));
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.CREATED)
+                .withMessage("Course created successfully")
+                .withData(courseMapper.toDto(savedCourse))
+                .withLocation(location)
+                .build();
     }
 
     @Override
@@ -86,14 +87,19 @@ public class CourseService implements ICourseService {
             return createErrorResponse("Instructor not found", HttpStatus.NOT_FOUND);
         }
 
-        Course course = courseMapper.toEntity(courseDto);
-        course.setId(courseOpt.get().getId());
-        course.setInstructor(instructorOpt.get());
+        // Get the existing course
+        Course existingCourse = courseOpt.get();
 
-        Course updatedCourse = courseRepository.save(course);
+        // Use the mapper to update fields of the existing entity
+        courseMapper.updateEntityFromDto(courseDto, existingCourse);
+        existingCourse.setInstructor(instructorOpt.get());
+
+        // Save the updated course
+        Course updatedCourse = courseRepository.save(existingCourse);
 
         return buildSuccessResponse("Course updated successfully", courseMapper.toDto(updatedCourse), HttpStatus.OK);
     }
+
 
     @Override
     public ResponseEntity<?> deleteCourse(String id) {
