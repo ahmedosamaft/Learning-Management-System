@@ -1,6 +1,7 @@
 package fci.swe.advanced_software.config;
 
 import fci.swe.advanced_software.services.auth.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -68,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(request, response);
-        } catch (UsernameNotFoundException | MalformedJwtException exception) {
+        } catch (UsernameNotFoundException | ExpiredJwtException | MalformedJwtException exception) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
         }
     }
