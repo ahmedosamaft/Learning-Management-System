@@ -6,13 +6,10 @@ import fci.swe.advanced_software.repositories.AbstractEntityRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends AbstractEntityRepository<Course> {
+
+    // Custom method not provided by JpaRepository
     List<Course> findByInstructor(Instructor instructor);
-
-    Optional<Course> findById(String id);
-
-    boolean existsById(String id);
 }

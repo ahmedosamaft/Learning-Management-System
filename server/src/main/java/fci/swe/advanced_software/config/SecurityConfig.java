@@ -5,7 +5,6 @@ import jakarta.servlet.DispatcherType;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -39,7 +38,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/students/**").hasAnyRole(Roles.STUDENT, Roles.ADMIN, Roles.INSTRUCTOR)
                         .requestMatchers("/api/v1/instructors/**").hasAnyRole(Roles.INSTRUCTOR, Roles.ADMIN)
                         .requestMatchers("/api/v1/admins/**").hasRole(Roles.ADMIN)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/courses/**").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
