@@ -4,6 +4,7 @@ import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.courses.course.ICourseService;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +28,13 @@ public class CourseController {
 
     @PostMapping
     @RolesAllowed({Roles.INSTRUCTOR, Roles.ADMIN})
-    public ResponseEntity<?> createCourse(@RequestBody CourseDto courseDto) {
+    public ResponseEntity<?> createCourse(@Valid @RequestBody CourseDto courseDto) {
         return courseService.createCourse(courseDto);
     }
 
     @PutMapping("/{id}")
     @RolesAllowed({Roles.INSTRUCTOR, Roles.ADMIN})
-    public ResponseEntity<?> updateCourse(@PathVariable String id, @RequestBody CourseDto courseDto) {
+    public ResponseEntity<?> updateCourse(@PathVariable String id,@Valid @RequestBody CourseDto courseDto) {
         return courseService.updateCourse(id, courseDto);
     }
 
