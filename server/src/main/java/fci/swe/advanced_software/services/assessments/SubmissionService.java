@@ -13,9 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-
 @Service
 @AllArgsConstructor
 public class SubmissionService implements ISubmissionService {
@@ -27,7 +24,6 @@ public class SubmissionService implements ISubmissionService {
     @Override
     public ResponseEntity<?> createSubmission(SubmissionRequestDto requestDto) {
         Submission submission = submissionMapper.toEntity(requestDto);
-        submission.setSubmittedAt(Timestamp.from(Instant.now()));
         submission = submissionRepository.save(submission);
 
         SubmissionResponseDto responseDto = submissionMapper.toResponseDto(submission);

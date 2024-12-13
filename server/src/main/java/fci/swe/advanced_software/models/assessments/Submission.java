@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.sql.Timestamp;
-
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,11 +32,10 @@ public class Submission extends AbstractEntity {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
+    @Enumerated(EnumType.STRING)
     private GradingType gradingType;
 
-    @Column(nullable = false)
-    private Timestamp submittedAt;
 
     @Column(nullable = false, length = 1024)
     private String answer;
