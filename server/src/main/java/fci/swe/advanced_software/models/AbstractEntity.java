@@ -1,7 +1,11 @@
 package fci.swe.advanced_software.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -11,14 +15,14 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class AbstractEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false, unique = true, length = 36)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
     @Column(name = "updated_at")
@@ -26,6 +30,18 @@ public class AbstractEntity {
 
     @Version
     private Long version;
+
+    @PrePersist
+    private void onCreate() {
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 
     @Override
     public boolean equals(Object obj) {

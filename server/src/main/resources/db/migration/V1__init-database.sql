@@ -1,295 +1,270 @@
-alter table if exists announcement
-    drop constraint if exists FKnxopiti7syvupku89mwxpckmq;
-alter table if exists announcement
-    drop constraint if exists FKdrch2s0c5ii9a11gojk8kceva;
-alter table if exists announcement_comment
-    drop constraint if exists FKi72u02fqknowb9i0h8d13qcis;
-alter table if exists announcement_comment
-    drop constraint if exists FKlpu61vni6pg431dnk2bdth5jr;
-alter table if exists assessment
-    drop constraint if exists FKrd2iqvu852eg13sql0micl26a;
-alter table if exists attempt
-    drop constraint if exists FKfms5vrt70k4hbw0115b5h3gur;
-alter table if exists attempt
-    drop constraint if exists FKot81pl0sxrusdj24cpmqm26cj;
-alter table if exists attendance
-    drop constraint if exists FKam01ddvne08oa3exny156v7al;
-alter table if exists attendance
-    drop constraint if exists FK8mfruisg1gjmo8eeib2ujfomr;
-alter table if exists course
-    drop constraint if exists FKb4a7exw2hlc62ijnxo0329vwc;
-alter table if exists enrollment
-    drop constraint if exists FKbhhcqkw1px6yljqg92m0sh2gt;
-alter table if exists enrollment
-    drop constraint if exists FKmqxbgg901872j7414qpsdlr4x;
-alter table if exists feedback
-    drop constraint if exists FKo4dg9d4wtcqpyga73spxdkbei;
-alter table if exists feedback
-    drop constraint if exists FK4e6343505rpjdnih2a4bg69cd;
-alter table if exists feedback
-    drop constraint if exists FKdoirxkh4ub4y9skl7cxmsjee4;
-alter table if exists lesson
-    drop constraint if exists FKjs3c7skmg8bvdddok5lc7s807;
-alter table if exists media
-    drop constraint if exists FKjurdsseu3rphh4hb7c1s90s62;
-alter table if exists media
-    drop constraint if exists FKgpjpdh58l5xsmpte6pcdviup4;
-alter table if exists media
-    drop constraint if exists FKl26k4xkijpbeq9tdo30xkvfgq;
-alter table if exists notification
-    drop constraint if exists FK2qvynpew0iu557b4qk9go0u0c;
-alter table if exists notification
-    drop constraint if exists FKm5wtmevqd8qoosl2nvufc011v;
-alter table if exists question
-    drop constraint if exists FK3o4lvvgwxo832sjpoucsw1fr3;
-alter table if exists submission
-    drop constraint if exists FK8mhrog1ft0k5mfagwsajudpdo;
-alter table if exists submission
-    drop constraint if exists FK7jforxslkh08kl9m2tqlveb18;
-alter table if exists submission
-    drop constraint if exists FKjskf22duewv7lid6te7nnixdq;
-alter table if exists submission
-    drop constraint if exists FK4wri2v9ubotjb7y9gu9fkxgal;
-drop table if exists "user" cascade;
-drop table if exists announcement cascade;
-drop table if exists announcement_comment cascade;
-drop table if exists assessment cascade;
-drop table if exists attempt cascade;
-drop table if exists attendance cascade;
-drop table if exists course cascade;
-drop table if exists enrollment cascade;
-drop table if exists feedback cascade;
-drop table if exists lesson cascade;
-drop table if exists media cascade;
-drop table if exists notification cascade;
-drop table if exists question cascade;
+drop table if exists user_roles cascade;
+
 drop table if exists submission cascade;
-create table "user"
+
+drop table if exists role cascade;
+
+drop table if exists question cascade;
+
+drop table if exists notification cascade;
+
+drop table if exists media cascade;
+
+drop table if exists lesson cascade;
+
+drop table if exists feedback cascade;
+
+drop table if exists enrollment cascade;
+
+drop table if exists course cascade;
+
+drop table if exists attendance cascade;
+
+drop table if exists attempt cascade;
+
+drop table if exists assessment cascade;
+
+drop table if exists announcement_comment cascade;
+
+drop table if exists announcement cascade;
+
+drop table if exists abstract_user cascade;
+
+CREATE TABLE abstract_user
 (
-    created_at timestamp(6) with time zone,
-    updated_at timestamp(6) with time zone,
-    version    bigint,
-    dtype      varchar(31)  not null,
-    id         varchar(36)  not null,
-    email      varchar(255) not null unique,
-    name       varchar(255) not null,
-    password   varchar(255) not null,
-    primary key (id)
+    id         VARCHAR(36)  NOT NULL,
+    dtype      VARCHAR(31),
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    name       VARCHAR(255) NOT NULL,
+    email      VARCHAR(255) NOT NULL,
+    password   VARCHAR(255) NOT NULL,
+    CONSTRAINT pk_abstract_user PRIMARY KEY (id),
+    CONSTRAINT uc_abstract_user_email UNIQUE (email)
 );
-create table announcement
+
+CREATE TABLE course
 (
-    created_at timestamp(6) with time zone,
-    posted_at  timestamp(6) not null,
-    updated_at timestamp(6) with time zone,
-    version    bigint,
-    course_id  varchar(36),
-    id         varchar(36)  not null,
-    posted_by  varchar(36)  not null,
-    content    TEXT         not null,
-    title      varchar(255) not null,
-    primary key (id)
+    id            VARCHAR(36)  NOT NULL,
+    created_at    TIMESTAMP WITHOUT TIME ZONE,
+    updated_at    TIMESTAMP WITHOUT TIME ZONE,
+    version       BIGINT,
+    code          VARCHAR(255) NOT NULL,
+    name          VARCHAR(255) NOT NULL,
+    description   VARCHAR(255) NOT NULL,
+    instructor_id VARCHAR(36)  NOT NULL,
+    CONSTRAINT pk_course PRIMARY KEY (id),
+    CONSTRAINT FK_COURSE_ON_INSTRUCTOR FOREIGN KEY (instructor_id) REFERENCES abstract_user (id) ON DELETE CASCADE
 );
-create table announcement_comment
+
+CREATE TABLE announcement
 (
-    commented_at    timestamp(6) not null,
-    created_at      timestamp(6) with time zone,
-    updated_at      timestamp(6) with time zone,
-    version         bigint,
-    announcement_id varchar(36)  not null,
-    id              varchar(36)  not null,
-    student_id      varchar(36)  not null,
-    content         varchar(255) not null,
-    primary key (id)
+    id         VARCHAR(36)                 NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    course_id  VARCHAR(36),
+    posted_by  VARCHAR(36)                 NOT NULL,
+    title      VARCHAR(255)                NOT NULL,
+    content    TEXT                        NOT NULL,
+    posted_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT pk_announcement PRIMARY KEY (id),
+    CONSTRAINT FK_ANNOUNCEMENT_ON_COURSE FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE,
+    CONSTRAINT FK_ANNOUNCEMENT_ON_POSTED_BY FOREIGN KEY (posted_by) REFERENCES abstract_user (id) ON DELETE CASCADE
 );
-create table assessment
+
+CREATE TABLE announcement_comment
 (
-    max_score       integer      not null,
-    created_at      timestamp(6) with time zone,
-    ends_at         timestamp(6) not null,
-    starts_at       timestamp(6) not null,
-    updated_at      timestamp(6) with time zone,
-    version         bigint,
-    assessment_type varchar(31)  not null,
-    course_id       varchar(36)  not null,
-    id              varchar(36)  not null,
-    instructions    varchar(255) not null,
-    primary key (id)
+    id              VARCHAR(36)                 NOT NULL,
+    created_at      TIMESTAMP WITHOUT TIME ZONE,
+    updated_at      TIMESTAMP WITHOUT TIME ZONE,
+    version         BIGINT,
+    announcement_id VARCHAR(36)                 NOT NULL,
+    student_id      VARCHAR(36)                 NOT NULL,
+    content         VARCHAR(255)                NOT NULL,
+    commented_at    TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT pk_announcement_comment PRIMARY KEY (id),
+    CONSTRAINT FK_ANNOUNCEMENT_COMMENT_ON_ANNOUNCEMENT FOREIGN KEY (announcement_id) REFERENCES announcement (id) ON DELETE CASCADE,
+    CONSTRAINT FK_ANNOUNCEMENT_COMMENT_ON_STUDENT FOREIGN KEY (student_id) REFERENCES abstract_user (id) ON DELETE CASCADE
 );
-create table attempt
+
+CREATE TABLE lesson
 (
-    attempted_at  timestamp(6) not null,
-    created_at    timestamp(6) with time zone,
-    updated_at    timestamp(6) with time zone,
-    version       bigint,
-    assessment_id varchar(36)  not null,
-    id            varchar(36)  not null,
-    student_id    varchar(36)  not null,
-    primary key (id)
+    id         VARCHAR(36)  NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    title      VARCHAR(255) NOT NULL,
+    content    VARCHAR(255) NOT NULL,
+    course_id  VARCHAR(36)  NOT NULL,
+    otp        VARCHAR(255) NOT NULL,
+    CONSTRAINT pk_lesson PRIMARY KEY (id),
+    CONSTRAINT FK_LESSON_ON_COURSE FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE
 );
-create table attendance
+
+CREATE TABLE assessment
 (
-    attended_at timestamp(6) not null,
-    created_at  timestamp(6) with time zone,
-    updated_at  timestamp(6) with time zone,
-    version     bigint,
-    id          varchar(36)  not null,
-    lesson_id   varchar(36)  not null,
-    student_id  varchar(36)  not null,
-    primary key (id)
+    id              VARCHAR(36)                 NOT NULL,
+    assessment_type VARCHAR(31),
+    created_at      TIMESTAMP WITHOUT TIME ZONE,
+    updated_at      TIMESTAMP WITHOUT TIME ZONE,
+    version         BIGINT,
+    instructions    VARCHAR(255)                NOT NULL,
+    course_id       VARCHAR(36)                 NOT NULL,
+    max_score       INTEGER                     NOT NULL,
+    starts_at       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    ends_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT pk_assessment PRIMARY KEY (id),
+    CONSTRAINT FK_ASSESSMENT_ON_COURSE FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE
 );
-create table course
+
+CREATE TABLE attempt
 (
-    created_at    timestamp(6) with time zone,
-    updated_at    timestamp(6) with time zone,
-    version       bigint,
-    id            varchar(36)  not null,
-    instructor_id varchar(36)  not null,
-    code          varchar(255) not null,
-    description   varchar(255) not null,
-    name          varchar(255) not null,
-    primary key (id)
+    id            VARCHAR(36)                 NOT NULL,
+    created_at    TIMESTAMP WITHOUT TIME ZONE,
+    updated_at    TIMESTAMP WITHOUT TIME ZONE,
+    version       BIGINT,
+    assessment_id VARCHAR(36)                 NOT NULL,
+    student_id    VARCHAR(36)                 NOT NULL,
+    attempted_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT pk_attempt PRIMARY KEY (id),
+    CONSTRAINT FK_ATTEMPT_ON_ASSESSMENT FOREIGN KEY (assessment_id) REFERENCES assessment (id) ON DELETE CASCADE,
+    CONSTRAINT FK_ATTEMPT_ON_STUDENT FOREIGN KEY (student_id) REFERENCES abstract_user (id) ON DELETE CASCADE
 );
-create table enrollment
+
+CREATE TABLE attendance
 (
-    created_at timestamp(6) with time zone,
-    updated_at timestamp(6) with time zone,
-    version    bigint,
-    course_id  varchar(36) not null,
-    id         varchar(36) not null,
-    student_id varchar(36) not null,
-    grade      varchar(255),
-    primary key (id)
+    id          VARCHAR(36)                 NOT NULL,
+    created_at  TIMESTAMP WITHOUT TIME ZONE,
+    updated_at  TIMESTAMP WITHOUT TIME ZONE,
+    version     BIGINT,
+    student_id  VARCHAR(36)                 NOT NULL,
+    lesson_id   VARCHAR(36)                 NOT NULL,
+    attended_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT pk_attendance PRIMARY KEY (id),
+    CONSTRAINT FK_ATTENDANCE_ON_LESSON FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
+    CONSTRAINT FK_ATTENDANCE_ON_STUDENT FOREIGN KEY (student_id) REFERENCES abstract_user (id) ON DELETE CASCADE
 );
-create table feedback
+
+CREATE TABLE enrollment
 (
-    grade         integer,
-    created_at    timestamp(6) with time zone,
-    updated_at    timestamp(6) with time zone,
-    version       bigint,
-    feedback_type varchar(20) not null check (feedback_type in ('MANUAL', 'AUTOMATIC')),
-    attempt_id    varchar(36) not null unique,
-    id            varchar(36) not null,
-    instructor_id varchar(36),
-    student_id    varchar(36) not null,
-    comments      varchar(255),
-    primary key (id)
+    id         VARCHAR(36) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    student_id VARCHAR(36) NOT NULL,
+    course_id  VARCHAR(36) NOT NULL,
+    grade      VARCHAR(255),
+    CONSTRAINT pk_enrollment PRIMARY KEY (id),
+    CONSTRAINT FK_ENROLLMENT_ON_COURSE FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE,
+    CONSTRAINT FK_ENROLLMENT_ON_STUDENT FOREIGN KEY (student_id) REFERENCES abstract_user (id) ON DELETE CASCADE
 );
-create table lesson
+
+CREATE TABLE feedback
 (
-    created_at timestamp(6) with time zone,
-    updated_at timestamp(6) with time zone,
-    version    bigint,
-    course_id  varchar(36)  not null,
-    id         varchar(36)  not null,
-    content    varchar(255) not null,
-    otp        varchar(255) not null,
-    title      varchar(255) not null,
-    primary key (id)
+    id            VARCHAR(36) NOT NULL,
+    created_at    TIMESTAMP WITHOUT TIME ZONE,
+    updated_at    TIMESTAMP WITHOUT TIME ZONE,
+    version       BIGINT,
+    comments      VARCHAR(255),
+    grade         INTEGER,
+    attempt_id    VARCHAR(36) NOT NULL,
+    student_id    VARCHAR(36) NOT NULL,
+    instructor_id VARCHAR(36),
+    feedback_type VARCHAR(20) NOT NULL,
+    CONSTRAINT pk_feedback PRIMARY KEY (id),
+    CONSTRAINT uc_feedback_attempt UNIQUE (attempt_id),
+    CONSTRAINT FK_FEEDBACK_ON_ATTEMPT FOREIGN KEY (attempt_id) REFERENCES attempt (id) ON DELETE CASCADE,
+    CONSTRAINT FK_FEEDBACK_ON_INSTRUCTOR FOREIGN KEY (instructor_id) REFERENCES abstract_user (id) ON DELETE CASCADE,
+    CONSTRAINT FK_FEEDBACK_ON_STUDENT FOREIGN KEY (student_id) REFERENCES abstract_user (id) ON DELETE CASCADE
 );
-create table media
+
+
+CREATE TABLE media
 (
-    created_at      timestamp(6) with time zone,
-    updated_at      timestamp(6) with time zone,
-    version         bigint,
-    announcement_id varchar(36),
-    assignment_id   varchar(36),
-    id              varchar(36)  not null,
-    lesson_id       varchar(36),
-    real_name       varchar(255) not null,
-    url             varchar(255) not null,
-    primary key (id)
+    id              VARCHAR(36)  NOT NULL,
+    created_at      TIMESTAMP WITHOUT TIME ZONE,
+    updated_at      TIMESTAMP WITHOUT TIME ZONE,
+    version         BIGINT,
+    announcement_id VARCHAR(36),
+    lesson_id       VARCHAR(36),
+    assignment_id   VARCHAR(36),
+    real_name       VARCHAR(255) NOT NULL,
+    url             VARCHAR(255) NOT NULL,
+    CONSTRAINT pk_media PRIMARY KEY (id),
+    CONSTRAINT FK_MEDIA_ON_ANNOUNCEMENT FOREIGN KEY (announcement_id) REFERENCES announcement (id) ON DELETE CASCADE,
+    CONSTRAINT FK_MEDIA_ON_ASSIGNMENT FOREIGN KEY (assignment_id) REFERENCES assessment (id) ON DELETE CASCADE,
+    CONSTRAINT FK_MEDIA_ON_LESSON FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE
 );
-create table notification
+
+CREATE TABLE notification
 (
-    is_read    boolean      not null,
-    created_at timestamp(6) with time zone,
-    updated_at timestamp(6) with time zone,
-    version    bigint,
-    course_id  varchar(36),
-    id         varchar(36)  not null,
-    recipient  varchar(36)  not null,
-    content    varchar(255) not null,
-    title      varchar(255) not null,
-    primary key (id)
+    id         VARCHAR(36)  NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    title      VARCHAR(255) NOT NULL,
+    content    VARCHAR(255) NOT NULL,
+    is_read    BOOLEAN      NOT NULL,
+    recipient  VARCHAR(36)  NOT NULL,
+    course_id  VARCHAR(36),
+    CONSTRAINT pk_notification PRIMARY KEY (id),
+    CONSTRAINT FK_NOTIFICATION_ON_COURSE FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE,
+    CONSTRAINT FK_NOTIFICATION_ON_RECIPIENT FOREIGN KEY (recipient) REFERENCES abstract_user (id) ON DELETE CASCADE
 );
-create table question
+
+CREATE TABLE question
 (
-    created_at     timestamp(6) with time zone,
-    updated_at     timestamp(6) with time zone,
-    version        bigint,
-    question_type  varchar(20)  not null check (question_type in ('MCQ', 'TRUE_FALSE', 'SHORT_ANSWER')),
-    assessment_id  varchar(36)  not null,
-    id             varchar(36)  not null,
-    correct_answer varchar(255) not null,
-    image_url      varchar(255),
+    id             VARCHAR(36)  NOT NULL,
+    created_at     TIMESTAMP WITHOUT TIME ZONE,
+    updated_at     TIMESTAMP WITHOUT TIME ZONE,
+    version        BIGINT,
+    assessment_id  VARCHAR(36)  NOT NULL,
+    text           TEXT         NOT NULL,
+    image_url      VARCHAR(255),
+    correct_answer VARCHAR(255) NOT NULL,
+    question_type  VARCHAR(20)  NOT NULL,
     options        TEXT,
-    text           TEXT         not null,
-    primary key (id)
+    CONSTRAINT pk_question PRIMARY KEY (id),
+    CONSTRAINT FK_QUESTION_ON_ASSESSMENT FOREIGN KEY (assessment_id) REFERENCES assessment (id) ON DELETE CASCADE
 );
-create table submission
+
+CREATE TABLE role
 (
-    created_at    timestamp(6) with time zone,
-    submitted_at  timestamp(6)  not null,
-    updated_at    timestamp(6) with time zone,
-    version       bigint,
-    grading_type  varchar(31)   not null,
-    assessment_id varchar(36)   not null,
-    attempt_id    varchar(36)   not null,
-    id            varchar(36)   not null,
-    question_id   varchar(36)   not null,
-    student_id    varchar(36)   not null,
-    answer        varchar(1024) not null,
-    primary key (id)
+    id         VARCHAR(36)  NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    name       VARCHAR(255) NOT NULL,
+    CONSTRAINT pk_role PRIMARY KEY (id),
+    CONSTRAINT uc_role_name UNIQUE (name)
 );
-alter table if exists announcement
-    add constraint FKnxopiti7syvupku89mwxpckmq foreign key (course_id) references course;
-alter table if exists announcement
-    add constraint FKdrch2s0c5ii9a11gojk8kceva foreign key (posted_by) references "user";
-alter table if exists announcement_comment
-    add constraint FKi72u02fqknowb9i0h8d13qcis foreign key (announcement_id) references announcement;
-alter table if exists announcement_comment
-    add constraint FKlpu61vni6pg431dnk2bdth5jr foreign key (student_id) references "user";
-alter table if exists assessment
-    add constraint FKrd2iqvu852eg13sql0micl26a foreign key (course_id) references course;
-alter table if exists attempt
-    add constraint FKfms5vrt70k4hbw0115b5h3gur foreign key (assessment_id) references assessment;
-alter table if exists attempt
-    add constraint FKot81pl0sxrusdj24cpmqm26cj foreign key (student_id) references "user";
-alter table if exists attendance
-    add constraint FKam01ddvne08oa3exny156v7al foreign key (lesson_id) references lesson;
-alter table if exists attendance
-    add constraint FK8mfruisg1gjmo8eeib2ujfomr foreign key (student_id) references "user";
-alter table if exists course
-    add constraint FKb4a7exw2hlc62ijnxo0329vwc foreign key (instructor_id) references "user";
-alter table if exists enrollment
-    add constraint FKbhhcqkw1px6yljqg92m0sh2gt foreign key (course_id) references course;
-alter table if exists enrollment
-    add constraint FKmqxbgg901872j7414qpsdlr4x foreign key (student_id) references "user";
-alter table if exists feedback
-    add constraint FKo4dg9d4wtcqpyga73spxdkbei foreign key (attempt_id) references attempt;
-alter table if exists feedback
-    add constraint FK4e6343505rpjdnih2a4bg69cd foreign key (instructor_id) references "user";
-alter table if exists feedback
-    add constraint FKdoirxkh4ub4y9skl7cxmsjee4 foreign key (student_id) references "user";
-alter table if exists lesson
-    add constraint FKjs3c7skmg8bvdddok5lc7s807 foreign key (course_id) references course;
-alter table if exists media
-    add constraint FKjurdsseu3rphh4hb7c1s90s62 foreign key (announcement_id) references announcement;
-alter table if exists media
-    add constraint FKgpjpdh58l5xsmpte6pcdviup4 foreign key (assignment_id) references assessment;
-alter table if exists media
-    add constraint FKl26k4xkijpbeq9tdo30xkvfgq foreign key (lesson_id) references lesson;
-alter table if exists notification
-    add constraint FK2qvynpew0iu557b4qk9go0u0c foreign key (course_id) references course;
-alter table if exists notification
-    add constraint FKm5wtmevqd8qoosl2nvufc011v foreign key (recipient) references "user";
-alter table if exists question
-    add constraint FK3o4lvvgwxo832sjpoucsw1fr3 foreign key (assessment_id) references assessment;
-alter table if exists submission
-    add constraint FK8mhrog1ft0k5mfagwsajudpdo foreign key (assessment_id) references assessment;
-alter table if exists submission
-    add constraint FK7jforxslkh08kl9m2tqlveb18 foreign key (attempt_id) references attempt;
-alter table if exists submission
-    add constraint FKjskf22duewv7lid6te7nnixdq foreign key (question_id) references question;
-alter table if exists submission
-    add constraint FK4wri2v9ubotjb7y9gu9fkxgal foreign key (student_id) references "user";
+
+CREATE TABLE submission
+(
+    id            VARCHAR(36)   NOT NULL,
+    created_at    TIMESTAMP WITHOUT TIME ZONE,
+    updated_at    TIMESTAMP WITHOUT TIME ZONE,
+    version       BIGINT,
+    question_id   VARCHAR(36)   NOT NULL,
+    assessment_id VARCHAR(36)   NOT NULL,
+    attempt_id    VARCHAR(36)   NOT NULL,
+    student_id    VARCHAR(36)   NOT NULL,
+    grading_type  VARCHAR(50)   NOT NULL,
+    answer        VARCHAR(1024) NOT NULL,
+    CONSTRAINT pk_submission PRIMARY KEY (id),
+    CONSTRAINT FK_SUBMISSION_ON_ASSESSMENT FOREIGN KEY (assessment_id) REFERENCES assessment (id) ON DELETE CASCADE,
+    CONSTRAINT FK_SUBMISSION_ON_ATTEMPT FOREIGN KEY (attempt_id) REFERENCES attempt (id) ON DELETE CASCADE,
+    CONSTRAINT FK_SUBMISSION_ON_QUESTION FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE,
+    CONSTRAINT FK_SUBMISSION_ON_STUDENT FOREIGN KEY (student_id) REFERENCES abstract_user (id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_roles
+(
+    role_id VARCHAR(36) NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
+    CONSTRAINT pk_user_roles PRIMARY KEY (role_id, user_id),
+    CONSTRAINT fk_user_role_on_abstract_user FOREIGN KEY (user_id) REFERENCES abstract_user (id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_role_on_role FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE
+);

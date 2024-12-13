@@ -1,3 +1,8 @@
+security:
+  jwt:
+    secret-key: 406a970f5fdd329ef30bb1b0e6205f7692d69647322a926bd30ac84ab1c6b8fa
+    expiration-time: 3600000
+
 spring:
   application:
     name: advanced-software
@@ -9,8 +14,22 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    show-sql: true
     hibernate:
       ddl-auto: validate
+
     properties:
       hibernate:
+        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+logging:
+  level:
+    org:
+      hibernate:
+        orm:
+          jdbc:
+            bind: trace
+        SQL: DEBUG
+        type.descriptor.sql.BasicBinder: trace
+server:
+  port: 9090
