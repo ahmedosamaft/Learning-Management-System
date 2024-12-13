@@ -40,7 +40,7 @@ public class CourseController {
 
     @DeleteMapping("/{id}")
     @RolesAllowed({Roles.INSTRUCTOR, Roles.ADMIN})
-    public ResponseEntity<?> deleteCourse(@PathVariable String code) {
-        return courseService.deleteCourse(code);
+    public ResponseEntity<?> deleteCourse(@PathVariable String id) {
+        return courseService.deleteCourse(id);
     }
 }
