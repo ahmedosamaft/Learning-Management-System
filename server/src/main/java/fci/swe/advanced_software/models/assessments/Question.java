@@ -3,10 +3,20 @@ package fci.swe.advanced_software.models.assessments;
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.utils.HashMapJsonConverter;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Question extends AbstractEntity {
     @ManyToOne

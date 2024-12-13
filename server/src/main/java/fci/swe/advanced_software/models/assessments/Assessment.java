@@ -3,12 +3,19 @@ package fci.swe.advanced_software.models.assessments;
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.courses.Course;
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "assessment_type", discriminatorType = DiscriminatorType.STRING)
 public class Assessment extends AbstractEntity {

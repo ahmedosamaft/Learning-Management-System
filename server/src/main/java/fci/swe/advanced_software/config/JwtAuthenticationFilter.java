@@ -1,6 +1,8 @@
 package fci.swe.advanced_software.config;
 
 import fci.swe.advanced_software.services.auth.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -44,13 +47,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             final String jwt = authHeader.substring(7);
-            final String email = jwtService.extractUsername(jwt);
+            final String id = jwtService.extractUsername(jwt);
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
 
-            if (email != null && authentication == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            if (id != null && authentication == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(id);
 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -66,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(request, response);
-        } catch (Exception exception) {
+        } catch (UsernameNotFoundException | ExpiredJwtException | MalformedJwtException exception) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
         }
     }
