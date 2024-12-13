@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface IAttemptService {
 
-    ResponseEntity<?> createAttempt(String assignmentId, AttemptRequestDto requestDto);
+    ResponseEntity<?> createAttempt(AttemptRequestDto requestDto);
 
 
     ResponseEntity<?> updateAttempt(String id, AttemptRequestDto requestDto);

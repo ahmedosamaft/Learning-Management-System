@@ -36,6 +36,5 @@ public class SubmissionRequestDto {
     private String answer;
 
     @NotNull(message = "Grading type is required.")
-    @NotBlank(message = "Grading type cannot be blank.")
     private GradingType gradingType;
 }

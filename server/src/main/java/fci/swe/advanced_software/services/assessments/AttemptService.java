@@ -31,8 +31,8 @@ public class AttemptService implements IAttemptService {
     private final AttemptMapper attemptMapper;
 
     @Override
-    public ResponseEntity<?> createAttempt(String assessmentId, AttemptRequestDto requestDto) {
-        Optional<Assessment> assessmentOpt = assessmentRepository.findById(assessmentId);
+    public ResponseEntity<?> createAttempt(AttemptRequestDto requestDto) {
+        Optional<Assessment> assessmentOpt = assessmentRepository.findById(requestDto.getAssessmentId());
         if (assessmentOpt.isEmpty()) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)

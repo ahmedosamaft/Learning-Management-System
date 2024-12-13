@@ -20,16 +20,9 @@ public class AttemptController {
     private final AssessmentRepository assessmentRepository;
     private final StudentRepository studentRepository;
 
-    @PostMapping("/{assignmentId}")
-    public ResponseEntity<?> createAttempt(@PathVariable String assignmentId,
-                                           @Valid @RequestBody AttemptRequestDto attemptRequestDto) {
-        return attemptService.createAttempt(assignmentId, attemptRequestDto);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateAttempt(@PathVariable String id,
-                                           @Valid @RequestBody AttemptRequestDto attemptRequestDto) {
-        return attemptService.updateAttempt(id, attemptRequestDto);
+    @PostMapping
+    public ResponseEntity<?> createAttempt(@Valid @RequestBody AttemptRequestDto attemptRequestDto) {
+        return attemptService.createAttempt(attemptRequestDto);
     }
 
     @GetMapping("/{id}")
