@@ -53,6 +53,9 @@ public abstract class AttemptMapper {
     }
 
     public Set<String> submissionToSubmissionDto(Set<Submission> submissionIds) {
+        if (submissionIds == null) {
+            return null;
+        }
         return submissionIds.stream().map(AbstractEntity::getId).collect(Collectors.toSet());
     }
 

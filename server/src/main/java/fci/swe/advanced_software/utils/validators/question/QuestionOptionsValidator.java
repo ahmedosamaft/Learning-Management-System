@@ -1,4 +1,4 @@
-package fci.swe.advanced_software.utils.validators;
+package fci.swe.advanced_software.utils.validators.question;
 
 import fci.swe.advanced_software.dtos.assessments.question.IQuestionDto;
 import fci.swe.advanced_software.models.assessments.QuestionType;

@@ -3,12 +3,18 @@ package fci.swe.advanced_software.models.assessments;
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.users.Student;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
-import java.sql.Timestamp;
-
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "grading_type", discriminatorType = DiscriminatorType.STRING)
 public class Submission extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
@@ -26,8 +32,10 @@ public class Submission extends AbstractEntity {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @Column(nullable = false)
-    private Timestamp submittedAt;
+    @Column(nullable = false, length = 50)
+    @Enumerated(EnumType.STRING)
+    private GradingType gradingType;
+
 
     @Column(nullable = false, length = 1024)
     private String answer;
