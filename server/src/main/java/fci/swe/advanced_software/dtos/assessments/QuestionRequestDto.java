@@ -15,6 +15,8 @@ import java.util.Map;
 
 @Data
 @Builder
+@ValidQuestionOptions
+@ValidAnswer
 public class QuestionRequestDto {
 
     @NotNull(message = "Assessment ID is required.")
@@ -32,12 +34,10 @@ public class QuestionRequestDto {
 
     @NotNull(message = "Correct answer is required.")
     @NotEmpty(message = "Correct answer cannot be blank.")
-    @ValidAnswer
     private String correctAnswer;
 
     @NotNull(message = "Question type is required.")
     private QuestionType questionType;
 
-    @ValidQuestionOptions
     private Map<String, String> options;
 }
