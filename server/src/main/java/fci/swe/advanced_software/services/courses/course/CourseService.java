@@ -6,12 +6,17 @@ import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
+import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,11 +26,12 @@ public class CourseService implements ICourseService {
 
     private final CourseRepository courseRepository;
     private final InstructorRepository instructorRepository;
+    private final CourseMapper courseMapper;
 
     @Override
     public ResponseEntity<?> getAllCourses() {
         List<CourseDto> courses = courseRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(courseMapper::toDto)
                 .collect(Collectors.toList());
 
         return buildSuccessResponse("Courses retrieved successfully", courses, HttpStatus.OK);
@@ -34,16 +40,16 @@ public class CourseService implements ICourseService {
     @Override
     public ResponseEntity<?> getCourseById(String id) {
         Optional<Course> courseOpt = courseRepository.findById(id);
-        return courseOpt.map(course -> ResponseEntityBuilder.<CourseDto>create()
+        return courseOpt
+                .map(course -> ResponseEntityBuilder.create()
                         .withStatus(HttpStatus.OK)
                         .withMessage("Course retrieved successfully")
-                        .withData(convertToDto(course))
+                        .withData(courseMapper.toDto(course))
                         .build())
-                .orElseGet(() -> ResponseEntityBuilder.<String>create()
+                .orElseGet(() -> ResponseEntityBuilder.create()
                         .withStatus(HttpStatus.NOT_FOUND)
                         .withMessage("Course not found")
                         .build());
-
     }
 
     @Override
@@ -53,15 +59,19 @@ public class CourseService implements ICourseService {
             return createErrorResponse("Instructor not found", HttpStatus.NOT_FOUND);
         }
 
-        Course course = new Course();
-        course.setCode(courseDto.getCode());
-        course.setName(courseDto.getName());
-        course.setDescription(courseDto.getDescription());
+        Course course = courseMapper.toEntity(courseDto);
         course.setInstructor(instructorOpt.get());
 
         Course savedCourse = courseRepository.save(course);
 
-        return buildSuccessResponse("Course created successfully", convertToDto(savedCourse), HttpStatus.CREATED);
+        // Build the location URI
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedCourse.getId())
+                .toUri();
+
+        return ResponseEntity.created(location)
+                .body(buildSuccessResponse("Course created successfully", courseMapper.toDto(savedCourse), HttpStatus.CREATED));
     }
 
     @Override
@@ -76,15 +86,13 @@ public class CourseService implements ICourseService {
             return createErrorResponse("Instructor not found", HttpStatus.NOT_FOUND);
         }
 
-        Course course = courseOpt.get();
-        course.setCode(courseDto.getCode());
-        course.setName(courseDto.getName());
-        course.setDescription(courseDto.getDescription());
+        Course course = courseMapper.toEntity(courseDto);
+        course.setId(courseOpt.get().getId());
         course.setInstructor(instructorOpt.get());
 
         Course updatedCourse = courseRepository.save(course);
 
-        return buildSuccessResponse("Course updated successfully", convertToDto(updatedCourse), HttpStatus.OK);
+        return buildSuccessResponse("Course updated successfully", courseMapper.toDto(updatedCourse), HttpStatus.OK);
     }
 
     @Override
@@ -98,24 +106,14 @@ public class CourseService implements ICourseService {
         return buildSuccessResponse("Course deleted successfully", null, HttpStatus.NO_CONTENT);
     }
 
-    private CourseDto convertToDto(Course course) {
-        return new CourseDto(
-                course.getCode(),
-                course.getId(),
-                course.getName(),
-                course.getDescription(),
-                course.getInstructor().getId(),
-                course.getInstructor().getName()
-        );
-    }
-
-
     // Helper method for success responses
     private ResponseEntity<?> buildSuccessResponse(String message, Object data, HttpStatus status) {
+        Map<String, Object> wrappedData = data != null ? Collections.singletonMap("course", data) : null;
+
         return ResponseEntityBuilder.create()
                 .withStatus(status)
                 .withMessage(message)
-                .withData(data)
+                .withData(wrappedData)
                 .build();
     }
 
