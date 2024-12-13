@@ -70,8 +70,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (UsernameNotFoundException | MalformedJwtException exception) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
-        } catch (Exception exception) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exception.getMessage());
         }
     }
 }
