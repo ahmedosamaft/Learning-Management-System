@@ -1,15 +1,16 @@
 package fci.swe.advanced_software.controllers;
 
-import fci.swe.advanced_software.dtos.StudentDto;
 import fci.swe.advanced_software.models.Notification;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.NotificationRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Instant;
 import java.util.Set;
 
 @RestController
@@ -29,19 +30,5 @@ public class StudentController {
     @GetMapping("/{id}/notifications/unread")
     public ResponseEntity<Set<Notification>> getStudentNotifications(@PathVariable String id) {
         return ResponseEntity.ok(notificationRepository.findAllByRecipientIdAndIsReadFalse(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<Student> createStudent(@RequestBody StudentDto dto) {
-        Student student = Student.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .build();
-
-        Student savedStudent = studentRepository.save(student);
-        return ResponseEntity.ok(savedStudent);
     }
 }

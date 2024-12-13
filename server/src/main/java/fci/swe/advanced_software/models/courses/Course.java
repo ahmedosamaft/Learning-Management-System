@@ -5,11 +5,20 @@ import fci.swe.advanced_software.models.assessments.Assignment;
 import fci.swe.advanced_software.models.assessments.Quiz;
 import fci.swe.advanced_software.models.users.Instructor;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@SuperBuilder
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
 public class Course extends AbstractEntity {
     @Column(nullable = false)
     private String code;
@@ -35,4 +44,8 @@ public class Course extends AbstractEntity {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Quiz> quizzes = new HashSet<>();
+
+    public Course() {
+
+    }
 }
