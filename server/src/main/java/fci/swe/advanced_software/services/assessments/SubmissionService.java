@@ -31,7 +31,7 @@ public class SubmissionService implements ISubmissionService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withLocation(Constants.API_VERSION + "/submissions/" + submission.getId())
-                .withData(responseDto)
+                .withData("submission", responseDto)
                 .withMessage("Submission created successfully!")
                 .build();
     }
@@ -51,7 +51,7 @@ public class SubmissionService implements ISubmissionService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("submission", responseDto)
                 .withMessage("Submission found successfully!")
                 .build();
     }

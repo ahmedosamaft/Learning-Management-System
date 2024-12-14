@@ -33,7 +33,7 @@ public class AssignmentService implements IAssignmentService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withLocation(Constants.API_VERSION + "/assignments/" + assignment.getId())
-                .withData(responseDto)
+                .withData("assignment", responseDto)
                 .withMessage("Assignment created successfully!")
                 .build();
     }
@@ -61,7 +61,7 @@ public class AssignmentService implements IAssignmentService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("assignment", responseDto)
                 .withMessage("Assignment updated successfully!")
                 .build();
     }
@@ -81,7 +81,7 @@ public class AssignmentService implements IAssignmentService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("assignment", responseDto)
                 .build();
     }
 
@@ -102,7 +102,7 @@ public class AssignmentService implements IAssignmentService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDtos)
+                .withData("assignment", responseDtos)
                 .build();
     }
 

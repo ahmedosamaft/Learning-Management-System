@@ -57,7 +57,7 @@ public class AttemptService implements IAttemptService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withLocation(Constants.API_VERSION + "/attempts/" + attempt.getId())
-                .withData(responseDto)
+                .withData("attempt", responseDto)
                 .withMessage("Attempt created successfully!")
                 .build();
     }
@@ -87,7 +87,7 @@ public class AttemptService implements IAttemptService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("attempt", responseDto)
                 .withMessage("Attempt updated successfully!")
                 .build();
     }
@@ -106,7 +106,7 @@ public class AttemptService implements IAttemptService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("attempt", responseDto)
                 .build();
     }
 
@@ -126,7 +126,7 @@ public class AttemptService implements IAttemptService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDtos)
+                .withData("attempt", responseDtos)
                 .build();
     }
 
@@ -146,7 +146,7 @@ public class AttemptService implements IAttemptService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDtos)
+                .withData("attempt", responseDtos)
                 .build();
     }
 

@@ -5,16 +5,20 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ResponseEntityBuilder {
     private HttpStatus status;
     private String message;
-    private Object data;
+    private Map<String,Object> data;
     private HttpHeaders headers;
     private String locationUrl;
 
     private ResponseEntityBuilder() {
         this.headers = new HttpHeaders();
         this.status = HttpStatus.OK;
+        this.data = new HashMap<>();
     }
 
     public static ResponseEntityBuilder create() {
@@ -31,8 +35,8 @@ public class ResponseEntityBuilder {
         return this;
     }
 
-    public ResponseEntityBuilder withData(Object data) {
-        this.data = data;
+    public ResponseEntityBuilder withData(String key,Object data) {
+        this.data.put(key,data);
         return this;
     }
 

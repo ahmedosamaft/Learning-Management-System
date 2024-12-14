@@ -5,6 +5,7 @@ import fci.swe.advanced_software.dtos.auth.RegisterDto;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.auth.IAuthService;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,17 +21,17 @@ public class AuthController {
 
     @PostMapping("admin")
     @RolesAllowed(Roles.ADMIN)
-    public ResponseEntity<?> adminRegister(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<?> adminRegister(@Valid @RequestBody RegisterDto registerDto) {
         return authService.register(registerDto, true);
     }
 
     @PostMapping("register")
-    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto) {
         return authService.register(registerDto, false);
     }
 
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody AuthDto authDto) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthDto authDto) {
         return authService.login(authDto);
     }
 }
