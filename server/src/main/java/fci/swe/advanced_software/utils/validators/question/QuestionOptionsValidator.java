@@ -11,25 +11,63 @@ public class QuestionOptionsValidator implements ConstraintValidator<ValidQuesti
 
     @Override
     public boolean isValid(IQuestionDto dto, ConstraintValidatorContext context) {
+        context.disableDefaultConstraintViolation();
+
         if (dto == null) {
             return true;
         }
 
         Map<String, String> options = dto.getOptions();
-        if (options == null) {
-            return true;
-        }
-
         QuestionType questionType = dto.getQuestionType();
+
         if (questionType == null) {
+            addConstraintViolation(context, "Question type must be specified");
             return false;
         }
 
-        if (questionType.equals(QuestionType.MCQ)) {
-            return !options.isEmpty();
-        } else if (questionType.equals(QuestionType.TRUE_FALSE)) {
-            return options.size() == 2;
+        return switch (questionType) {
+            case MCQ -> validateMCQOptions(options, context);
+            case TRUE_FALSE -> validateTrueFalseOptions(options, context);
+            case SHORT_ANSWER -> validateShortAnswerOptions(options, context);
+        };
+    }
+
+    private boolean validateMCQOptions(Map<String, String> options, ConstraintValidatorContext context) {
+        if (options == null || options.isEmpty()) {
+            addConstraintViolation(context, "MCQ questions must have at least one option");
+            return false;
         }
-        return false;
+        return true;
+    }
+
+    private boolean validateTrueFalseOptions(Map<String, String> options, ConstraintValidatorContext context) {
+        if (options == null || options.size() != 2) {
+            addConstraintViolation(context, "True/False questions must have exactly two options");
+            return false;
+        }
+
+        boolean hasTrue = options.containsValue("True") || options.containsValue("true");
+        boolean hasFalse = options.containsValue("False") || options.containsValue("false");
+
+        if (!hasTrue || !hasFalse) {
+            addConstraintViolation(context, "True/False questions must have 'True' and 'False' options");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateShortAnswerOptions(Map<String, String> options, ConstraintValidatorContext context) {
+        if (options != null && !options.isEmpty()) {
+            addConstraintViolation(context, "Short answer questions should not have options");
+            return false;
+        }
+        return true;
+    }
+
+    private void addConstraintViolation(ConstraintValidatorContext context, String message) {
+        context.buildConstraintViolationWithTemplate(message)
+                .addPropertyNode("options")
+                .addConstraintViolation();
     }
 }

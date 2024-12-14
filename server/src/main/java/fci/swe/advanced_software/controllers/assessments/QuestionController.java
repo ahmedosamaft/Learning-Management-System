@@ -2,8 +2,10 @@ package fci.swe.advanced_software.controllers.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
 import fci.swe.advanced_software.dtos.assessments.question.QuestionUpdateDto;
+import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.assessments.IQuestionService;
 import fci.swe.advanced_software.utils.Constants;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(Constants.API_VERSION + "/questions")
 @RequiredArgsConstructor
+@RolesAllowed({Roles.ADMIN, Roles.INSTRUCTOR})
 public class QuestionController {
     private final IQuestionService questionService;
 

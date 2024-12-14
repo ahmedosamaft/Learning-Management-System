@@ -12,12 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,7 +41,7 @@ public class CourseService implements ICourseService {
                 .map(course -> ResponseEntityBuilder.create()
                         .withStatus(HttpStatus.OK)
                         .withMessage("Course retrieved successfully")
-                        .withData(courseMapper.toDto(course))
+                        .withData("course", courseMapper.toDto(course))
                         .build())
                 .orElseGet(() -> ResponseEntityBuilder.create()
                         .withStatus(HttpStatus.NOT_FOUND)
@@ -70,7 +66,7 @@ public class CourseService implements ICourseService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withMessage("Course created successfully")
-                .withData(courseMapper.toDto(savedCourse))
+                .withData("course", courseMapper.toDto(savedCourse))
                 .withLocation(location)
                 .build();
     }
@@ -114,12 +110,10 @@ public class CourseService implements ICourseService {
 
     // Helper method for success responses
     private ResponseEntity<?> buildSuccessResponse(String message, Object data, HttpStatus status) {
-        Map<String, Object> wrappedData = data != null ? Collections.singletonMap("course", data) : null;
-
         return ResponseEntityBuilder.create()
                 .withStatus(status)
                 .withMessage(message)
-                .withData(wrappedData)
+                .withData("course", data)
                 .build();
     }
 

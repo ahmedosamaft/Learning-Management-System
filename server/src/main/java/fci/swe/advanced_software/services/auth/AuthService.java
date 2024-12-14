@@ -42,12 +42,12 @@ public class AuthService implements IAuthService {
             return createErrorResponse("You are not authorized to create an admin account!");
         }
 
-        Optional<Role> role = roleRepository.findByName(registerDto.getRole());
-        if (role.isEmpty()) {
+        Role role = roleRepository.findByName(registerDto.getRole()).orElse(null);
+        if (role == null) {
             return createErrorResponse("Role not found!");
         }
 
-        AbstractUser user = createUser(registerDto, role.get());
+        AbstractUser user = createUser(registerDto, role);
         user = userRepository.save(user);
 
         String token = jwtService.generateToken(new UserDetailsAdapter(user));
@@ -56,7 +56,7 @@ public class AuthService implements IAuthService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
-                .withData(response)
+                .withData("user", response)
                 .withMessage("User registered successfully!")
                 .withLocation("/api/v1/auth")
                 .build();
@@ -76,7 +76,7 @@ public class AuthService implements IAuthService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(response)
+                .withData("user", response)
                 .withMessage("User logged in successfully!")
                 .build();
     }
