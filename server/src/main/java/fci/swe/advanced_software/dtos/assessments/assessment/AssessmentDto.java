@@ -2,10 +2,7 @@ package fci.swe.advanced_software.dtos.assessments.assessment;
 
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.sql.Timestamp;
@@ -14,7 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AssessmentRequestDto {
+public class AssessmentDto {
     private String id;
 
     @NotBlank(message = "Instructions cannot be blank.")

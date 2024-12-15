@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public abstract class AttemptMapper {
 
     protected AssessmentRepository assessmentRepository;
-
     protected StudentRepository studentRepository;
 
     @Mapping(target = "assessment", source = "assessmentId", qualifiedByName = "assessmentDtoToAssessment")

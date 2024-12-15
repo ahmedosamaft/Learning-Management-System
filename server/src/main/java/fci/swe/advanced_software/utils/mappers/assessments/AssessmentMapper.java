@@ -1,6 +1,6 @@
 package fci.swe.advanced_software.utils.mappers.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentRequestDto;
+import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
@@ -16,12 +16,11 @@ public abstract class AssessmentMapper {
     protected CourseRepository courseRepository;
 
     @Mapping(target = "course", source = "courseId", qualifiedByName = "courseDtoToCourse")
-    @Mapping(target = "media", ignore = true)
-    public abstract Assessment toEntity(AssessmentRequestDto requestDto);
+    public abstract Assessment toEntity(AssessmentDto requestDto);
 
 
     @Mapping(target = "courseId", source = "course.id")
-    public abstract AssessmentRequestDto toResponseDto(Assessment assessment);
+    public abstract AssessmentDto toResponseDto(Assessment assessment);
 
     @Named("courseDtoToCourse")
     public Course courseDtoToCourse(String courseId) {

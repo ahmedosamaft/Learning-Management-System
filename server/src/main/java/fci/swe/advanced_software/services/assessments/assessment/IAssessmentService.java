@@ -1,17 +1,14 @@
 package fci.swe.advanced_software.services.assessments.assessment;
 
-import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentRequestDto;
-import fci.swe.advanced_software.models.courses.Course;
+import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import org.springframework.http.ResponseEntity;
 
 public interface IAssessmentService {
-    ResponseEntity<?> createAssessment(AssessmentRequestDto requestDto);
+    ResponseEntity<?> createAssessment(AssessmentDto requestDto);
 
-    ResponseEntity<?> updateAssessment(String id, AssessmentRequestDto requestDto);
+    ResponseEntity<?> updateAssessment(String id, AssessmentDto requestDto);
 
     ResponseEntity<?> getAssessment(String id);
-
-    ResponseEntity<?> getAssessmentsByCourse(Course course);
 
     ResponseEntity<?> deleteAssessment(String id);
 }

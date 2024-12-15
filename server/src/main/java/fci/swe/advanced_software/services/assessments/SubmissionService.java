@@ -3,7 +3,6 @@ package fci.swe.advanced_software.services.assessments;
 import fci.swe.advanced_software.dtos.assessments.submission.SubmissionRequestDto;
 import fci.swe.advanced_software.dtos.assessments.submission.SubmissionResponseDto;
 import fci.swe.advanced_software.models.assessments.Submission;
-import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.SubmissionRepository;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 public class SubmissionService implements ISubmissionService {
 
     private final SubmissionRepository submissionRepository;
-    private final AssessmentRepository assessmentRepository;
     private final SubmissionMapper submissionMapper;
 
     @Override
