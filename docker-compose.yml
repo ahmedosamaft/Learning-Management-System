@@ -20,5 +20,25 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  server1:
+    image: lms
+    ports:
+      - "8081:9090"
+
+
+  server2:
+    image: lms
+    ports:
+      - "8082:9090"
+
+  loadbalancer:
+    image: lms-lb
+    depends_on:
+      - server1
+      - server2
+    ports:
+      - "9090:80"
+
+
 volumes:
   postgres_data:
