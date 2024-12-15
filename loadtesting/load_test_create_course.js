@@ -13,17 +13,18 @@ export default function () {
         "description": "This course covers basic principles of computer science and programming.",
         "instructorId": "5a15699c-b63d-4ef4-a421-876e93014331"
     };
+    let page = Math.floor(Math.random() * 100);
 
-    let res = http.post("http://localhost:9090/api/v1/courses", JSON.stringify(data), {
+    let res = http.get(`http://localhost:9090/api/v1/courses?page=${page}`, {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI1YTE1Njk5Yy1iNjNkLTRlZjQtYTQyMS04NzZlOTMwMTQzMzEiLCJyb2xlIjpbIlJPTEVfSU5TVFJVQ1RPUiJdLCJpYXQiOjE3MzQyMjIwODAsImV4cCI6MTczNDIyNTY4MH0.qycNW8WaVFYlLO1rTvBN4uAU57Vhlutdjut8o4Qx-Steor4TV3eDvJJRkGa7cwAx'
+            'Authorization': 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI1YTE1Njk5Yy1iNjNkLTRlZjQtYTQyMS04NzZlOTMwMTQzMzEiLCJyb2xlIjpbIlJPTEVfSU5TVFJVQ1RPUiJdLCJpYXQiOjE3MzQyNjcwMDIsImV4cCI6MTczNDI3MDYwMn0.6pvWKeDyFt5rCnd-FaFbfxPZe14Sfweg9ztdtpbTChH46wfagM88TmRyCEVlGPGu'
         },
     })
 
     // console.log(res);
     // console.log(res.body);
     check(res, {
-        'status is 201': (r) => r.status === 201
+        'status is 200': (r) => r.status === 200
     });
 }

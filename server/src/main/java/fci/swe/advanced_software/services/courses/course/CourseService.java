@@ -9,6 +9,8 @@ import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,10 @@ public class CourseService implements ICourseService {
     private final CourseMapper courseMapper;
 
     @Override
-    public ResponseEntity<?> getAllCourses() {
-        List<CourseDto> courses = courseRepository.findAll().stream()
+    public ResponseEntity<?> getAllCourses(Pageable pageable) {
+        Page<Course> coursePage = courseRepository.findAll(pageable);
+
+        List<CourseDto> courses = coursePage.stream()
                 .map(courseMapper::toDto)
                 .collect(Collectors.toList());
 
