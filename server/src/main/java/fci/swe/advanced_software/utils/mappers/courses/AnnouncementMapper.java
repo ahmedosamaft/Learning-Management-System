@@ -3,6 +3,7 @@ package fci.swe.advanced_software.utils.mappers.courses;
 import fci.swe.advanced_software.dtos.course.AnnouncementRequestDto;
 import fci.swe.advanced_software.dtos.course.AnnouncementResponseDto;
 import fci.swe.advanced_software.models.courses.Announcement;
+import fci.swe.advanced_software.models.courses.AnnouncementComment;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.AbstractUser;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
@@ -11,6 +12,8 @@ import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class AnnouncementMapper {
@@ -25,6 +28,7 @@ public abstract class AnnouncementMapper {
 
     @Mapping(target = "courseId", source = "course.id")
     @Mapping(target = "postedByUserId", source = "postedBy.id")
+    @Mapping(target="commentIds",source="comments")
     public abstract AnnouncementResponseDto toResponseDto(Announcement announcement);
 
     @Named("courseDtoToCourse")
@@ -34,6 +38,12 @@ public abstract class AnnouncementMapper {
         }
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + courseId));
+    }
+    public List<String> mapComments(List<AnnouncementComment> comments) {
+        if (comments == null) {
+            return null;
+        }
+        return comments.stream().map(comment -> comment.getId()).toList();
     }
 
     @Named("userDtoToUser")
