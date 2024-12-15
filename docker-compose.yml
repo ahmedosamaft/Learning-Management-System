@@ -1,5 +1,5 @@
 services:
-#    To connect to the db: host.docker.internal:5432
+  #    To connect to the db: host.docker.internal:5432
   pgadmin:
     image: dpage/pgadmin4:8.12.0
     container_name: pgadmin
@@ -22,12 +22,16 @@ services:
 
   server1:
     image: lms
+    environment:
+      SERVER_NAME: "server 1"
     ports:
       - "8081:9090"
 
 
   server2:
     image: lms
+    environment:
+      SERVER_NAME: "server 2"
     ports:
       - "8082:9090"
 
