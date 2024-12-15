@@ -3,10 +3,20 @@ package fci.swe.advanced_software.models.courses;
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.users.AbstractUser;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
 import java.util.List;
 
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Announcement extends AbstractEntity {
     @ManyToOne
