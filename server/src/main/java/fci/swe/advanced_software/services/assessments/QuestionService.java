@@ -54,9 +54,9 @@ public class QuestionService implements IQuestionService {
             question.setText(requestDto.getText());
         }
 
-        if (requestDto.getImageUrl() != null) {
-            question.setImageUrl(requestDto.getImageUrl());
-        }
+//        if (requestDto.getImageUrl() != null) {
+//            question.setImageUrl(requestDto.getImageUrl());
+//        }
 
         if (requestDto.getCorrectAnswer() != null) {
             question.setCorrectAnswer(requestDto.getCorrectAnswer());

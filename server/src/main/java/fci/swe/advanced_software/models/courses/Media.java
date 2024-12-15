@@ -1,16 +1,23 @@
 package fci.swe.advanced_software.models.courses;
 
 import fci.swe.advanced_software.models.AbstractEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import fci.swe.advanced_software.models.assessments.Assessment;
+import fci.swe.advanced_software.models.assessments.Question;
+import jakarta.persistence.*;
 
 @Entity
 public class Media extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "announcement_id")
     private Announcement announcement;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id")
+    private Question question;
+
+    @ManyToOne
+    @JoinColumn(name = "assessment_id")
+    private Assessment assessment;
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
