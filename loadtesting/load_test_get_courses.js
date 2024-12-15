@@ -7,14 +7,9 @@ export let options = {
 };
 
 export default function () {
-    let data = {
-        "code": "LOADTEST",
-        "name": "Introduction to Computer Science",
-        "description": "This course covers basic principles of computer science and programming.",
-        "instructorId": "5a15699c-b63d-4ef4-a421-876e93014331"
-    };
+    let page = Math.floor(Math.random() * 100);
 
-    let res = http.post("http://localhost:9090/api/v1/courses", JSON.stringify(data), {
+    let res = http.get(`http://localhost:9090/api/v1/courses?page=${page}`, {
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI1YTE1Njk5Yy1iNjNkLTRlZjQtYTQyMS04NzZlOTMwMTQzMzEiLCJyb2xlIjpbIlJPTEVfSU5TVFJVQ1RPUiJdLCJpYXQiOjE3MzQzMDI2MDIsImV4cCI6MTczNDMwNjIwMn0.3PTWxh7RCmeE92nLjVYMGRREVnZq4rmREVjuoQOH_hhN234yaJS3fsAstsGG0jwX'
@@ -22,6 +17,6 @@ export default function () {
     })
 
     check(res, {
-        'status is 201': (r) => r.status === 201
+        'status is 200': (r) => r.status === 200
     });
 }
