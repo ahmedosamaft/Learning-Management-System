@@ -20,3 +20,9 @@ include course creation and management, user management, assessments, and perfor
         docker build -t lms-lb .\loadbalancer
         docker compose up
     ```
+   
+## To load test the application
+1. **Run the command:**
+    ``` bash
+    k6 run loadtesting/load_test_create_course.js
+    ```
