@@ -1,14 +1,19 @@
 package fci.swe.advanced_software.config;
 
 import fci.swe.advanced_software.models.courses.Course;
+import fci.swe.advanced_software.models.users.Admin;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.repositories.auth.RoleRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
+import fci.swe.advanced_software.repositories.users.AdminRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -16,6 +21,8 @@ public class DataLoader {
     private RoleRepository roleRepository;
     private CourseRepository courseRepository;
     private InstructorRepository instructorRepository;
+    private AdminRepository adminRepository;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @PostConstruct
     public void loadRoles() {
@@ -24,8 +31,22 @@ public class DataLoader {
             roleRepository.save(Role.builder().name("INSTRUCTOR").build());
             roleRepository.save(Role.builder().name("ADMIN").build());
         }
-        if (!instructorRepository.existsByEmail("ahmed@fcai-instructor.com")) {
-            instructorRepository.save(Instructor.builder().name("Ahmed").email("ahmed@fcai-instructor.com").password("123456").build());
+        if (!adminRepository.existsByEmail("abdelhady@fcai.admin.com")) {
+            adminRepository.save(Admin.builder()
+                    .name("abdelhady")
+                    .email("abdelhady@fcai.admin.com")
+                    .password(passwordEncoder.encode("123456"))
+                    .roles(Set.of(roleRepository.findByName("ADMIN").orElseThrow(() -> new RuntimeException("NO RULE FOUND"))))
+                    .build());
+        }
+
+        if (!instructorRepository.existsByEmail("ahmed@fcai.instructor.com")) {
+            instructorRepository.save(Instructor.builder()
+                    .name("Ahmed")
+                    .email("ahmed@fcai.instructor.com")
+                    .password(passwordEncoder.encode("123456"))
+                    .roles(Set.of(roleRepository.findByName("INSTRUCTOR").orElseThrow(() -> new RuntimeException("NO RULE FOUND"))))
+                    .build());
         }
 
         if (courseRepository.count() == 0) {
@@ -33,7 +54,7 @@ public class DataLoader {
                     .code("CS321")
                     .instructor(
                             instructorRepository
-                                    .findByEmail("ahmed@fcai-instructor.com").get()
+                                    .findByEmail("ahmed@fcai.instructor.com").orElseThrow(() -> new RuntimeException("NO INSTRUCTOR FOUND"))
                     )
                     .name("Software Engineering")
                     .description("This course introduces students to the principles of software engineering.")

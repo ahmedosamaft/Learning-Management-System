@@ -4,14 +4,11 @@ security:
     expiration-time: 3600000
 
 spring:
+  profiles:
+    active: db-docker
+
   application:
     name: advanced-software
-
-  datasource:
-    url: jdbc:postgresql://pg-swe-ahmedosamaft-b177.j.aivencloud.com:17641/lms?ssl=require&user=avnadmin&password=AVNS_eqCAEXHlcDKjgmeC8lL
-    username: avnadmin
-    password: AVNS_eqCAEXHlcDKjgmeC8lL
-    driver-class-name: org.postgresql.Driver
 
   jpa:
     show-sql: true
@@ -31,5 +28,6 @@ logging:
             bind: trace
         SQL: DEBUG
         type.descriptor.sql.BasicBinder: trace
+
 server:
   port: 9090

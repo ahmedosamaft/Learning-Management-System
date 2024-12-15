@@ -1,6 +1,7 @@
 package fci.swe.advanced_software.models.assessments;
 
 import fci.swe.advanced_software.models.AbstractEntity;
+import fci.swe.advanced_software.models.courses.Media;
 import fci.swe.advanced_software.utils.HashMapJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,8 +27,8 @@ public class Question extends AbstractEntity {
     @Column(nullable = false,columnDefinition = "TEXT")
     private String text;
 
-    @Column
-    private String imageUrl;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Media media;
 
     @Column(nullable = false)
     private String correctAnswer; // for MCQs and True/False will contain the correct answer id else the correct answer text

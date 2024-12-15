@@ -11,8 +11,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,18 +28,19 @@ public class Assessment extends AbstractEntity {
     private Course course;
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
-    private List<Media> media;
+    private Set<Media> media;
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
-    private Set<Question> questions = new HashSet<>();
+    private Set<Question> questions;
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
-    private Set<Attempt> attempts = new HashSet<>();
+    private Set<Attempt> attempts;
 
     @Column(nullable = false)
     private Integer maxScore;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
+    @Enumerated(EnumType.STRING)
     private AssessmentType type;
 
     @Column(nullable = false)
