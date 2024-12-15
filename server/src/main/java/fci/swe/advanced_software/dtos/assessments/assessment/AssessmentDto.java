@@ -26,7 +26,6 @@ public class AssessmentDto {
     @Positive(message = "Max score must be a positive number.")
     private Integer maxScore;
 
-    @NotNull(message = "Assessment type is required.")
     private AssessmentType type;
 
     @NotNull(message = "Start time is required.")

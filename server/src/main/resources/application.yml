@@ -11,23 +11,22 @@ spring:
     name: advanced-software
 
   jpa:
-    show-sql: true
+#    show-sql: true
     hibernate:
       ddl-auto: validate
 
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-logging:
-  level:
-    org:
-      hibernate:
-        orm:
-          jdbc:
-            bind: trace
-        SQL: DEBUG
-        type.descriptor.sql.BasicBinder: trace
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        orm:
+#          jdbc:
+#            bind: trace
+#        SQL: DEBUG
+#        type.descriptor.sql.BasicBinder: trace
 
 server:
   port: 9090
