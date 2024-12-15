@@ -2,12 +2,17 @@ package fci.swe.advanced_software.models.assessments;
 
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.courses.Course;
+import fci.swe.advanced_software.models.courses.Media;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,8 +21,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Setter
 @Getter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "assessment_type", discriminatorType = DiscriminatorType.STRING)
 public class Assessment extends AbstractEntity {
     @Column(nullable = false)
     private String instructions;
@@ -27,6 +30,9 @@ public class Assessment extends AbstractEntity {
     private Course course;
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
+    private List<Media> media;
+
+    @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
     private Set<Question> questions = new HashSet<>();
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
@@ -34,6 +40,9 @@ public class Assessment extends AbstractEntity {
 
     @Column(nullable = false)
     private Integer maxScore;
+
+    @Column(nullable = false)
+    private AssessmentType type;
 
     @Column(nullable = false)
     private Timestamp startsAt;

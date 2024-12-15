@@ -1,4 +1,4 @@
-package fci.swe.advanced_software.dtos.assessments;
+package fci.swe.advanced_software.dtos.assessments.Attempt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

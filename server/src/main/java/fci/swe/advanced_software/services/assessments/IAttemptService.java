@@ -1,6 +1,6 @@
 package fci.swe.advanced_software.services.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.AttemptRequestDto;
+import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptRequestDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.users.Student;
 import org.springframework.http.ResponseEntity;

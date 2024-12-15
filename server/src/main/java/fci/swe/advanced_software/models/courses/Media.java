@@ -1,8 +1,10 @@
 package fci.swe.advanced_software.models.courses;
 
 import fci.swe.advanced_software.models.AbstractEntity;
-import fci.swe.advanced_software.models.assessments.Assignment;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Media extends AbstractEntity {
@@ -13,10 +15,6 @@ public class Media extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
-
-    @ManyToOne
-    @JoinColumn(name = "assignment_id")
-    private Assignment assignment;
 
     @Column(nullable = false)
     private String realName;

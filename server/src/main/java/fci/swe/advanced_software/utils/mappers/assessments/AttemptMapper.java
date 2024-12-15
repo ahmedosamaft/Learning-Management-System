@@ -1,7 +1,7 @@
 package fci.swe.advanced_software.utils.mappers.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.AttemptRequestDto;
-import fci.swe.advanced_software.dtos.assessments.AttemptResponseDto;
+import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptRequestDto;
+import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptResponseDto;
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.Attempt;
