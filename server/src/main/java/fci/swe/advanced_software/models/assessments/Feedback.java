@@ -4,7 +4,17 @@ import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.models.users.Student;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Feedback extends AbstractEntity {
 

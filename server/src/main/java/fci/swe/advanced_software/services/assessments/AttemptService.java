@@ -63,36 +63,6 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> updateAttempt(String id, AttemptRequestDto requestDto) {
-        Optional<Attempt> attemptOpt = attemptRepository.findById(id);
-        if (attemptOpt.isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Attempt not found!")
-                    .build();
-        }
-
-        Attempt attempt = attemptOpt.get();
-
-//        if (requestDto.getScore() != null) {
-//            attempt.setScore(requestDto.getScore());
-//        }
-
-        if (requestDto.getSubmissionDate() != null) {
-            attempt.setAttemptedAt(requestDto.getSubmissionDate()); // Assuming it's already a Timestamp
-        }
-
-        attempt = attemptRepository.save(attempt);
-        AttemptResponseDto responseDto = attemptMapper.toResponseDto(attempt);
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData(responseDto)
-                .withMessage("Attempt updated successfully!")
-                .build();
-    }
-
-    @Override
     public ResponseEntity<?> getAttemptById(String id) {
         Optional<Attempt> attemptOpt = attemptRepository.findById(id);
         if (attemptOpt.isEmpty()) {

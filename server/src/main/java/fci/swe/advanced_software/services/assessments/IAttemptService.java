@@ -9,9 +9,6 @@ public interface IAttemptService {
 
     ResponseEntity<?> createAttempt(AttemptRequestDto requestDto);
 
-
-    ResponseEntity<?> updateAttempt(String id, AttemptRequestDto requestDto);
-
     ResponseEntity<?> getAttemptById(String id);
 
     ResponseEntity<?> getAttemptsByAssessment(Assessment assessment);

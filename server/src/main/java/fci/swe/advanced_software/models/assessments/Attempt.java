@@ -28,6 +28,10 @@ public class Attempt extends AbstractEntity {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @OneToOne
+    @JoinColumn(name = "feedback_id")
+    private Feedback feedback;
+
     @OneToMany
     @JoinColumn(name = "attempt_id")
     private Set<Submission> submissions = new HashSet<>();
