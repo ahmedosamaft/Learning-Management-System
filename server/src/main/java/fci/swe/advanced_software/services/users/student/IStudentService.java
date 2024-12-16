@@ -1,30 +1,38 @@
 package fci.swe.advanced_software.services.users.student;
 
+import fci.swe.advanced_software.dtos.course.EnrollmentDto;
 import fci.swe.advanced_software.dtos.users.StudentRequestDto;
+import fci.swe.advanced_software.models.assessments.AssessmentType;
 import org.springframework.http.ResponseEntity;
 
 public interface IStudentService {
     ResponseEntity<?> getStudent(String id);
 
-    ResponseEntity<?> courseEnroll(StudentRequestDto requestDto);
+    ResponseEntity<?> enrollCourse(EnrollmentDto enrollmentDto);
 
-    ResponseEntity<?> attendLecture(String studentId, String lectureId);
+    ResponseEntity<?> getGrades(String courseId);
 
-    ResponseEntity<?> attemptAssessment(String studentId, String assessmentId);
+    ResponseEntity<?> getCourses();
 
-    ResponseEntity<?> generatePerformanceReport(String studentId);
+    ResponseEntity<?> searchCourses(String keyword);
 
-    ResponseEntity<?> requestFeedback(String studentId, String assessmentId);
+    ResponseEntity<?> getAttendance(String courseId);
 
-    ResponseEntity<?> commentOnAnnouncement(String studentId, String announcementId, String comment);
+    ResponseEntity<?> attendLesson(String lessonId, String otp);
 
-    ResponseEntity<?> getStudentCourses(String studentId);
+    ResponseEntity<?> getAssessments(AssessmentType type);
 
-    ResponseEntity<?> getStudentLectures(String studentId);
+    ResponseEntity<?> getCourseAssessments(String courseId, AssessmentType type);
 
-    ResponseEntity<?> getStudentAssessments(String studentId);
+    ResponseEntity<?> attemptAssessment(String assessmentId);
 
-    ResponseEntity<?> getStudentFeedbacks(String studentId);
+    ResponseEntity<?> getFeedbacks();
 
-    ResponseEntity<?> getStudentReports(String studentId);
+    ResponseEntity<?> getCourseFeedbacks(String courseId);
+
+    ResponseEntity<?> getReports();
+
+    ResponseEntity<?> comment(String announcementId, String comment);
+
+    ResponseEntity<?> updateProfile(StudentRequestDto requestDto);
 }

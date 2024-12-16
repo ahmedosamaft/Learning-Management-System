@@ -13,4 +13,6 @@ public interface EnrollmentRepository extends AbstractEntityRepository<Enrollmen
     List<Enrollment> findByStudent(Student student);
 
     List<Enrollment> findByCourse(Course course);
+
+    Enrollment findByStudentAndCourse(Student student, Course course);
 }
