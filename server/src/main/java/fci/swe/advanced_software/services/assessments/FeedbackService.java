@@ -39,7 +39,7 @@ public class FeedbackService implements IFeedbackService {
                     .build();
         }
 
-        if (studentRepository.findById(feedbackDto.getStudentId()).isEmpty()) {
+        if (!studentRepository.existsById(feedbackDto.getStudentId())) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
                     .withMessage("Student not found!")

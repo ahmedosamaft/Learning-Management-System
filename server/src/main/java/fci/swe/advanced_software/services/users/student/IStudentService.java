@@ -10,13 +10,13 @@ public interface IStudentService {
 
     ResponseEntity<?> enrollCourse(EnrollmentDto enrollmentDto);
 
-    ResponseEntity<?> getGrades(String courseId);
-
     ResponseEntity<?> getCourses();
 
     ResponseEntity<?> searchCourses(String keyword);
 
-    ResponseEntity<?> getAttendance(String courseId);
+    ResponseEntity<?> getAttendance();
+
+    ResponseEntity<?> getCourseAttendance(String courseId);
 
     ResponseEntity<?> attendLesson(String lessonId, String otp);
 
