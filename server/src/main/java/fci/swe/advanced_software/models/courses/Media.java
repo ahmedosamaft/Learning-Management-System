@@ -4,7 +4,9 @@ import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.Question;
 import jakarta.persistence.*;
+import lombok.Setter;
 
+@Setter
 @Entity
 public class Media extends AbstractEntity {
     @ManyToOne

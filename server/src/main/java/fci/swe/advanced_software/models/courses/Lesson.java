@@ -3,11 +3,13 @@ package fci.swe.advanced_software.models.courses;
 import fci.swe.advanced_software.models.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@Setter
 @Entity
 public class Lesson extends AbstractEntity {
     @Column(nullable = false)
