@@ -6,6 +6,7 @@ import fci.swe.advanced_software.services.courses.lesson.ILessonService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,12 @@ public class LessonController {
 
     private final ILessonService lessonService;
 
+    // Pagination added here
     @GetMapping
-    public ResponseEntity<?> getAllLessons(Pageable pageable) {
+    public ResponseEntity<?> getAllLessons(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
+        size = Math.min(size, 100); // Preventing the size from being too large
+        Pageable pageable = PageRequest.of(page, size);
         return lessonService.getAllLessons(pageable);
     }
 

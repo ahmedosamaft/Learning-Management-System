@@ -7,11 +7,11 @@ import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.courses.LessonMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -24,8 +24,9 @@ public class LessonService implements ILessonService {
 
     @Override
     public ResponseEntity<?> getAllLessons(Pageable pageable) {
-        Page<LessonDto> lessons = lessonRepository.findAll(pageable).map(lessonMapper::toDto);
-        return buildSuccessResponse("Lessons retrieved successfully", lessons, HttpStatus.OK);
+        Page<Lesson> lessonsPage = lessonRepository.findAll(pageable);
+        Page<LessonDto> lessonsDto = lessonsPage.map(lessonMapper::toDto);
+        return buildSuccessResponse("Lessons retrieved successfully", lessonsDto, HttpStatus.OK);
     }
 
     @Override
