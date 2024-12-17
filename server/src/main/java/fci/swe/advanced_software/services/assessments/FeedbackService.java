@@ -1,6 +1,7 @@
 package fci.swe.advanced_software.services.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackDto;
+import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.assessments.Feedback;
 import fci.swe.advanced_software.models.assessments.FeedbackType;
 import fci.swe.advanced_software.models.assessments.Submission;
@@ -53,7 +54,8 @@ public class FeedbackService implements IFeedbackService {
                     .build();
         }
 
-        List<Submission> submissions = submissionRepository.findAllByAttempt(feedbackDto.getAttemptId());
+        Attempt attempt = attemptRepository.findById(feedbackDto.getAttemptId()).orElse(null);
+        List<Submission> submissions = submissionRepository.findAllByAttempt(attempt);
 
         for (Submission submission : submissions) {
             // Grade the submission

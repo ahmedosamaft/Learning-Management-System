@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.dtos.assessments.Attempt;
 
+import fci.swe.advanced_software.models.assessments.Feedback;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,8 @@ public class AttemptResponseDto {
     private String assessmentId;
 
     private String studentId;
+
+    private Feedback feedback;
 
     private Timestamp attemptedAt;
 

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 public interface SubmissionRepository extends AbstractEntityRepository<Submission> {
-    List<Submission> findAllByAttempt(@NotNull @NotBlank @UUID(message = "Attempt ID must be a valid UUID.") String attempt);
+    List<Submission> findAllByAttempt(Attempt attempt);
 
     List<Submission> findByAssessment(Assessment assessment);
 
