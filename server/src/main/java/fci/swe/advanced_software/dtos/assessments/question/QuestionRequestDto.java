@@ -20,10 +20,10 @@ import java.util.Map;
 @ValidAnswer
 public class QuestionRequestDto implements IQuestionDto {
 
-    @NotNull(message = "Assessment ID is required.")
-    @NotBlank(message = "Assessment ID cannot be blank.")
-    @UUID(message = "Assessment ID must be a valid UUID.")
-    private String assessmentId;
+    @NotNull(message = "Course ID is required.")
+    @NotBlank(message = "Course ID cannot be blank.")
+    @UUID(message = "Course ID must be a valid UUID.")
+    private String courseId;
 
     @NotNull(message = "Question text is required.")
     @NotBlank(message = "Question text cannot be blank.")
@@ -39,6 +39,9 @@ public class QuestionRequestDto implements IQuestionDto {
 
     @NotNull(message = "Question type is required.")
     private QuestionType questionType;
+
+    @NotNull(message = "Score is required.")
+    private Integer score;
 
     private Map<String, String> options;
 }

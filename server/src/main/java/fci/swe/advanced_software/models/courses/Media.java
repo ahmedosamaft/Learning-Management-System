@@ -4,8 +4,16 @@ import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.Question;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
 public class Media extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "announcement_id")
@@ -28,4 +36,8 @@ public class Media extends AbstractEntity {
 
     @Column(nullable = false)
     private String url;
+
+    public Media() {
+
+    }
 }

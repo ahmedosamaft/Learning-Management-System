@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface FeedbackRepository extends AbstractEntityRepository<Feedback> {
-
     List<Feedback> findByAttempt(Attempt attempt);
 
     List<Feedback> findByStudent(Student student);

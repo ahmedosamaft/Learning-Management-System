@@ -4,8 +4,8 @@ import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
 import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
 import fci.swe.advanced_software.dtos.assessments.question.QuestionUpdateDto;
 import fci.swe.advanced_software.models.assessments.Question;
-import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
+import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.QuestionMapper;
@@ -20,7 +20,7 @@ public class QuestionService implements IQuestionService {
 
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
-    private final AssessmentRepository assessmentRepository;
+    private final CourseRepository courseRepository;
 
     public ResponseEntity<?> createQuestion(QuestionRequestDto requestDto) {
         Question question = questionMapper.toEntity(requestDto);
@@ -46,8 +46,8 @@ public class QuestionService implements IQuestionService {
                     .build();
         }
 
-        if (requestDto.getAssessmentId() != null) {
-            question.setAssessment(assessmentRepository.findById(requestDto.getAssessmentId()).orElseThrow(() -> new IllegalArgumentException("Invalid assessment ID: " + requestDto.getAssessmentId())));
+        if (requestDto.getCourseId() != null) {
+            question.setCourse(courseRepository.findById(requestDto.getCourseId()).orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + requestDto.getCourseId())));
         }
 
         if (requestDto.getText() != null) {

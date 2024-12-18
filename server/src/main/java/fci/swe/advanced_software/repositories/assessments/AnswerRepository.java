@@ -1,7 +1,7 @@
 package fci.swe.advanced_software.repositories.assessments;
 
+import fci.swe.advanced_software.models.assessments.Answer;
 import fci.swe.advanced_software.models.assessments.Question;
-import fci.swe.advanced_software.models.assessments.Submission;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.users.Student;
@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SubmissionRepository extends AbstractEntityRepository<Submission> {
-    List<Submission> findByAttempt(Attempt attempt);
+public interface AnswerRepository extends AbstractEntityRepository<Answer> {
+    List<Answer> findAllByAttempt(Attempt attempt);
 
-    List<Submission> findByAssessment(Assessment assessment);
+    List<Answer> findByAssessment(Assessment assessment);
 
-    List<Submission> findByStudent(Student student);
+    List<Answer> findByStudent(Student student);
 
-    List<Submission> findByQuestion(Question question);
-    Optional<Submission> findByAttemptAndStudent(Attempt attempt, Student student);
+    List<Answer> findByQuestion(Question question);
+    Optional<Answer> findByAttemptAndStudent(Attempt attempt, Student student);
 }

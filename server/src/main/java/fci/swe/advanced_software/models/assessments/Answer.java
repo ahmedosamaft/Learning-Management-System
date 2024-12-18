@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @Entity
-public class Submission extends AbstractEntity {
+public class Answer extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
@@ -36,6 +36,8 @@ public class Submission extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private GradingType gradingType;
 
+    @Column(columnDefinition = "SMALLINT")
+    private Integer grade;
 
     @Column(nullable = false, length = 1024)
     private String answer;

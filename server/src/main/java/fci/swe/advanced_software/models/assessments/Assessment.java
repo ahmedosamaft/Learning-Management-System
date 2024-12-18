@@ -30,7 +30,12 @@ public class Assessment extends AbstractEntity {
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
     private Set<Media> media;
 
-    @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "question_assessment",
+            joinColumns = @JoinColumn(name = "assessment_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id")
+    )
     private Set<Question> questions;
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)

@@ -3,9 +3,9 @@ package fci.swe.advanced_software.utils.mappers.assessments;
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptRequestDto;
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptResponseDto;
 import fci.swe.advanced_software.models.AbstractEntity;
+import fci.swe.advanced_software.models.assessments.Answer;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.Attempt;
-import fci.swe.advanced_software.models.assessments.Submission;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
@@ -25,12 +25,12 @@ public abstract class AttemptMapper {
 
     @Mapping(target = "assessment", source = "assessmentId", qualifiedByName = "assessmentDtoToAssessment")
     @Mapping(target = "student", source = "studentId", qualifiedByName = "studentDtoToStudent")
-    @Mapping(target = "submissions", ignore = true)
+    @Mapping(target = "answers", ignore = true)
     public abstract Attempt toEntity(AttemptRequestDto requestDto);
 
     @Mapping(target = "assessmentId", source = "assessment.id")
     @Mapping(target = "studentId", source = "student.id")
-    @Mapping(target = "submissionIds", source = "submissions")
+    @Mapping(target = "answerIds", source = "answers")
     public abstract AttemptResponseDto toResponseDto(Attempt attempt);
 
     @Named("assessmentDtoToAssessment")
@@ -51,11 +51,11 @@ public abstract class AttemptMapper {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + studentId));
     }
 
-    public Set<String> submissionToSubmissionDto(Set<Submission> submissionIds) {
-        if (submissionIds == null) {
+    public Set<String> answerToAnswerDto(Set<Answer> answerIds) {
+        if (answerIds == null) {
             return null;
         }
-        return submissionIds.stream().map(AbstractEntity::getId).collect(Collectors.toSet());
+        return answerIds.stream().map(AbstractEntity::getId).collect(Collectors.toSet());
     }
 
     @Autowired

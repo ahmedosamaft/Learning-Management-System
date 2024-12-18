@@ -28,9 +28,12 @@ public class Attempt extends AbstractEntity {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @OneToMany
-    @JoinColumn(name = "attempt_id")
-    private Set<Submission> submissions = new HashSet<>();
+    @OneToOne
+    @JoinColumn(name = "feedback_id")
+    private Feedback feedback;
+
+    @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL)
+    private Set<Answer> answers = new HashSet<>();
 
     @Column(nullable = false)
     private Timestamp attemptedAt;
