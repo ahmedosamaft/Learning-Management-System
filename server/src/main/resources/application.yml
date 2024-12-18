@@ -5,7 +5,7 @@ security:
 
 spring:
   profiles:
-    active: db-docker
+    active: db-cloud
 
   application:
     name: advanced-software

@@ -11,7 +11,7 @@ import java.util.Map;
 public class ResponseEntityBuilder {
     private HttpStatus status;
     private String message;
-    private Map<String,Object> data;
+    private Map<String, Object> data;
     private HttpHeaders headers;
     private String locationUrl;
 
@@ -35,8 +35,8 @@ public class ResponseEntityBuilder {
         return this;
     }
 
-    public ResponseEntityBuilder withData(String key,Object data) {
-        this.data.put(key,data);
+    public ResponseEntityBuilder withData(String key, Object data) {
+        this.data.put(key, data);
         return this;
     }
 

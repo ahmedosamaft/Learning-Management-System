@@ -72,7 +72,7 @@ public class StudentService implements IStudentService {
         StudentRequestDto studentDto = studentMapper.toDto(student);
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(studentDto)
+                .withData("student", studentDto)
                 .build();
     }
 
@@ -90,7 +90,7 @@ public class StudentService implements IStudentService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withMessage("Course enrolled successfully!")
-                .withData(enrollmentDto)
+                .withData("enrollment", enrollmentDto)
                 .build();
     }
 
@@ -98,13 +98,13 @@ public class StudentService implements IStudentService {
     public ResponseEntity<?> getCourses() {
         Student student = validateAndRetrieveCurrentStudent();
 
-        List<CourseDto> courses = enrollmentRepository.findAllByStudent(student).stream()
+        List<CourseDto> coursesDto = enrollmentRepository.findAllByStudent(student).stream()
                 .map(enrollment -> courseMapper.toDto(enrollment.getCourse()))
                 .toList();
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(courses)
+                .withData("courses", coursesDto)
                 .build();
     }
 
@@ -117,13 +117,13 @@ public class StudentService implements IStudentService {
     public ResponseEntity<?> getAttendance() {
         Student student = validateAndRetrieveCurrentStudent();
 
-        List<AttendanceDto> attendance = attendanceRepository.findAllByStudent(student).stream()
+        List<AttendanceDto> attendanceDtos = attendanceRepository.findAllByStudent(student).stream()
                 .map(attendanceMapper::toDto)
                 .toList();
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(attendance)
+                .withData("attendances", attendanceDtos)
                 .build();
     }
 
@@ -132,14 +132,14 @@ public class StudentService implements IStudentService {
         Student student = validateAndRetrieveCurrentStudent();
         Course course = validateAndRetrieveCourse(courseId);
 
-        List<AttendanceDto> attendance = attendanceRepository.findAllByStudentAndCourse(student, course)
+        List<AttendanceDto> attendanceDtos = attendanceRepository.findAllByStudentAndCourse(student, course)
                 .stream()
                 .map(attendanceMapper::toDto)
                 .toList();
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(attendance)
+                .withData("attendances", attendanceDtos)
                 .build();
     }
 
@@ -166,7 +166,7 @@ public class StudentService implements IStudentService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withMessage("Lesson attended successfully!")
-                .withData(attendanceMapper.toDto(attendance))
+                .withData("attendance", attendanceMapper.toDto(attendance))
                 .build();
     }
 
@@ -176,7 +176,7 @@ public class StudentService implements IStudentService {
 
         List<Attempt> attempts = attemptRepository.findByStudent(student);
 
-        List<FeedbackDto> feedbacks = attempts.stream()
+        List<FeedbackDto> feedbacksDto = attempts.stream()
                 .filter(
                         attempt -> attempt.getAssessment() != null &&
                                 attempt.getAssessment().getType() == assessmentType &&
@@ -187,7 +187,7 @@ public class StudentService implements IStudentService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(feedbacks)
+                .withData("feedbacks", feedbacksDto)
                 .build();
     }
 
@@ -196,7 +196,7 @@ public class StudentService implements IStudentService {
         Student student = validateAndRetrieveCurrentStudent();
         Course course = validateAndRetrieveCourse(courseId);
 
-        List<FeedbackDto> feedbacks = assessmentRepository.findAllByCourseAndType(course, assessmentType).stream()
+        List<FeedbackDto> feedbacksDto = assessmentRepository.findAllByCourseAndType(course, assessmentType).stream()
                 .map(assessment -> attemptRepository.findByAssessmentAndStudent(assessment, student))
                 .filter(attempt -> attempt != null && attempt.getFeedback() != null)
                 .map(attempt -> feedbackMapper.toDto(attempt.getFeedback()))
@@ -204,7 +204,7 @@ public class StudentService implements IStudentService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(feedbacks)
+                .withData("feedbacks", feedbacksDto)
                 .build();
     }
 
