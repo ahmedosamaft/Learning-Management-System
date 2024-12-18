@@ -31,6 +31,6 @@ public class AttemptRequestDto {
 
     @AssertTrue(message = "Score must be within the valid range of the assessment.")
     private boolean isScoreValid() {
-        return score != null && score >= 0; // Example condition, can be extended as needed
+        return score != null && score >= 0;
     }
 }
