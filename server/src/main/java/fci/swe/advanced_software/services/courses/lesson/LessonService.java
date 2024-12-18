@@ -36,7 +36,7 @@ public class LessonService implements ILessonService {
                 .map(lesson -> ResponseEntityBuilder.create()
                         .withStatus(HttpStatus.OK)
                         .withMessage("Lesson retrieved successfully")
-                        .withData(lessonMapper.toDto(lesson))
+                        .withData("lesson", lessonMapper.toDto(lesson))
                         .build())
                 .orElseGet(() -> ResponseEntityBuilder.create()
                         .withStatus(HttpStatus.NOT_FOUND)
@@ -57,7 +57,7 @@ public class LessonService implements ILessonService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withMessage("Lesson created successfully")
-                .withData(lessonMapper.toDto(savedLesson))
+                .withData("lesson", lessonMapper.toDto(savedLesson))
                 .withLocation(location)
                 .build();
     }
@@ -96,7 +96,7 @@ public class LessonService implements ILessonService {
         return ResponseEntityBuilder.create()
                 .withStatus(status)
                 .withMessage(message)
-                .withData(data)
+                .withData("lesson", data)
                 .build();
     }
 

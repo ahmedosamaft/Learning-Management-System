@@ -39,7 +39,7 @@ public class AssessmentService implements IAssessmentService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withLocation(Constants.API_VERSION + "/assessments/" + assessment.getId())
-                .withData(responseDto)
+                .withData("assessment", responseDto)
                 .withMessage("Assessment created successfully!")
                 .build();
     }
@@ -68,7 +68,7 @@ public class AssessmentService implements IAssessmentService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
                 .withLocation(Constants.API_VERSION + "/assessments/" + assessment.getId())
-                .withData(responseDto)
+                .withData("assessment", responseDto)
                 .withMessage("Assessment updated successfully!")
                 .build();
     }
@@ -88,7 +88,7 @@ public class AssessmentService implements IAssessmentService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("assessment", responseDto)
                 .build();
     }
 

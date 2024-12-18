@@ -33,7 +33,7 @@ public class AnswerService implements IAnswerService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withLocation(Constants.API_VERSION + "/answer/" + answer.getId())
-                .withData(responseDto)
+                .withData("answer", responseDto)
                 .withMessage("Answer created successfully!")
                 .build();
     }
@@ -53,7 +53,7 @@ public class AnswerService implements IAnswerService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("answer", responseDto)
                 .withMessage("Answer found successfully!")
                 .build();
     }

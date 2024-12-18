@@ -72,7 +72,7 @@ public class FeedbackService implements IFeedbackService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withLocation("/feedbacks/" + feedback.getId())
-                .withData(feedbackMapper.toDto(feedback))
+                .withData("feedback", feedbackMapper.toDto(feedback))
                 .withMessage("Feedback created successfully!")
                 .build();
     }
@@ -115,7 +115,7 @@ public class FeedbackService implements IFeedbackService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
                 .withLocation("/feedbacks/" + feedback.getId())
-                .withData(feedbackMapper.toDto(feedback))
+                .withData("feedback", feedbackMapper.toDto(feedback))
                 .withMessage("Feedback updated successfully!")
                 .build();
     }
@@ -127,7 +127,7 @@ public class FeedbackService implements IFeedbackService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(feedbackMapper.toDto(feedback))
+                .withData("feedback", feedbackMapper.toDto(feedback))
                 .withMessage("Feedback found successfully!")
                 .build();
     }
