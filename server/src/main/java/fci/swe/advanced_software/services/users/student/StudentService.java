@@ -29,7 +29,6 @@ import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
 import fci.swe.advanced_software.utils.mappers.courses.LessonMapper;
 import fci.swe.advanced_software.utils.mappers.users.StudentMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -79,22 +78,8 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> enrollCourse(String courseId) {
-        Student student = getCurrentStudent();
-        Course course = courseRepository.findById(courseId).orElse(null);
-
-        if (student == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Student not found!")
-                    .build();
-        }
-
-        if (course == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Course not found!")
-                    .build();
-        }
+        Student student = validateAndRetrieveCurrentStudent();
+        Course course = validateAndRetrieveCourse(courseId);
 
         EnrollmentDto enrollmentDto = EnrollmentDto.builder()
                 .studentId(student.getId())
@@ -111,14 +96,7 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> getCourses() {
-        Student student = getCurrentStudent();
-
-        if (student == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.FORBIDDEN)
-                    .withMessage("User is not a student!")
-                    .build();
-        }
+        Student student = validateAndRetrieveCurrentStudent();
 
         List<CourseDto> courses = enrollmentRepository.findAllByStudent(student).stream()
                 .map(enrollment -> courseMapper.toDto(enrollment.getCourse()))
@@ -137,14 +115,7 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> getAttendance() {
-        Student student = getCurrentStudent();
-
-        if (student == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.FORBIDDEN)
-                    .withMessage("User is not a student!")
-                    .build();
-        }
+        Student student = validateAndRetrieveCurrentStudent();
 
         List<AttendanceDto> attendance = attendanceRepository.findAllByStudent(student).stream()
                 .map(attendanceMapper::toDto)
@@ -158,9 +129,8 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> getCourseAttendance(String courseId) {
-        Pair<Student, Course> result = validateAndRetrieveStudentAndCourse(courseId);
-        Student student = result.getFirst();
-        Course course = result.getSecond();
+        Student student = validateAndRetrieveCurrentStudent();
+        Course course = validateAndRetrieveCourse(courseId);
 
         List<AttendanceDto> attendance = attendanceRepository.findAllByStudentAndCourse(student, course)
                 .stream()
@@ -175,22 +145,8 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> attendLesson(String lessonId, String otp) {
-        Student student = getCurrentStudent();
-        Lesson lesson = lessonRepository.findById(lessonId).orElse(null);
-
-        if (student == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.FORBIDDEN)
-                    .withMessage("User is not a student!")
-                    .build();
-        }
-
-        if (lesson == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Lesson not found!")
-                    .build();
-        }
+        Student student = validateAndRetrieveCurrentStudent();
+        Lesson lesson = validateAndRetrieveLesson(lessonId);
 
         if (!lesson.getOtp().equals(otp)) {
             return ResponseEntityBuilder.create()
@@ -202,6 +158,7 @@ public class StudentService implements IStudentService {
         Attendance attendance = Attendance.builder()
                 .student(student)
                 .lesson(lesson)
+                .course(lesson.getCourse())
                 .attendedAt(Timestamp.from(Instant.now()))
                 .build();
 
@@ -215,14 +172,7 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> getFeedbacks(AssessmentType assessmentType) {
-        Student student = getCurrentStudent();
-
-        if (student == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.FORBIDDEN)
-                    .withMessage("User is not a student!")
-                    .build();
-        }
+        Student student = validateAndRetrieveCurrentStudent();
 
         List<Attempt> attempts = attemptRepository.findByStudent(student);
 
@@ -243,9 +193,8 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> getCourseFeedbacks(AssessmentType assessmentType, String courseId) {
-        Pair<Student, Course> result = validateAndRetrieveStudentAndCourse(courseId);
-        Student student = result.getFirst();
-        Course course = result.getSecond();
+        Student student = validateAndRetrieveCurrentStudent();
+        Course course = validateAndRetrieveCourse(courseId);
 
         List<FeedbackDto> feedbacks = assessmentRepository.findAllByCourseAndType(course, assessmentType).stream()
                 .map(assessment -> attemptRepository.findByAssessmentAndStudent(assessment, student))
@@ -274,21 +223,27 @@ public class StudentService implements IStudentService {
         return null;
     }
 
-    private Student getCurrentStudent() {
-       return studentRepository.findById(authUtils.getCurrentUserId()).orElse(null);
-    }
-
-    private Pair<Student, Course> validateAndRetrieveStudentAndCourse(String courseId) {
-        Student student = getCurrentStudent();
+    private Student validateAndRetrieveCurrentStudent() {
+        Student student = studentRepository.findById(authUtils.getCurrentUserId()).orElse(null);
         if (student == null) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not a student!");
         }
+        return student;
+    }
 
+    private Course validateAndRetrieveCourse(String courseId) {
         Course course = courseRepository.findById(courseId).orElse(null);
         if (course == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!");
         }
+        return course;
+    }
 
-        return Pair.of(student, course);
+    private Lesson validateAndRetrieveLesson(String lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId).orElse(null);
+        if (lesson == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lesson not found!");
+        }
+        return lesson;
     }
 }

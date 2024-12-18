@@ -2,9 +2,9 @@ package fci.swe.advanced_software.utils.mappers.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
 import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
-import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.Question;
-import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
+import fci.swe.advanced_software.models.courses.Course;
+import fci.swe.advanced_software.repositories.course.CourseRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -13,26 +13,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class QuestionMapper {
-    protected AssessmentRepository assessmentRepository;
+    protected CourseRepository courseRepository;
 
-    @Mapping(target = "assessment", source = "assessmentId", qualifiedByName = "assessmentDtoToAssessment")
+    @Mapping(target = "course", source = "courseId", qualifiedByName = "courseDtoToCourse")
     public abstract Question toEntity(QuestionRequestDto requestDto);
 
     @Mapping(target = "id", source = "question.id")
-    @Mapping(target = "assessmentId", source = "assessment.id")
+    @Mapping(target = "courseId", source = "course.id")
     public abstract QuestionResponseDto toResponseDto(Question question);
 
-    @Named("assessmentDtoToAssessment")
-    public Assessment assessmentDtoToAssessment(String assessmentId) {
-        if (assessmentId == null) {
+    @Named("courseDtoToCourse")
+    public Course courseDtoToCourse(String courseId) {
+        if (courseId == null) {
             return null;
         }
-        return assessmentRepository.findById(assessmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid assessment ID: " + assessmentId));
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + courseId));
     }
 
     @Autowired
-    protected void setAssessmentRepository(AssessmentRepository assessmentRepository) {
-        this.assessmentRepository = assessmentRepository;
+    protected void setCourseRepository(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
     }
 }

@@ -1,13 +1,13 @@
 package fci.swe.advanced_software.services.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackDto;
+import fci.swe.advanced_software.models.assessments.Answer;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.assessments.Feedback;
 import fci.swe.advanced_software.models.assessments.FeedbackType;
-import fci.swe.advanced_software.models.assessments.Submission;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.assessments.FeedbackRepository;
-import fci.swe.advanced_software.repositories.assessments.SubmissionRepository;
+import fci.swe.advanced_software.repositories.assessments.AnswerRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -28,7 +28,7 @@ public class FeedbackService implements IFeedbackService {
     private final AttemptRepository attemptRepository;
     private final StudentRepository studentRepository;
     private final InstructorRepository instructorRepository;
-    private final SubmissionRepository submissionRepository;
+    private final AnswerRepository answerRepository;
 
     @Override
     public ResponseEntity<?> createFeedback(FeedbackDto feedbackDto) {
@@ -55,9 +55,9 @@ public class FeedbackService implements IFeedbackService {
         }
 
         Attempt attempt = attemptRepository.findById(feedbackDto.getAttemptId()).orElse(null);
-        List<Submission> submissions = submissionRepository.findAllByAttempt(attempt);
+        List<Answer> answers = answerRepository.findAllByAttempt(attempt);
 
-        for (Submission submission : submissions) {
+        for (Answer answer : answers) {
             // Grade the submission
         }
 

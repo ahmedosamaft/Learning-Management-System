@@ -1,13 +1,8 @@
 package fci.swe.advanced_software.services.users.student;
 
-import fci.swe.advanced_software.dtos.assessments.submission.SubmissionRequestDto;
-import fci.swe.advanced_software.dtos.course.EnrollmentDto;
 import fci.swe.advanced_software.dtos.users.StudentRequestDto;
-import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Set;
 
 public interface IStudentService {
     ResponseEntity<?> getStudent(String id);

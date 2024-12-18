@@ -14,10 +14,11 @@ import java.util.Map;
 @Builder
 public class QuestionResponseDto {
     private String id;
-    private String assessmentId;
+    private String courseId;
     private String text;
     private String imageUrl;
     private String correctAnswer;
     private QuestionType questionType;
+    private Integer score;
     private Map<String, String> options;
 }
