@@ -1,7 +1,8 @@
 package fci.swe.advanced_software.controllers.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.AssignmentRequestDto;
-import fci.swe.advanced_software.services.assessments.IAssignmentService;
+import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
+import fci.swe.advanced_software.models.assessments.AssessmentType;
+import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,16 +13,28 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(Constants.API_VERSION + "/assignments")
 @RequiredArgsConstructor
 public class AssignmentController {
-    private final IAssignmentService assignmentService;
+    private final IAssessmentService assessmentService;
 
     @PostMapping
-    public ResponseEntity<?> createAssignment(@Valid @RequestBody AssignmentRequestDto assignment) {
-        return assignmentService.createAssignment(assignment);
+    public ResponseEntity<?> createAssignment(@Valid @RequestBody AssessmentDto assignment) {
+        assignment.setType(AssessmentType.ASSIGNMENT);
+        return assessmentService.createAssessment(assignment);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAssignment(@PathVariable String id) {
-        return assignmentService.getAssignment(id);
+        return assessmentService.getAssessment(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateAssignment(@PathVariable String id, @Valid @RequestBody AssessmentDto assignment) {
+        assignment.setType(AssessmentType.ASSIGNMENT);
+        return assessmentService.updateAssessment(id, assignment);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAssignment(@PathVariable String id) {
+        return assessmentService.deleteAssessment(id);
     }
 
 }

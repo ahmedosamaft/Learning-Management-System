@@ -1,13 +1,11 @@
 package fci.swe.advanced_software.models.courses;
 
 import fci.swe.advanced_software.models.AbstractEntity;
-import fci.swe.advanced_software.models.assessments.Assignment;
-import fci.swe.advanced_software.models.assessments.Quiz;
+import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.users.Instructor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -40,10 +38,7 @@ public class Course extends AbstractEntity {
     private Set<Enrollment> enrollments = new HashSet<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private Set<Assignment> assignments = new HashSet<>();
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private Set<Quiz> quizzes = new HashSet<>();
+    private Set<Assessment> assessments = new HashSet<>();
 
     public Course() {
 
