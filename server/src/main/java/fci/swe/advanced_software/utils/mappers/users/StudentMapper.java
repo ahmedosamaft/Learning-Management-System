@@ -14,7 +14,7 @@ public abstract class StudentMapper {
     @Mapping(target = "enrollments", ignore = true)
     @Mapping(target = "comments", ignore = true)
     @Mapping(target = "attendances", ignore = true)
-    @Mapping(target = "submissions", ignore = true)
+    @Mapping(target = "answers", ignore = true)
     @Mapping(target = "attempts", ignore = true)
     public abstract Student toEntity(StudentRequestDto requestDto);
 

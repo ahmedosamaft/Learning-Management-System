@@ -25,12 +25,12 @@ public abstract class AttemptMapper {
 
     @Mapping(target = "assessment", source = "assessmentId", qualifiedByName = "assessmentDtoToAssessment")
     @Mapping(target = "student", source = "studentId", qualifiedByName = "studentDtoToStudent")
-    @Mapping(target = "submissions", ignore = true)
+    @Mapping(target = "answers", ignore = true)
     public abstract Attempt toEntity(AttemptRequestDto requestDto);
 
     @Mapping(target = "assessmentId", source = "assessment.id")
     @Mapping(target = "studentId", source = "student.id")
-    @Mapping(target = "submissionIds", source = "submissions")
+    @Mapping(target = "answerIds", source = "answers")
     public abstract AttemptResponseDto toResponseDto(Attempt attempt);
 
     @Named("assessmentDtoToAssessment")
@@ -51,7 +51,7 @@ public abstract class AttemptMapper {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + studentId));
     }
 
-    public Set<String> submissionToSubmissionDto(Set<Answer> answerIds) {
+    public Set<String> answerToAnswerDto(Set<Answer> answerIds) {
         if (answerIds == null) {
             return null;
         }

@@ -25,5 +25,5 @@ public class AttemptResponseDto {
 
     private Timestamp attemptedAt;
 
-    private Set<String> submissionIds;
+    private Set<String> answerIds;
 }
