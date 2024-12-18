@@ -2,12 +2,15 @@ package fci.swe.advanced_software.models.assessments;
 
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.courses.Course;
+import fci.swe.advanced_software.models.courses.Media;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,8 +19,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Setter
 @Getter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "assessment_type", discriminatorType = DiscriminatorType.STRING)
 public class Assessment extends AbstractEntity {
     @Column(nullable = false)
     private String instructions;
@@ -27,13 +28,25 @@ public class Assessment extends AbstractEntity {
     private Course course;
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
-    private Set<Question> questions = new HashSet<>();
+    private Set<Media> media;
+
+    @ManyToMany
+    @JoinTable(
+            name = "question_assessment",
+            joinColumns = @JoinColumn(name = "assessment_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id")
+    )
+    private Set<Question> questions;
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL)
-    private Set<Attempt> attempts = new HashSet<>();
+    private Set<Attempt> attempts;
 
     @Column(nullable = false)
     private Integer maxScore;
+
+    @Column(nullable = false, length = 30)
+    @Enumerated(EnumType.STRING)
+    private AssessmentType type;
 
     @Column(nullable = false)
     private Timestamp startsAt;

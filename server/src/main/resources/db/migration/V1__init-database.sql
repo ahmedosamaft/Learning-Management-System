@@ -106,7 +106,7 @@ CREATE TABLE lesson
 CREATE TABLE assessment
 (
     id              VARCHAR(36)                 NOT NULL,
-    assessment_type VARCHAR(31),
+    type VARCHAR(31),
     created_at      TIMESTAMP WITHOUT TIME ZONE,
     updated_at      TIMESTAMP WITHOUT TIME ZONE,
     version         BIGINT,

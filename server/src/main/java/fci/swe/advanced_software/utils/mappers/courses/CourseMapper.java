@@ -17,8 +17,7 @@ public abstract class CourseMapper {
     // Convert CourseDto to Course entity
     @Mapping(target = "instructor", source = "instructorId", qualifiedByName = "instructorDtoToInstructor")
     @Mapping(target = "lessons", ignore = true)  // Ignore lessons and other relationships that are handled elsewhere
-    @Mapping(target = "assignments", ignore = true)
-    @Mapping(target = "quizzes", ignore = true)
+    @Mapping(target = "assessments", ignore = true)
     @Mapping(target = "enrollments", ignore = true)
     public abstract Course toEntity(CourseDto courseDto);
 

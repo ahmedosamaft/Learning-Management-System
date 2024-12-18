@@ -10,7 +10,9 @@ import java.util.List;
 
 @Repository
 public interface EnrollmentRepository extends AbstractEntityRepository<Enrollment> {
-    List<Enrollment> findByStudent(Student student);
+    List<Enrollment> findAllByStudent(Student student);
 
     List<Enrollment> findByCourse(Course course);
+
+    Enrollment findByStudentAndCourse(Student student, Course course);
 }

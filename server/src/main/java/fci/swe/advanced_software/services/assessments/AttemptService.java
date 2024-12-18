@@ -1,12 +1,12 @@
 package fci.swe.advanced_software.services.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.AttemptRequestDto;
-import fci.swe.advanced_software.dtos.assessments.AttemptResponseDto;
+import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptRequestDto;
+import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptResponseDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.users.Student;
-import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
+import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -63,36 +63,6 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> updateAttempt(String id, AttemptRequestDto requestDto) {
-        Optional<Attempt> attemptOpt = attemptRepository.findById(id);
-        if (attemptOpt.isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Attempt not found!")
-                    .build();
-        }
-
-        Attempt attempt = attemptOpt.get();
-
-//        if (requestDto.getScore() != null) {
-//            attempt.setScore(requestDto.getScore());
-//        }
-
-        if (requestDto.getSubmissionDate() != null) {
-            attempt.setAttemptedAt(requestDto.getSubmissionDate()); // Assuming it's already a Timestamp
-        }
-
-        attempt = attemptRepository.save(attempt);
-        AttemptResponseDto responseDto = attemptMapper.toResponseDto(attempt);
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData("attempt", responseDto)
-                .withMessage("Attempt updated successfully!")
-                .build();
-    }
-
-    @Override
     public ResponseEntity<?> getAttemptById(String id) {
         Optional<Attempt> attemptOpt = attemptRepository.findById(id);
         if (attemptOpt.isEmpty()) {
@@ -126,7 +96,7 @@ public class AttemptService implements IAttemptService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData("attempt", responseDtos)
+                .withData("attempts", responseDtos)
                 .build();
     }
 
@@ -146,7 +116,7 @@ public class AttemptService implements IAttemptService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData("attempt", responseDtos)
+                .withData("attempts", responseDtos)
                 .build();
     }
 
