@@ -1,4 +1,4 @@
-package fci.swe.advanced_software.dtos.assessments.submission;
+package fci.swe.advanced_software.dtos.assessments.answer;
 
 import fci.swe.advanced_software.models.assessments.GradingType;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.UUID;
 
 @Data
 @Builder
-public class SubmissionRequestDto {
+public class AnswerRequestDto {
 
     @NotNull(message = "Question ID is required.")
     @NotBlank(message = "Question ID cannot be blank.")

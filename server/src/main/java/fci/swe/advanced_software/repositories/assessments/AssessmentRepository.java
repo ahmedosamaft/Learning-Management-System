@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface AssessmentRepository extends AbstractEntityRepository<Assessment> {
-    List<Assessment> findByCourse(Course course);
+    List<Assessment> findAllByCourse(Course course);
 
-    List<Assessment> findByCourseAndType(Course course, AssessmentType type);
+    List<Assessment> findAllByCourseAndType(Course course, AssessmentType type);
 }

@@ -19,8 +19,8 @@ public class QuestionUpdateDto implements IQuestionDto {
 
     private String id;
 
-    @UUID(message = "Assessment ID must be a valid UUID.")
-    private String assessmentId;
+    @UUID(message = "Course ID must be a valid UUID.")
+    private String courseId;
 
     @Length(max = 255, message = "Question text cannot exceed 500 characters.")
     private String text;
@@ -31,6 +31,8 @@ public class QuestionUpdateDto implements IQuestionDto {
     private String correctAnswer;
 
     private QuestionType questionType;
+
+    private Integer score;
 
     private Map<String, String> options;
 }
