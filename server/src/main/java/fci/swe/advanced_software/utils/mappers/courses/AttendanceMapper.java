@@ -24,8 +24,8 @@ public abstract class AttendanceMapper {
     @Mapping(target = "lesson", source = "lessonId", qualifiedByName = "lessonDtoToLesson")
     public abstract Attendance toEntity(AttendanceDto requestDto);
 
-    @Mapping(target = "studentId", source = "id")
-    @Mapping(target = "lessonId", source = "id")
+    @Mapping(target = "studentId", source = "student.id")
+    @Mapping(target = "lessonId", source = "lesson.id")
     public abstract AttendanceDto toDto(Attendance attendance);
 
     @Named("studentDtoToStudent")

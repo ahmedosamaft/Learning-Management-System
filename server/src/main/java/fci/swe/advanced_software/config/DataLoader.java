@@ -4,10 +4,12 @@ import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.Admin;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.models.users.Role;
+import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.auth.RoleRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.users.AdminRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
+import fci.swe.advanced_software.repositories.users.StudentRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +24,7 @@ public class DataLoader {
     private CourseRepository courseRepository;
     private InstructorRepository instructorRepository;
     private AdminRepository adminRepository;
+    private StudentRepository studentRepository;
     private BCryptPasswordEncoder passwordEncoder;
 
     @PostConstruct
@@ -46,6 +49,15 @@ public class DataLoader {
                     .email("ahmed@fcai.instructor.com")
                     .password(passwordEncoder.encode("123456"))
                     .roles(Set.of(roleRepository.findByName("INSTRUCTOR").orElseThrow(() -> new RuntimeException("NO RULE FOUND"))))
+                    .build());
+        }
+
+        if (!studentRepository.existsByEmail("pop@fcai.student.com")) {
+            studentRepository.save(Student.builder()
+                    .name("pop")
+                    .email("pop@fcai.student.com")
+                    .password(passwordEncoder.encode("123456"))
+                    .roles(Set.of(roleRepository.findByName("STUDENT").orElseThrow(() -> new RuntimeException("NO RULE FOUND"))))
                     .build());
         }
 

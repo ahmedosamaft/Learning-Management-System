@@ -12,7 +12,7 @@ import java.util.Set;
 public interface IStudentService {
     ResponseEntity<?> getStudent(String id);
 
-    ResponseEntity<?> enrollCourse(EnrollmentDto enrollmentDto);
+    ResponseEntity<?> enrollCourse(String courseId);
 
     ResponseEntity<?> getCourses();
 

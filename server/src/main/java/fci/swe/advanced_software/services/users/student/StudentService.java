@@ -1,12 +1,10 @@
 package fci.swe.advanced_software.services.users.student;
 
 import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackDto;
-import fci.swe.advanced_software.dtos.assessments.submission.SubmissionRequestDto;
 import fci.swe.advanced_software.dtos.course.AttendanceDto;
 import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.dtos.course.EnrollmentDto;
 import fci.swe.advanced_software.dtos.users.StudentRequestDto;
-import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.courses.Attendance;
@@ -39,7 +37,6 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -80,9 +77,9 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public ResponseEntity<?> enrollCourse(EnrollmentDto enrollDto) {
-        Student student = studentRepository.findById(enrollDto.getStudentId()).orElse(null);
-        Course course = courseRepository.findById(enrollDto.getCourseId()).orElse(null);
+    public ResponseEntity<?> enrollCourse(String courseId) {
+        Student student = getCurrentStudent();
+        Course course = courseRepository.findById(courseId).orElse(null);
 
         if (student == null) {
             return ResponseEntityBuilder.create()
@@ -98,14 +95,16 @@ public class StudentService implements IStudentService {
                     .build();
         }
 
+        EnrollmentDto enrollmentDto = EnrollmentDto.builder()
+                .studentId(student.getId())
+                .courseId(course.getId())
+                .build();
         Enrollment enrollment = new Enrollment(student, course, null);
-        student.getEnrollments().add(enrollment);
-        studentRepository.save(student);
         enrollmentRepository.save(enrollment);
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withMessage("Course enrolled successfully!")
-                .withData(enrollment)
+                .withData(enrollmentDto)
                 .build();
     }
 
@@ -301,10 +300,6 @@ public class StudentService implements IStudentService {
     }
 
     private Student getCurrentStudent() {
-        AbstractUser user = authUtils.getCurrentUser();
-        if (user instanceof Student) {
-            return (Student) user;
-        }
-        return null;
+       return studentRepository.findById(authUtils.getCurrentUserId()).orElse(null);
     }
 }
