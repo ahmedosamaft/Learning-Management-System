@@ -11,7 +11,6 @@ import fci.swe.advanced_software.models.courses.Attendance;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.courses.Enrollment;
 import fci.swe.advanced_software.models.courses.Lesson;
-import fci.swe.advanced_software.models.users.AbstractUser;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
@@ -30,9 +29,11 @@ import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
 import fci.swe.advanced_software.utils.mappers.courses.LessonMapper;
 import fci.swe.advanced_software.utils.mappers.users.StudentMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -157,22 +158,9 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> getCourseAttendance(String courseId) {
-        Student student = getCurrentStudent();
-        Course course = courseRepository.findById(courseId).orElse(null);
-
-        if (student == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.FORBIDDEN)
-                    .withMessage("User is not a student!")
-                    .build();
-        }
-
-        if (course == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Course not found!")
-                    .build();
-        }
+        Pair<Student, Course> result = validateAndRetrieveStudentAndCourse(courseId);
+        Student student = result.getFirst();
+        Course course = result.getSecond();
 
         List<AttendanceDto> attendance = attendanceRepository.findAllByStudentAndCourse(student, course)
                 .stream()
@@ -255,22 +243,9 @@ public class StudentService implements IStudentService {
 
     @Override
     public ResponseEntity<?> getCourseFeedbacks(AssessmentType assessmentType, String courseId) {
-        Student student = getCurrentStudent();
-        Course course = courseRepository.findById(courseId).orElse(null);
-
-        if (student == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.FORBIDDEN)
-                    .withMessage("User is not a student!")
-                    .build();
-        }
-
-        if (course == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Course not found!")
-                    .build();
-        }
+        Pair<Student, Course> result = validateAndRetrieveStudentAndCourse(courseId);
+        Student student = result.getFirst();
+        Course course = result.getSecond();
 
         List<FeedbackDto> feedbacks = assessmentRepository.findAllByCourseAndType(course, assessmentType).stream()
                 .map(assessment -> attemptRepository.findByAssessmentAndStudent(assessment, student))
@@ -301,5 +276,19 @@ public class StudentService implements IStudentService {
 
     private Student getCurrentStudent() {
        return studentRepository.findById(authUtils.getCurrentUserId()).orElse(null);
+    }
+
+    private Pair<Student, Course> validateAndRetrieveStudentAndCourse(String courseId) {
+        Student student = getCurrentStudent();
+        if (student == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not a student!");
+        }
+
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!");
+        }
+
+        return Pair.of(student, course);
     }
 }
