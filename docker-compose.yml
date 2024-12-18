@@ -24,6 +24,8 @@ services:
 
   server1:
     image: lms
+    depends_on:
+      - lms_db
     environment:
       SERVER_NAME: "server 1"
     ports:
@@ -32,6 +34,8 @@ services:
 
   server2:
     image: lms
+    depends_on:
+      - lms_db
     environment:
       SERVER_NAME: "server 2"
     ports:
