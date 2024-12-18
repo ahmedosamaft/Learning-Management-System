@@ -31,7 +31,7 @@ public class QuestionService implements IQuestionService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withLocation(Constants.API_VERSION + "/questions/" + question.getId())
-                .withData(responseDto)
+                .withData("question", responseDto)
                 .withMessage("Question created successfully!")
                 .build();
     }
@@ -73,7 +73,7 @@ public class QuestionService implements IQuestionService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("question", responseDto)
                 .withMessage("Question updated successfully!")
                 .build();
     }
@@ -92,7 +92,7 @@ public class QuestionService implements IQuestionService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData(responseDto)
+                .withData("question", responseDto)
                 .withMessage("Question found successfully!")
                 .build();
     }
