@@ -1,1 +1,4 @@
 ALTER TABLE submission RENAME TO answer;
+
+ALTER TABLE answer
+    ADD COLUMN IF NOT EXISTS grade INTEGER;

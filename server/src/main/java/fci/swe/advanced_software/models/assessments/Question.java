@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -44,4 +45,7 @@ public class Question extends AbstractEntity {
     @Column(columnDefinition = "TEXT")
     @Convert(converter = HashMapJsonConverter.class)
     private Map<String, String> options = new HashMap<>();
+
+    @ManyToMany(mappedBy = "questions")
+    private Set<Assessment> assessments;
 }
