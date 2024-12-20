@@ -4,7 +4,6 @@ import fci.swe.advanced_software.dtos.auth.AuthDto;
 import fci.swe.advanced_software.dtos.auth.AuthResponseDto;
 import fci.swe.advanced_software.dtos.auth.RegisterDto;
 import fci.swe.advanced_software.models.users.*;
-import fci.swe.advanced_software.repositories.auth.RoleRepository;
 import fci.swe.advanced_software.repositories.users.AbstractUserRepository;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.adapters.UserDetailsAdapter;
@@ -15,13 +14,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
 public class AuthService implements IAuthService {
 
-    private final RoleRepository roleRepository;
     private final AbstractUserRepository<AbstractUser> userRepository;
     private final AbstractUserRepository<Admin> adminRepository;
     private final AbstractUserRepository<Student> studentRepository;
@@ -31,23 +28,14 @@ public class AuthService implements IAuthService {
 
     public ResponseEntity<?> register(RegisterDto registerDto, Boolean isAdmin) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
-            return createErrorResponse("Email is already registered!");
+            return createErrorResponse("Email is already registered!", HttpStatus.BAD_REQUEST);
         }
 
-        if (!isValidRole(registerDto.getRole())) {
-            return createErrorResponse("Role is invalid!");
+        if (!isAdmin && registerDto.getRole() == Role.ADMIN) {
+            return createErrorResponse("You are not authorized to create an admin account!", HttpStatus.FORBIDDEN);
         }
 
-        if (!isAdmin && registerDto.getRole().equals(Roles.ADMIN)) {
-            return createErrorResponse("You are not authorized to create an admin account!");
-        }
-
-        Role role = roleRepository.findByName(registerDto.getRole()).orElse(null);
-        if (role == null) {
-            return createErrorResponse("Role not found!");
-        }
-
-        AbstractUser user = createUser(registerDto, role);
+        AbstractUser user = createUser(registerDto);
         user = userRepository.save(user);
 
         String token = jwtService.generateToken(new UserDetailsAdapter(user));
@@ -66,7 +54,7 @@ public class AuthService implements IAuthService {
         Optional<AbstractUser> user = userRepository.findByEmail(authDto.getEmail());
 
         if (user.isEmpty() || !passwordEncoder.matches(authDto.getPassword(), user.get().getPassword())) {
-            return createErrorResponse("Invalid email or password!");
+            return createErrorResponse("Invalid email or password!", HttpStatus.BAD_REQUEST);
         }
 
         String token = jwtService.generateToken(new UserDetailsAdapter(user.get()));
@@ -82,24 +70,20 @@ public class AuthService implements IAuthService {
     }
 
 
-    private boolean isValidRole(String role) {
-        return role.equals(Roles.INSTRUCTOR) || role.equals(Roles.STUDENT) || role.equals(Roles.ADMIN);
-    }
-
-    private ResponseEntity<?> createErrorResponse(String message) {
+    private ResponseEntity<?> createErrorResponse(String message, HttpStatus status) {
         return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.BAD_REQUEST)
+                .withStatus(status)
                 .withMessage(message)
                 .build();
     }
 
-    private AbstractUser createUser(RegisterDto registerDto, Role role) {
-        var builder = getBuilder(role.getName());
+    private AbstractUser createUser(RegisterDto registerDto) {
+        var builder = getBuilder(registerDto.getRole());
         return builder
                 .name(registerDto.getName())
                 .email(registerDto.getEmail())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
-                .roles(Set.of(role))
+                .role(registerDto.getRole())
                 .build();
     }
 
@@ -112,12 +96,11 @@ public class AuthService implements IAuthService {
                 .build();
     }
 
-    private AbstractUser.AbstractUserBuilder<?, ?> getBuilder(String role) {
+    private AbstractUser.AbstractUserBuilder<?, ?> getBuilder(Role role) {
         return switch (role) {
-            case Roles.ADMIN -> Admin.builder();
-            case Roles.STUDENT -> Student.builder();
-            case Roles.INSTRUCTOR -> Instructor.builder();
-            default -> null;
+            case ADMIN -> Admin.builder();
+            case STUDENT -> Student.builder();
+            case INSTRUCTOR -> Instructor.builder();
         };
     }
 }

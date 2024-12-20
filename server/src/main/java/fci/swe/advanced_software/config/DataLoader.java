@@ -12,7 +12,6 @@ import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
-import fci.swe.advanced_software.repositories.auth.RoleRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.LessonRepository;
 import fci.swe.advanced_software.repositories.users.AdminRepository;
@@ -32,7 +31,6 @@ import java.util.random.RandomGenerator;
 @Component
 @AllArgsConstructor
 public class DataLoader {
-    private RoleRepository roleRepository;
     private CourseRepository courseRepository;
     private LessonRepository lessonRepository;
     private InstructorRepository instructorRepository;
@@ -44,20 +42,12 @@ public class DataLoader {
 
     @PostConstruct
     public void loadData() {
-        loadRoles();
         loadAdmins();
         loadInstructors();
         loadStudents();
         loadCourses();
     }
 
-    private void loadRoles() {
-        if (roleRepository.count() == 0) {
-            roleRepository.save(Role.builder().name("STUDENT").build());
-            roleRepository.save(Role.builder().name("INSTRUCTOR").build());
-            roleRepository.save(Role.builder().name("ADMIN").build());
-        }
-    }
 
     private void loadAdmins() {
         if (!adminRepository.existsByEmail("abdelhady@fcai.admin.com")) {
@@ -65,7 +55,7 @@ public class DataLoader {
                     .name("Abdelhady")
                     .email("abdelhady@fcai.admin.com")
                     .password(passwordEncoder.encode("123456"))
-                    .roles(Set.of(roleRepository.findByName("ADMIN").orElseThrow(() -> new RuntimeException("NO ROLE FOUND"))))
+                    .role(Role.ADMIN)
                     .build());
         }
     }
@@ -76,7 +66,7 @@ public class DataLoader {
                     .name("Ahmed")
                     .email("ahmed@fcai.instructor.com")
                     .password(passwordEncoder.encode("123456"))
-                    .roles(Set.of(roleRepository.findByName("INSTRUCTOR").orElseThrow(() -> new RuntimeException("NO ROLE FOUND"))))
+                    .role(Role.INSTRUCTOR)
                     .build());
         }
 
@@ -85,7 +75,7 @@ public class DataLoader {
                     .name("Tamer")
                     .email("tamer@fcai.instructor.com")
                     .password(passwordEncoder.encode("123456"))
-                    .roles(Set.of(roleRepository.findByName("INSTRUCTOR").orElseThrow(() -> new RuntimeException("NO ROLE FOUND"))))
+                    .role(Role.INSTRUCTOR)
                     .build());
         }
     }
@@ -96,7 +86,7 @@ public class DataLoader {
                     .name("pop")
                     .email("pop@fcai.student.com")
                     .password(passwordEncoder.encode("123456"))
-                    .roles(Set.of(roleRepository.findByName("STUDENT").orElseThrow(() -> new RuntimeException("NO ROLE FOUND"))))
+                    .role(Role.STUDENT)
                     .build());
         }
 
@@ -105,7 +95,7 @@ public class DataLoader {
                     .name("sayed")
                     .email("sayed@fcai.student.com")
                     .password(passwordEncoder.encode("123456"))
-                    .roles(Set.of(roleRepository.findByName("STUDENT").orElseThrow(() -> new RuntimeException("NO ROLE FOUND"))))
+                    .role(Role.STUDENT)
                     .build());
         }
     }

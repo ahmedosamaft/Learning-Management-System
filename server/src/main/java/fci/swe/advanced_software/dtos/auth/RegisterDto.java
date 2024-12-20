@@ -1,10 +1,9 @@
 package fci.swe.advanced_software.dtos.auth;
 
-import fci.swe.advanced_software.models.users.Roles;
+import fci.swe.advanced_software.models.users.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -29,7 +28,5 @@ public class RegisterDto {
     private String password;
 
     @NotNull
-    @NotBlank
-    @Pattern(regexp = Roles.ADMIN + "|" + Roles.INSTRUCTOR + "|" + Roles.STUDENT)
-    private String role;
+    private Role role;
 }
