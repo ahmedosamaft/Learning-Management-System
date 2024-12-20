@@ -9,7 +9,7 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class StudentMapper {
 
-    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "role", ignore = true)
     @Mapping(target = "notifications", ignore = true)
     @Mapping(target = "enrollments", ignore = true)
     @Mapping(target = "comments", ignore = true)
