@@ -15,4 +15,6 @@ public interface EnrollmentRepository extends AbstractEntityRepository<Enrollmen
     List<Enrollment> findByCourse(Course course);
 
     Enrollment findByStudentAndCourse(Student student, Course course);
+
+    boolean existsByStudentIdAndCourseId(String studentId, String courseId);
 }
