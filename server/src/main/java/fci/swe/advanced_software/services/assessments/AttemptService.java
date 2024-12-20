@@ -1,13 +1,14 @@
 package fci.swe.advanced_software.services.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptRequestDto;
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptResponseDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
+import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
+import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AttemptMapper;
@@ -17,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,29 +30,39 @@ public class AttemptService implements IAttemptService {
     private final AssessmentRepository assessmentRepository;
     private final StudentRepository studentRepository;
     private final AttemptMapper attemptMapper;
+    private final AuthUtils authUtils;
 
     @Override
-    public ResponseEntity<?> createAttempt(AttemptRequestDto requestDto) {
-        Optional<Assessment> assessmentOpt = assessmentRepository.findById(requestDto.getAssessmentId());
-        if (assessmentOpt.isEmpty()) {
+    public ResponseEntity<?> createAttempt(String course_id, AssessmentType type, String assessment_id) {
+        Assessment assessment = assessmentRepository
+                .findById(assessment_id)
+                .orElse(null);
+
+        if (assessment == null) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Assessment not found!")
+                    .withMessage(type.name().toLowerCase() + " not found!")
                     .build();
         }
 
-        Optional<Student> studentOpt = studentRepository.findById(requestDto.getStudentId());
-        if (studentOpt.isEmpty()) {
+        Student student = studentRepository.findById(authUtils.getCurrentUserId()).orElse(null);
+        if (student == null) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
                     .withMessage("Student not found!")
                     .build();
         }
 
-        Attempt attempt = attemptMapper.toEntity(requestDto);
-        attempt.setAttemptedAt(Timestamp.valueOf(LocalDateTime.now()));
+        Attempt attempt = Attempt
+                .builder()
+                .attemptedAt(Timestamp.from(Instant.now()))
+                .assessment(assessment)
+                .student(student)
+                .build();
+
 
         attempt = attemptRepository.save(attempt);
+
         AttemptResponseDto responseDto = attemptMapper.toResponseDto(attempt);
 
         return ResponseEntityBuilder.create()

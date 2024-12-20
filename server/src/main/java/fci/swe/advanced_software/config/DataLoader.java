@@ -6,6 +6,7 @@ import fci.swe.advanced_software.models.assessments.Question;
 import fci.swe.advanced_software.models.assessments.QuestionType;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.courses.Lesson;
+import fci.swe.advanced_software.models.courses.Media;
 import fci.swe.advanced_software.models.users.Admin;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.models.users.Role;
@@ -14,11 +15,12 @@ import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.LessonRepository;
+import fci.swe.advanced_software.repositories.course.MediaRepository;
 import fci.swe.advanced_software.repositories.users.AdminRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +32,8 @@ import java.util.random.RandomGenerator;
 
 @Component
 @AllArgsConstructor
-public class DataLoader {
+public class DataLoader implements CommandLineRunner {
+    private final MediaRepository mediaRepository;
     private CourseRepository courseRepository;
     private LessonRepository lessonRepository;
     private InstructorRepository instructorRepository;
@@ -40,7 +43,6 @@ public class DataLoader {
     private QuestionRepository questionRepository;
     private BCryptPasswordEncoder passwordEncoder;
 
-    @PostConstruct
     public void loadData() {
         loadAdmins();
         loadInstructors();
@@ -137,12 +139,21 @@ public class DataLoader {
 
     private void loadLessonsToCourse(Course course) {
         for (int i = 1; i <= 5; i++) {
-            lessonRepository.save(Lesson.builder()
+            Lesson lesson = lessonRepository.save(Lesson.builder()
                     .title("Lesson " + i + " for " + course.getName())
                     .content("This is the content of Lesson " + i + " for the course " + course.getName() + ".")
                     .otp(course.getCode().toLowerCase() + i)
                     .course(course)
                     .build());
+            Media media = Media
+                    .builder()
+                    .lesson(lesson)
+                    .realName("Video " + i)
+                    .url("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                    .build();
+            mediaRepository.save(media);
+            lessonRepository.flush();
+            mediaRepository.flush();
         }
     }
 
@@ -164,6 +175,7 @@ public class DataLoader {
                     .score(10)
                     .build();
             questionRepository.save(question);
+            questionRepository.flush();
         }
 
         // Create 5 TRUE_FALSE questions
@@ -181,6 +193,7 @@ public class DataLoader {
                     .score(10)
                     .build();
             questionRepository.save(question);
+            questionRepository.flush();
         }
     }
 
@@ -215,6 +228,13 @@ public class DataLoader {
 
             assessmentRepository.save(assignment);
             assessmentRepository.save(quiz);
+            assessmentRepository.flush();
+            questionRepository.flush();
         }
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        loadData();
     }
 }

@@ -2,15 +2,23 @@ package fci.swe.advanced_software.services.assessments.assessment;
 
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
+import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.Helper;
+import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AssessmentMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +27,22 @@ public class AssessmentService implements IAssessmentService {
     private final AssessmentRepository assessmentRepository;
     private final AssessmentMapper assessmentMapper;
     private final CourseRepository courseRepository;
+    private final RepositoryUtils repositoryUtils;
+    private final Helper helper;
 
+
+    @Override
+    public ResponseEntity<?> getAllAssessments(String course_id, AssessmentType type, Integer page, Integer size) {
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Assessment> assessmentsPage = assessmentRepository.findAllByCourseIdAndType(course_id, type, pageable);
+        List<AssessmentDto> assessments = assessmentsPage.map(assessmentMapper::toResponseDto).getContent();
+        String typeString = helper.getAssessmentTypePlural(type);
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData(typeString, assessments)
+                .withMessage(typeString + " retrieved successfully!")
+                .build();
+    }
 
     @Override
     public ResponseEntity<?> createAssessment(AssessmentDto requestDto) {

@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.Set;
 @SuperBuilder
 @AllArgsConstructor
@@ -33,7 +32,7 @@ public class Attempt extends AbstractEntity {
     private Feedback feedback;
 
     @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL)
-    private Set<Answer> answers = new HashSet<>();
+    private Set<Answer> answers;
 
     @Column(nullable = false)
     private Timestamp attemptedAt;

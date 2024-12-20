@@ -4,7 +4,9 @@ import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.EnrollmentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component( "authorizationService")
 @RequiredArgsConstructor
@@ -15,6 +17,9 @@ public class AuthorizationService {
 
     public boolean isEnrolled(String courseId) {
         String studentId = authUtils.getCurrentUserId();
+        if(!courseRepository.existsById(courseId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!");
+        }
         return enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId);
     }
 
