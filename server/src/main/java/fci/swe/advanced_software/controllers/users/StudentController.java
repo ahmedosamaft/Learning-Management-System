@@ -1,12 +1,12 @@
 package fci.swe.advanced_software.controllers.users;
 
-import fci.swe.advanced_software.dtos.course.EnrollmentDto;
 import fci.swe.advanced_software.dtos.users.StudentRequestDto;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.users.student.IStudentService;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(Constants.API_VERSION + "/students")
 @RequiredArgsConstructor
+@Tag(name = "Student", description = "Student related endpoints")
 public class StudentController {
     private final IStudentService studentService;
     private final AuthUtils authUtils;
