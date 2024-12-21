@@ -12,5 +12,8 @@ import java.util.List;
 @Repository
 public interface LessonRepository extends AbstractEntityRepository<Lesson> {
     List<Lesson> findAllByCourse(Course course);
+
     Page<Lesson> findAllByCourseId(String courseId, Pageable pageable);
+
+    boolean existsByIdAndCourseId(String id, String courseId);
 }

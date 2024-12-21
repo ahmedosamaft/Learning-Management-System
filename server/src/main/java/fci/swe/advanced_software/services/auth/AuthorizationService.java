@@ -1,7 +1,9 @@
 package fci.swe.advanced_software.services.auth;
 
+import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.EnrollmentRepository;
+import fci.swe.advanced_software.repositories.course.LessonRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,8 @@ public class AuthorizationService {
     private final EnrollmentRepository enrollmentRepository;
     private final AuthUtils authUtils;
     private final CourseRepository courseRepository;
+    private final AssessmentRepository assessmentRepository;
+    private final LessonRepository lessonRepository;
 
     public boolean isEnrolled(String courseId) {
         if (!courseRepository.existsById(courseId)) {
@@ -28,6 +32,20 @@ public class AuthorizationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!");
         }
         String instructorId = authUtils.getCurrentUserId();
-        return courseRepository.existsByInstructorId(instructorId);
+        return courseRepository.existsByIdAndInstructorId(courseId, instructorId);
+    }
+
+    public boolean containsAssessment(String courseId, String assessmentId) {
+        if (!assessmentRepository.existsByIdAndCourseId(assessmentId, courseId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found!");
+        }
+        return true;
+    }
+
+    public boolean containsLesson(String courseId, String lessonId){
+        if (!lessonRepository.existsByIdAndCourseId(lessonId, courseId)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lesson not found!");
+        }
+        return true;
     }
 }

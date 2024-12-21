@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -35,7 +36,7 @@ public class AttemptService implements IAttemptService {
 
     @Override
     public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
-        if(attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
+        if (attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You already attempted this " + type.name().toLowerCase() + "!");
         }
 
@@ -97,8 +98,12 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptsByStudent(Student student) {
-        List<Attempt> attempts = attemptRepository.findByStudent(student);
+    public ResponseEntity<?> getAttemptsByStudentId(String studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
+        }
+
+        List<Attempt> attempts = attemptRepository.findAllByStudentId(studentId);
         if (attempts.isEmpty()) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
@@ -117,8 +122,32 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptsByAssessment(Assessment assessment) {
-        List<Attempt> attempts = attemptRepository.findByAssessment(assessment);
+    public ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
+        }
+
+        List<Assessment> assessments = assessmentRepository.findAllByCourseId(courseId);
+
+        List<Attempt> attempts = assessments.stream()
+                .flatMap(assessment -> attemptRepository
+                        .findAllByAssessmentAndStudentId(assessment, studentId).stream())
+                .toList();
+
+        List<AttemptResponseDto> responseDtos = attempts.stream()
+                .map(attemptMapper::toResponseDto)
+                .toList();
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("attempts", responseDtos)
+                .build();
+    }
+
+
+    @Override
+    public ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId) {
+        List<Attempt> attempts = attemptRepository.findAllByAssessmentId(assessmentId);
         if (attempts.isEmpty()) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
