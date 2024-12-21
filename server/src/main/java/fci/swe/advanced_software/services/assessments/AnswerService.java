@@ -160,7 +160,7 @@ public class AnswerService implements IAnswerService {
         Set<Question> questions = assessment.getQuestions();
         for (int i = 0; i < answersDto.size(); i++) {
             Answer answer = answerMapper.toEntity(answersDto.get(i));
-            if(!questions.contains(answer.getQuestion())) {
+            if (!questions.contains(answer.getQuestion())) {
                 log.warn("question {} is not in that assessment {{}}", answer.getQuestion().getId(), assessment.getId());
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Question not found!");
             }
@@ -205,11 +205,10 @@ public class AnswerService implements IAnswerService {
     private ResponseEntity<?> buildResponse(AssessmentType assessmentType, Feedback feedback) {
         ResponseEntityBuilder responseEntityBuilder = ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
+                .withLocation(Constants.API_VERSION + "/students/courses/" +
+                        feedback.getCourse().getId() + "/feedbacks/" + feedback.getId())
                 .withMessage("Answers submitted successfully!");
 
-        if (assessmentType == AssessmentType.QUIZ) {
-            responseEntityBuilder.withData("feedback", feedback);
-        }
 
         return responseEntityBuilder.build();
     }
