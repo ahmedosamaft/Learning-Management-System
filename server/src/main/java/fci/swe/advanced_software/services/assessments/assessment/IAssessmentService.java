@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 public interface IAssessmentService {
     ResponseEntity<?> getAllAssessments(String course_id, AssessmentType type, Integer page, Integer size);
 
-    ResponseEntity<?> createAssessment(AssessmentDto requestDto);
+    ResponseEntity<?> createAssessment(String courseId, AssessmentType assessmentType, AssessmentDto requestDto);
 
-    ResponseEntity<?> updateAssessment(String id, AssessmentDto requestDto);
+    ResponseEntity<?> updateAssessment(String id, AssessmentType type, AssessmentDto requestDto);
 
     ResponseEntity<?> getAssessment(String id);
 

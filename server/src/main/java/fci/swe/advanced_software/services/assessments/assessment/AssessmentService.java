@@ -45,14 +45,9 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> createAssessment(AssessmentDto requestDto) {
-
-        if (courseRepository.findById(requestDto.getCourseId()).isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Course not found!")
-                    .build();
-        }
+    public ResponseEntity<?> createAssessment(String courseId, AssessmentType type, AssessmentDto requestDto) {
+        requestDto.setCourseId(courseId);
+        requestDto.setType(type);
 
         Assessment assessment = assessmentMapper.toEntity(requestDto);
         assessment = assessmentRepository.save(assessment);
@@ -68,7 +63,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> updateAssessment(String id, AssessmentDto requestDto) {
+    public ResponseEntity<?> updateAssessment(String id, AssessmentType type, AssessmentDto requestDto) {
         Assessment assessment = assessmentRepository.findById(id).orElse(null);
 
         if (assessment == null) {
@@ -77,12 +72,9 @@ public class AssessmentService implements IAssessmentService {
                     .withMessage("Assessment not found!")
                     .build();
         }
-
-        if (courseRepository.findById(requestDto.getCourseId()).isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Course not found!")
-                    .build();
+        requestDto.setType(type);
+        if (requestDto.getCourseId() == null) {
+            requestDto.setCourseId(assessment.getCourse().getId());
         }
 
         assessment = assessmentRepository.save(assessment);
@@ -128,9 +120,6 @@ public class AssessmentService implements IAssessmentService {
 
         assessmentRepository.delete(assessment);
 
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withMessage("Assessment deleted successfully!")
-                .build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

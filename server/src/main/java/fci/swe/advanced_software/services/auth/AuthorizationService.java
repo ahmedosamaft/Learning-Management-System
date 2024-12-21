@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
-@Component( "authorizationService")
+@Component("authorizationService")
 @RequiredArgsConstructor
 public class AuthorizationService {
     private final EnrollmentRepository enrollmentRepository;
@@ -16,16 +16,18 @@ public class AuthorizationService {
     private final CourseRepository courseRepository;
 
     public boolean isEnrolled(String courseId) {
-        String studentId = authUtils.getCurrentUserId();
-        if(!courseRepository.existsById(courseId)) {
+        if (!courseRepository.existsById(courseId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!");
         }
+        String studentId = authUtils.getCurrentUserId();
         return enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId);
     }
 
     public boolean isTeaching(String courseId) {
+        if (!courseRepository.existsById(courseId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!");
+        }
         String instructorId = authUtils.getCurrentUserId();
         return courseRepository.existsByInstructorId(instructorId);
     }
-
 }

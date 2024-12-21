@@ -20,8 +20,6 @@ public class AssessmentDto {
     @Length(max = 255, message = "Instructions cannot exceed 500 characters.")
     private String instructions;
 
-    @NotBlank(message = "Course ID is required.")
-    @Length(min = 36, max = 36, message = "Course ID must be 24 characters long.")
     private String courseId;
 
     @NotNull(message = "Max score is required.")

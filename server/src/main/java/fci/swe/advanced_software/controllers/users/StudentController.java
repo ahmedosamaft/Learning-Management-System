@@ -2,7 +2,6 @@ package fci.swe.advanced_software.controllers.users;
 
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.users.student.IStudentService;
-import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.RolesAllowed;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Student", description = "Student related endpoints")
 public class StudentController {
     private final IStudentService studentService;
-    private final AuthUtils authUtils;
 
     @GetMapping("/{id}")
     @RolesAllowed({Roles.INSTRUCTOR, Roles.ADMIN})
