@@ -16,6 +16,7 @@ public abstract class AssessmentMapper {
     protected CourseRepository courseRepository;
 
     @Mapping(target = "course", source = "courseId", qualifiedByName = "courseDtoToCourse")
+    @Mapping(target = "type", ignore = true)
     public abstract Assessment toEntity(AssessmentDto requestDto);
 
 

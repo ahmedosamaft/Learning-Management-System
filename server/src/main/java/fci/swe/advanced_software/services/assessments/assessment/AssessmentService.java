@@ -47,9 +47,9 @@ public class AssessmentService implements IAssessmentService {
     @Override
     public ResponseEntity<?> createAssessment(String courseId, AssessmentType type, AssessmentDto requestDto) {
         requestDto.setCourseId(courseId);
-        requestDto.setType(type);
 
         Assessment assessment = assessmentMapper.toEntity(requestDto);
+        assessment.setType(type);
         assessment = assessmentRepository.save(assessment);
 
         AssessmentDto responseDto = assessmentMapper.toResponseDto(assessment);
@@ -72,7 +72,6 @@ public class AssessmentService implements IAssessmentService {
                     .withMessage("Assessment not found!")
                     .build();
         }
-        requestDto.setType(type);
         if (requestDto.getCourseId() == null) {
             requestDto.setCourseId(assessment.getCourse().getId());
         }
