@@ -18,7 +18,4 @@ public interface AssessmentRepository extends AbstractEntityRepository<Assessmen
 
     List<Assessment> findAllByCourseAndType(Course course, AssessmentType type);
     Page<Assessment> findAllByCourseIdAndType(String course_id, AssessmentType type, Pageable pageable);
-
-    @Query(value = "SELECT EXISTS (SELECT 1 FROM question_assessment WHERE assessment_id = :assessmentId AND question_id = :questionId)", nativeQuery = true)
-    boolean existsByAssessmentIdAndQuestionId(@Param("assessmentId") String assessmentId, @Param("questionId") String questionId);
 }

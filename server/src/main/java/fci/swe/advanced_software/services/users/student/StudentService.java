@@ -180,7 +180,7 @@ public class StudentService implements IStudentService {
     public ResponseEntity<?> getFeedbacks(AssessmentType assessmentType) {
         Student student = validateAndRetrieveCurrentStudent();
 
-        List<Attempt> attempts = attemptRepository.findByStudent(student);
+        List<Attempt> attempts = attemptRepository.findAllByStudent(student);
 
         List<FeedbackDto> feedbacksDto = attempts.stream()
                 .filter(

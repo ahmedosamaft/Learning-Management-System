@@ -6,10 +6,7 @@ import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.API_VERSION + "/instructors")
@@ -23,4 +20,10 @@ public class InstructorController {
         return instructorService.getInstructor(id);
     }
 
+    @GetMapping("")
+    @RolesAllowed(Roles.ADMIN)
+    public ResponseEntity<?> getAllInstructors(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                               @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return instructorService.getAllInstructors(page, size);
+    }
 }

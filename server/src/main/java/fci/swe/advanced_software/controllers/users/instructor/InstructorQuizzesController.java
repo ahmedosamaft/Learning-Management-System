@@ -28,26 +28,26 @@ public class InstructorQuizzesController {
 
     @GetMapping("/{quiz_id}")
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> getAssignmentById(@PathVariable String course_id, @PathVariable String quiz_id) {
+    public ResponseEntity<?> getQuizById(@PathVariable String course_id, @PathVariable String quiz_id) {
         return quizService.getAssessment(quiz_id);
     }
 
     @PostMapping
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> createAssignment(@PathVariable String course_id, @Valid @RequestBody AssessmentDto quiz) {
+    public ResponseEntity<?> createQuiz(@PathVariable String course_id, @Valid @RequestBody AssessmentDto quiz) {
         return quizService.createAssessment(course_id, AssessmentType.QUIZ, quiz);
     }
 
     @PutMapping("/{quiz_id}")
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> updateAssignment(@PathVariable String course_id, @PathVariable String quiz_id,
-                                              @Valid @RequestBody AssessmentDto quiz) {
+    public ResponseEntity<?> updateQuiz(@PathVariable String course_id, @PathVariable String quiz_id,
+                                        @Valid @RequestBody AssessmentDto quiz) {
         return quizService.updateAssessment(quiz_id, AssessmentType.QUIZ, quiz);
     }
 
     @DeleteMapping("/{quiz_id}")
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> deleteAssignment(@PathVariable String course_id, @PathVariable String quiz_id) {
+    public ResponseEntity<?> deleteQuiz(@PathVariable String course_id, @PathVariable String quiz_id) {
         return quizService.deleteAssessment(quiz_id);
     }
 }

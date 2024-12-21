@@ -3,6 +3,7 @@ package fci.swe.advanced_software.services.assessments.assessment;
 import fci.swe.advanced_software.dtos.assessments.QuestionAssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentQuestionsDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Question;
@@ -15,6 +16,7 @@ import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AssessmentMapper;
 import fci.swe.advanced_software.utils.mappers.assessments.AssessmentQuestionsMapper;
+import fci.swe.advanced_software.utils.mappers.assessments.QuestionMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,7 @@ public class AssessmentService implements IAssessmentService {
     private final RepositoryUtils repositoryUtils;
     private final Helper helper;
     private final QuestionRepository questionRepository;
+    private final QuestionMapper questionMapper;
     private final AssessmentQuestionsMapper assessmentQuestionsMapper;
 
     @Override
@@ -175,23 +178,14 @@ public class AssessmentService implements IAssessmentService {
                     .withMessage("Question not found!")
                     .build();
         }
-        if (!assessmentRepository.existsByAssessmentIdAndQuestionId(assessmentId, questionId)) {
+        if (!assessment.removeQuestion(question)) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.BAD_REQUEST)
                     .withMessage("Question not found in assessment!")
                     .build();
         }
-
-        assessment.removeQuestion(question);
-        assessment = assessmentRepository.save(assessment);
-
-        AssessmentQuestionsDto assessmentQuestionsDto = assessmentQuestionsMapper.toResponseDto(assessment);
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withMessage("Question removed successfully!")
-                .withData("assessment", assessmentQuestionsDto)
-                .build();
+        assessmentRepository.save(assessment);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
@@ -204,11 +198,13 @@ public class AssessmentService implements IAssessmentService {
                     .build();
         }
 
-        AssessmentQuestionsDto assessmentQuestionsDto = assessmentQuestionsMapper.toResponseDto(assessment);
+        List<QuestionResponseDto> questions = assessment.getQuestions().stream().
+                map(questionMapper::toResponseDto)
+                .toList();
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData("assessment", assessmentQuestionsDto)
+                .withData("questions", questions)
                 .withMessage("Questions retrieved successfully!")
                 .build();
     }
