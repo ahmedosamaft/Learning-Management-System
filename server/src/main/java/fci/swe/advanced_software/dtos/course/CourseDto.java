@@ -1,6 +1,5 @@
 package fci.swe.advanced_software.dtos.course;
 
-import fci.swe.advanced_software.utils.validators.course.ValidCourse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ValidCourse
 public class CourseDto {
 
     @NotBlank(message = "Course code is required.")
@@ -28,7 +26,6 @@ public class CourseDto {
     @Size(max = 255, message = "Description must be less than or equal to 255 characters.")
     private String description;
 
-    @NotBlank(message = "Instructor ID is required.")
     private String instructorId;
 
     private String instructorName;

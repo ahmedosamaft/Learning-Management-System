@@ -1,8 +1,10 @@
 package fci.swe.advanced_software.dtos.assessments.assessment;
 
-import fci.swe.advanced_software.models.assessments.AssessmentType;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import java.sql.Timestamp;
@@ -18,15 +20,11 @@ public class AssessmentDto {
     @Length(max = 255, message = "Instructions cannot exceed 500 characters.")
     private String instructions;
 
-    @NotBlank(message = "Course ID is required.")
-    @Length(min = 36, max = 36, message = "Course ID must be 24 characters long.")
     private String courseId;
 
     @NotNull(message = "Max score is required.")
     @Positive(message = "Max score must be a positive number.")
     private Integer maxScore;
-
-    private AssessmentType type;
 
     @NotNull(message = "Start time is required.")
     @Future(message = "Start time must be in the future.")

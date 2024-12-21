@@ -11,15 +11,16 @@ spring:
     name: advanced-software
 
   jpa:
-#    show-sql: true
+    #    show-sql: true
     hibernate:
       ddl-auto: validate
 
     properties:
       hibernate:
         format_sql: true
-#logging:
-#  level:
+logging:
+  level:
+    "fci.swe.advanced_software": trace
 #    org:
 #      hibernate:
 #        orm:

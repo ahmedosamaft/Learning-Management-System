@@ -1,34 +1,31 @@
 package fci.swe.advanced_software.utils.mappers.courses;
 
-import fci.swe.advanced_software.dtos.course.AnnouncementRequestDto;
-import fci.swe.advanced_software.dtos.course.AnnouncementResponseDto;
+import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto;
+import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
 import fci.swe.advanced_software.models.courses.Announcement;
-import fci.swe.advanced_software.models.courses.AnnouncementComment;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.AbstractUser;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.repositories.users.AdminRepository;
-import fci.swe.advanced_software.repositories.users.InstructorRepository;
-import org.mapstruct.*;
+import fci.swe.advanced_software.repositories.users.AbstractUserRepository;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class AnnouncementMapper {
 
     protected CourseRepository courseRepository;
-    protected AdminRepository adminRepository;
-    protected InstructorRepository instructorRepository;
+    protected AbstractUserRepository<AbstractUser> userRepository;
 
     @Mapping(target = "course", source = "courseId", qualifiedByName = "courseDtoToCourse")
-    @Mapping(target = "postedBy", source = "postedByUserId", qualifiedByName = "userDtoToUser")
+    @Mapping(target = "postedBy", source = "userId", qualifiedByName = "userDtoToUser")
     public abstract Announcement toEntity(AnnouncementRequestDto requestDto);
 
     @Mapping(target = "courseId", source = "course.id")
-    @Mapping(target = "postedByUserId", source = "postedBy.id")
-    @Mapping(target="commentIds",source="comments")
+    @Mapping(target = "author", source = "postedBy")
+    @Mapping(target = "comments", source = "comments")
     public abstract AnnouncementResponseDto toResponseDto(Announcement announcement);
 
     @Named("courseDtoToCourse")
@@ -37,13 +34,7 @@ public abstract class AnnouncementMapper {
             return null;
         }
         return courseRepository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + courseId));
-    }
-    public List<String> mapComments(List<AnnouncementComment> comments) {
-        if (comments == null) {
-            return null;
-        }
-        return comments.stream().map(comment -> comment.getId()).toList();
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course id" + courseId));
     }
 
     @Named("userDtoToUser")
@@ -51,15 +42,8 @@ public abstract class AnnouncementMapper {
         if (userId == null) {
             return null;
         }
-        if (userId.startsWith("admin")) {
-            return adminRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid admin ID: " + userId));
-        } else if (userId.startsWith("instructor")) {
-            return instructorRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid instructor ID: " + userId));
-        } else {
-            throw new IllegalArgumentException("Invalid user type for ID: " + userId);
-        }
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user id"));
     }
 
     @Autowired
@@ -68,14 +52,7 @@ public abstract class AnnouncementMapper {
     }
 
     @Autowired
-    @Qualifier("adminRepository")
-    protected void setAdminRepository(AdminRepository adminRepository) {
-        this.adminRepository = adminRepository;
-    }
-
-    @Autowired
-    @Qualifier("instructorRepository")
-    protected void setInstructorRepository(InstructorRepository instructorRepository) {
-        this.instructorRepository = instructorRepository;
+    protected void setUserRepository(AbstractUserRepository<AbstractUser> userRepository) {
+        this.userRepository = userRepository;
     }
 }

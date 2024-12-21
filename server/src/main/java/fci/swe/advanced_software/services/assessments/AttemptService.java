@@ -1,23 +1,29 @@
 package fci.swe.advanced_software.services.assessments;
 
-import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptRequestDto;
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptResponseDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
+import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
+import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AttemptMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,29 +35,44 @@ public class AttemptService implements IAttemptService {
     private final AssessmentRepository assessmentRepository;
     private final StudentRepository studentRepository;
     private final AttemptMapper attemptMapper;
+    private final AuthUtils authUtils;
+    private final RepositoryUtils repositoryUtils;
 
     @Override
-    public ResponseEntity<?> createAttempt(AttemptRequestDto requestDto) {
-        Optional<Assessment> assessmentOpt = assessmentRepository.findById(requestDto.getAssessmentId());
-        if (assessmentOpt.isEmpty()) {
+    public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
+        if (attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You already attempted this " + type.name().toLowerCase() + "!");
+        }
+
+        Assessment assessment = assessmentRepository
+                .findById(assessmentId)
+                .orElse(null);
+
+        if (assessment == null) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Assessment not found!")
+                    .withMessage(type.name().toLowerCase() + " not found!")
                     .build();
         }
 
-        Optional<Student> studentOpt = studentRepository.findById(requestDto.getStudentId());
-        if (studentOpt.isEmpty()) {
+        Student student = studentRepository.findById(authUtils.getCurrentUserId()).orElse(null);
+        if (student == null) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
                     .withMessage("Student not found!")
                     .build();
         }
 
-        Attempt attempt = attemptMapper.toEntity(requestDto);
-        attempt.setAttemptedAt(Timestamp.valueOf(LocalDateTime.now()));
+        Attempt attempt = Attempt
+                .builder()
+                .attemptedAt(Timestamp.from(Instant.now()))
+                .assessment(assessment)
+                .student(student)
+                .build();
+
 
         attempt = attemptRepository.save(attempt);
+
         AttemptResponseDto responseDto = attemptMapper.toResponseDto(attempt);
 
         return ResponseEntityBuilder.create()
@@ -81,8 +102,12 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptsByStudent(Student student) {
-        List<Attempt> attempts = attemptRepository.findByStudent(student);
+    public ResponseEntity<?> getAttemptsByStudentId(String studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
+        }
+
+        List<Attempt> attempts = attemptRepository.findAllByStudentId(studentId);
         if (attempts.isEmpty()) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
@@ -100,17 +125,53 @@ public class AttemptService implements IAttemptService {
                 .build();
     }
 
-    @Override
-    public ResponseEntity<?> getAttemptsByAssessment(Assessment assessment) {
-        List<Attempt> attempts = attemptRepository.findByAssessment(assessment);
-        if (attempts.isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("No attempts found for this assessment!")
-                    .build();
+    public ResponseEntity<?> oldGetAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
         }
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Assessment> assessments = assessmentRepository.findAllByCourseId(courseId, pageable);
+
+        List<Attempt> attempts = assessments
+                .flatMap(assessment -> attemptRepository
+                        .findAllByAssessmentAndStudentId(assessment, studentId).stream())
+                .toList();
 
         List<AttemptResponseDto> responseDtos = attempts.stream()
+                .map(attemptMapper::toResponseDto)
+                .toList();
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("attempts", responseDtos)
+                .build();
+    }
+
+    @Override
+    public ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
+        }
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Attempt> attempts = attemptRepository.findAllByCourseIdAndStudentId(courseId, studentId, pageable);
+
+        List<AttemptResponseDto> response = attempts.stream()
+                .map(attemptMapper::toResponseDto)
+                .toList();
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("attempts", response)
+                .build();
+    }
+
+
+    @Override
+    public ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId, Integer page, Integer size) {
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Attempt> attempts = attemptRepository.findAllByAssessmentId(assessmentId, pageable);
+
+        List<AttemptResponseDto> responseDtos = attempts
                 .map(attemptMapper::toResponseDto)
                 .toList();
 

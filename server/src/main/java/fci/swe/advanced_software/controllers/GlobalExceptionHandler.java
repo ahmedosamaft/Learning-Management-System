@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -99,7 +100,7 @@ public class GlobalExceptionHandler {
                         .map(entry -> entry.getKey() + ": " + entry.getValue())
                         .collect(Collectors.joining("; "))
         );
-
+        log.debug("[GlobalExceptionHandler] Stack trace: ", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -114,6 +115,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({NoSuchElementException.class, ResourceNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(Exception ex, WebRequest request) {
         log.info("Resource Not Found: {}", ex.getMessage());
+        log.debug("[GlobalExceptionHandler] Stack trace: ", ex);
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
@@ -124,9 +126,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler({IllegalArgumentException.class,MethodArgumentTypeMismatchException.class, NumberFormatException.class})
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
         log.info("Invalid Input: {}", ex.getMessage());
+        log.debug("[GlobalExceptionHandler] Stack trace: ", ex);
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -140,6 +143,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex, WebRequest request) {
         log.info("Authorization Denied: {}", ex.getMessage());
+        log.debug("[GlobalExceptionHandler] Stack trace: ", ex);
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.FORBIDDEN.value(),
@@ -153,6 +157,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex, WebRequest request) {
         log.info("Response Status Exception: {}", ex.getMessage());
+        log.debug("[GlobalExceptionHandler] Stack trace: ", ex);
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 ex.getStatusCode().value(),

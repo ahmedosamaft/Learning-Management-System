@@ -4,21 +4,17 @@ import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Question;
 import fci.swe.advanced_software.models.assessments.QuestionType;
-import fci.swe.advanced_software.models.courses.Course;
-import fci.swe.advanced_software.models.courses.Lesson;
-import fci.swe.advanced_software.models.users.Admin;
-import fci.swe.advanced_software.models.users.Instructor;
-import fci.swe.advanced_software.models.users.Role;
-import fci.swe.advanced_software.models.users.Student;
+import fci.swe.advanced_software.models.courses.*;
+import fci.swe.advanced_software.models.users.*;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
-import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.repositories.course.LessonRepository;
+import fci.swe.advanced_software.repositories.course.*;
 import fci.swe.advanced_software.repositories.users.AdminRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
-import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +26,10 @@ import java.util.random.RandomGenerator;
 
 @Component
 @AllArgsConstructor
-public class DataLoader {
+public class DataLoader implements CommandLineRunner {
+    private final MediaRepository mediaRepository;
+    private final AnnouncementRepository announcementRepository;
+    private final CommentRepository commentRepository;
     private CourseRepository courseRepository;
     private LessonRepository lessonRepository;
     private InstructorRepository instructorRepository;
@@ -40,7 +39,7 @@ public class DataLoader {
     private QuestionRepository questionRepository;
     private BCryptPasswordEncoder passwordEncoder;
 
-    @PostConstruct
+    @Transactional
     public void loadData() {
         loadAdmins();
         loadInstructors();
@@ -113,6 +112,17 @@ public class DataLoader {
                     .build()
             );
 
+            Course os = courseRepository.save(Course.builder()
+                    .code("CS316")
+                    .instructor(
+                            instructorRepository
+                                    .findByEmail("ahmed@fcai.instructor.com").orElseThrow(() -> new RuntimeException("NO INSTRUCTOR FOUND"))
+                    )
+                    .name("OS")
+                    .description("This course introduces students to the principles of OS.")
+                    .build()
+            );
+
             Course oop = courseRepository.save(Course.builder()
                     .code("CS311")
                     .instructor(
@@ -126,23 +136,40 @@ public class DataLoader {
 
             loadLessonsToCourse(softwareEngineering);
             loadLessonsToCourse(oop);
+            loadLessonsToCourse(os);
 
             loadQuestionsForCourse(softwareEngineering);
             loadQuestionsForCourse(oop);
+            loadQuestionsForCourse(os);
 
             loadAssessmentsForCourse(softwareEngineering);
             loadAssessmentsForCourse(oop);
+            loadAssessmentsForCourse(os);
+
+            
+            loadAnnouncementsForCourse(softwareEngineering);
+            loadAnnouncementsForCourse(oop);
+            loadAnnouncementsForCourse(os);
         }
     }
 
     private void loadLessonsToCourse(Course course) {
         for (int i = 1; i <= 5; i++) {
-            lessonRepository.save(Lesson.builder()
+            Lesson lesson = lessonRepository.save(Lesson.builder()
                     .title("Lesson " + i + " for " + course.getName())
                     .content("This is the content of Lesson " + i + " for the course " + course.getName() + ".")
                     .otp(course.getCode().toLowerCase() + i)
                     .course(course)
                     .build());
+            Media media = Media
+                    .builder()
+                    .lesson(lesson)
+                    .realName("Video " + i)
+                    .url("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                    .build();
+            mediaRepository.save(media);
+            lessonRepository.flush();
+            mediaRepository.flush();
         }
     }
 
@@ -164,6 +191,7 @@ public class DataLoader {
                     .score(10)
                     .build();
             questionRepository.save(question);
+            questionRepository.flush();
         }
 
         // Create 5 TRUE_FALSE questions
@@ -173,14 +201,15 @@ public class DataLoader {
                     .course(course)
                     .text("True/False Question " + i + " for " + course.getName())
                     .options(Map.of(
-                            "True", "True",
-                            "False", "False"
+                            "true", "True",
+                            "false", "False"
                     ))
                     .correctAnswer(trueFalseOptions[RandomGenerator.getDefault().nextInt(2)])
                     .questionType(QuestionType.TRUE_FALSE)
                     .score(10)
                     .build();
             questionRepository.save(question);
+            questionRepository.flush();
         }
     }
 
@@ -193,7 +222,7 @@ public class DataLoader {
                     .type(AssessmentType.ASSIGNMENT)
                     .maxScore(100)
                     .startsAt(Timestamp.valueOf("2024-12-20 08:00:00"))
-                    .endsAt(Timestamp.valueOf("2024-12-25 08:00:00"))
+                    .endsAt(Timestamp.valueOf("2025-12-25 08:00:00"))
                     .build();
 
             Assessment quiz = Assessment.builder()
@@ -202,7 +231,7 @@ public class DataLoader {
                     .type(AssessmentType.QUIZ)
                     .maxScore(50)
                     .startsAt(Timestamp.valueOf("2024-12-20 08:00:00"))
-                    .endsAt(Timestamp.valueOf("2024-12-22 08:00:00"))
+                    .endsAt(Timestamp.valueOf("2025-12-25 08:00:00"))
                     .build();
 
             assignment = assessmentRepository.save(assignment);
@@ -215,6 +244,37 @@ public class DataLoader {
 
             assessmentRepository.save(assignment);
             assessmentRepository.save(quiz);
+            assessmentRepository.flush();
+            questionRepository.flush();
         }
+    }
+    
+    private void loadAnnouncementsForCourse(Course course) {
+        AbstractUser instructor = course.getInstructor();
+        AbstractUser student = studentRepository.findByEmail("sayed@fcai.student.com").orElseThrow(() -> new RuntimeException("NO STUDENT FOUND"));
+        for (int i = 1; i <= 5; i++) {
+            Announcement announcement = Announcement.builder()
+                    .course(course)
+                    .postedAt(Timestamp.valueOf("2024-12-20 08:00:00"))
+                    .title("Announcement " + i + " for " + course.getName())
+                    .content("Announcement " + i + " for the course " + course.getName() + ".")
+                    .postedBy(instructor)
+                    .build();
+            announcement = announcementRepository.save(announcement);
+            Comment comment = Comment.builder()
+                    .content("Comment " + i + " for the announcement " + announcement.getTitle() + " posted by " + instructor.getName())
+                    .announcement(announcement)
+                    .author(student)
+                    .commentedAt(Timestamp.valueOf("2024-12-20 08:00:00"))
+                    .build();
+            announcementRepository.flush();
+            commentRepository.saveAndFlush(comment);
+        }
+
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        loadData();
     }
 }

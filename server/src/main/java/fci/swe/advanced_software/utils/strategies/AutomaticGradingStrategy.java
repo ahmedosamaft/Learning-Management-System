@@ -7,8 +7,9 @@ public class AutomaticGradingStrategy implements IGradingStrategy {
     @Override
     public void grade(Answer answer) {
         Question question = answer.getQuestion();
-        String correctAnswer = question.getCorrectAnswer();
+        String correctAnswer = question.getCorrectAnswer().toLowerCase();
         String ans = answer.getAnswer().toLowerCase();
+        // Add AI for Correcting Short answer
         if (ans.equals(correctAnswer)) {
             answer.setGrade(question.getScore());
         } else {

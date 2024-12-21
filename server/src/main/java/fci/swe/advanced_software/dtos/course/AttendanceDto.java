@@ -15,6 +15,8 @@ import java.sql.Timestamp;
 @ValidLesson
 @Builder
 public class AttendanceDto {
+    private String id;
+
     @NotNull
     @UUID
     private String studentId;

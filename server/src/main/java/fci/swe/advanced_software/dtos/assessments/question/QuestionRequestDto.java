@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
-import org.hibernate.validator.constraints.UUID;
 
 import java.util.Map;
 
@@ -18,11 +17,8 @@ import java.util.Map;
 @Builder
 @ValidQuestionOptions
 @ValidAnswer
-public class QuestionRequestDto implements IQuestionDto {
+public class QuestionRequestDto {
 
-    @NotNull(message = "Course ID is required.")
-    @NotBlank(message = "Course ID cannot be blank.")
-    @UUID(message = "Course ID must be a valid UUID.")
     private String courseId;
 
     @NotNull(message = "Question text is required.")

@@ -147,6 +147,12 @@ public class StudentService implements IStudentService {
     public ResponseEntity<?> attendLesson(String lessonId, String otp) {
         Student student = validateAndRetrieveCurrentStudent();
         Lesson lesson = validateAndRetrieveLesson(lessonId);
+        if(attendanceRepository.existsByLessonIdAndStudentId(lessonId, student.getId())) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.BAD_REQUEST)
+                    .withMessage("You already attended this lesson!")
+                    .build();
+        }
 
         if (!lesson.getOtp().equals(otp)) {
             return ResponseEntityBuilder.create()
@@ -162,7 +168,7 @@ public class StudentService implements IStudentService {
                 .attendedAt(Timestamp.from(Instant.now()))
                 .build();
 
-        attendanceRepository.save(attendance);
+        attendance = attendanceRepository.save(attendance);
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withMessage("Lesson attended successfully!")
@@ -174,7 +180,7 @@ public class StudentService implements IStudentService {
     public ResponseEntity<?> getFeedbacks(AssessmentType assessmentType) {
         Student student = validateAndRetrieveCurrentStudent();
 
-        List<Attempt> attempts = attemptRepository.findByStudent(student);
+        List<Attempt> attempts = attemptRepository.findAllByStudent(student);
 
         List<FeedbackDto> feedbacksDto = attempts.stream()
                 .filter(

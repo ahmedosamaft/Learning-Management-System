@@ -2,30 +2,37 @@ package fci.swe.advanced_software.services.courses.lesson;
 
 import fci.swe.advanced_software.dtos.course.LessonDto;
 import fci.swe.advanced_software.models.courses.Lesson;
+import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.LessonRepository;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.courses.LessonMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LessonService implements ILessonService {
 
     private final LessonRepository lessonRepository;
     private final LessonMapper lessonMapper;
+    private final RepositoryUtils repositoryUtils;
+    private final CourseRepository courseRepository;
 
     @Override
-    public ResponseEntity<?> getAllLessons(Pageable pageable) {
-        Page<Lesson> lessonsPage = lessonRepository.findAll(pageable);
-        Page<LessonDto> lessonsDto = lessonsPage.map(lessonMapper::toDto);
+    public ResponseEntity<?> getAllLessons(String course_id, Integer page, Integer size) {
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Lesson> lessonsPage = lessonRepository.findAllByCourseId(course_id, pageable);
+        List<LessonDto> lessonsDto = lessonsPage.map(lessonMapper::toDto).getContent();
         return buildSuccessResponse("Lessons retrieved successfully", lessonsDto, HttpStatus.OK);
     }
 
@@ -45,7 +52,9 @@ public class LessonService implements ILessonService {
     }
 
     @Override
-    public ResponseEntity<?> createLesson(LessonDto lessonDto) {
+    public ResponseEntity<?> createLesson(LessonDto lessonDto, String course_id) {
+
+        lessonDto.setCourseId(course_id);
         Lesson lesson = lessonMapper.toEntity(lessonDto);
 
         // Auto-generate the lesson OTP

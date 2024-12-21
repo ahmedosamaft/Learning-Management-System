@@ -6,6 +6,7 @@ import fci.swe.advanced_software.models.users.Instructor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -17,6 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Course extends AbstractEntity {
     @Column(nullable = false)
     private String code;
@@ -39,8 +41,4 @@ public class Course extends AbstractEntity {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Assessment> assessments = new HashSet<>();
-
-    public Course() {
-
-    }
 }

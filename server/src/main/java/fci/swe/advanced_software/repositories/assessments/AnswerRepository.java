@@ -21,4 +21,8 @@ public interface AnswerRepository extends AbstractEntityRepository<Answer> {
 
     List<Answer> findByQuestion(Question question);
     Optional<Answer> findByAttemptAndStudent(Attempt attempt, Student student);
+
+    boolean existsByStudentAndQuestionAndAttempt(Student student, Question question, Attempt attempt);
+
+    boolean existsByStudentAndAttempt(Student student, Attempt attempt);
 }
