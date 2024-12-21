@@ -1,4 +1,4 @@
-package fci.swe.advanced_software.dtos.course;
+package fci.swe.advanced_software.dtos.course.announcement;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +20,7 @@ public class AnnouncementRequestDto {
     @NotNull(message = "Posted by user ID is required.")
     @NotBlank(message = "Posted by user ID cannot be blank.")
     @UUID(message = "Posted by user ID must be a valid UUID.")
-    private String postedByUserId;
+    private String userId;
 
     @NotNull(message = "Title is required.")
     @NotBlank(message = "Title cannot be blank.")

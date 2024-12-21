@@ -2,7 +2,6 @@ package fci.swe.advanced_software.models.users;
 
 import fci.swe.advanced_software.models.assessments.Answer;
 import fci.swe.advanced_software.models.assessments.Attempt;
-import fci.swe.advanced_software.models.courses.AnnouncementComment;
 import fci.swe.advanced_software.models.courses.Attendance;
 import fci.swe.advanced_software.models.courses.Enrollment;
 import jakarta.persistence.CascadeType;
@@ -28,9 +27,6 @@ import java.util.Set;
 public class Student extends AbstractUser {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Set<Enrollment> enrollments = new HashSet<>();
-
-    @OneToMany(mappedBy = "commenter", cascade = CascadeType.ALL)
-    private Set<AnnouncementComment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Set<Attendance> attendances = new HashSet<>();

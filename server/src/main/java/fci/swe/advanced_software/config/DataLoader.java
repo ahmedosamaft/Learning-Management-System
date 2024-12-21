@@ -4,21 +4,15 @@ import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Question;
 import fci.swe.advanced_software.models.assessments.QuestionType;
-import fci.swe.advanced_software.models.courses.Course;
-import fci.swe.advanced_software.models.courses.Lesson;
-import fci.swe.advanced_software.models.courses.Media;
-import fci.swe.advanced_software.models.users.Admin;
-import fci.swe.advanced_software.models.users.Instructor;
-import fci.swe.advanced_software.models.users.Role;
-import fci.swe.advanced_software.models.users.Student;
+import fci.swe.advanced_software.models.courses.*;
+import fci.swe.advanced_software.models.users.*;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
-import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.repositories.course.LessonRepository;
-import fci.swe.advanced_software.repositories.course.MediaRepository;
+import fci.swe.advanced_software.repositories.course.*;
 import fci.swe.advanced_software.repositories.users.AdminRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,6 +28,8 @@ import java.util.random.RandomGenerator;
 @AllArgsConstructor
 public class DataLoader implements CommandLineRunner {
     private final MediaRepository mediaRepository;
+    private final AnnouncementRepository announcementRepository;
+    private final CommentRepository commentRepository;
     private CourseRepository courseRepository;
     private LessonRepository lessonRepository;
     private InstructorRepository instructorRepository;
@@ -43,6 +39,7 @@ public class DataLoader implements CommandLineRunner {
     private QuestionRepository questionRepository;
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Transactional
     public void loadData() {
         loadAdmins();
         loadInstructors();
@@ -148,6 +145,11 @@ public class DataLoader implements CommandLineRunner {
             loadAssessmentsForCourse(softwareEngineering);
             loadAssessmentsForCourse(oop);
             loadAssessmentsForCourse(os);
+
+            
+            loadAnnouncementsForCourse(softwareEngineering);
+            loadAnnouncementsForCourse(oop);
+            loadAnnouncementsForCourse(os);
         }
     }
 
@@ -245,6 +247,30 @@ public class DataLoader implements CommandLineRunner {
             assessmentRepository.flush();
             questionRepository.flush();
         }
+    }
+    
+    private void loadAnnouncementsForCourse(Course course) {
+        AbstractUser instructor = course.getInstructor();
+        AbstractUser student = studentRepository.findByEmail("sayed@fcai.student.com").orElseThrow(() -> new RuntimeException("NO STUDENT FOUND"));
+        for (int i = 1; i <= 5; i++) {
+            Announcement announcement = Announcement.builder()
+                    .course(course)
+                    .postedAt(Timestamp.valueOf("2024-12-20 08:00:00"))
+                    .title("Announcement " + i + " for " + course.getName())
+                    .content("Announcement " + i + " for the course " + course.getName() + ".")
+                    .postedBy(instructor)
+                    .build();
+            announcement = announcementRepository.save(announcement);
+            Comment comment = Comment.builder()
+                    .content("Comment " + i + " for the announcement " + announcement.getTitle() + " posted by " + instructor.getName())
+                    .announcement(announcement)
+                    .author(student)
+                    .commentedAt(Timestamp.valueOf("2024-12-20 08:00:00"))
+                    .build();
+            announcementRepository.flush();
+            commentRepository.saveAndFlush(comment);
+        }
+
     }
 
     @Override
