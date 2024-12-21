@@ -16,4 +16,6 @@ public interface AttemptRepository extends AbstractEntityRepository<Attempt> {
     List<Attempt> findByStudent(Student student);
 
     Attempt findByAssessmentAndStudent(Assessment assessment, Student student);
+
+    boolean existsByStudentIdAndAssessmentId(String studentId, String assessmentId);
 }

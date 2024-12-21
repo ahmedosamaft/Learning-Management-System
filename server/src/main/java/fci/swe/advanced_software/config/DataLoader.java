@@ -185,8 +185,8 @@ public class DataLoader implements CommandLineRunner {
                     .course(course)
                     .text("True/False Question " + i + " for " + course.getName())
                     .options(Map.of(
-                            "True", "True",
-                            "False", "False"
+                            "true", "True",
+                            "false", "False"
                     ))
                     .correctAnswer(trueFalseOptions[RandomGenerator.getDefault().nextInt(2)])
                     .questionType(QuestionType.TRUE_FALSE)
@@ -206,7 +206,7 @@ public class DataLoader implements CommandLineRunner {
                     .type(AssessmentType.ASSIGNMENT)
                     .maxScore(100)
                     .startsAt(Timestamp.valueOf("2024-12-20 08:00:00"))
-                    .endsAt(Timestamp.valueOf("2024-12-25 08:00:00"))
+                    .endsAt(Timestamp.valueOf("2025-12-25 08:00:00"))
                     .build();
 
             Assessment quiz = Assessment.builder()
@@ -215,7 +215,7 @@ public class DataLoader implements CommandLineRunner {
                     .type(AssessmentType.QUIZ)
                     .maxScore(50)
                     .startsAt(Timestamp.valueOf("2024-12-20 08:00:00"))
-                    .endsAt(Timestamp.valueOf("2024-12-22 08:00:00"))
+                    .endsAt(Timestamp.valueOf("2025-12-25 08:00:00"))
                     .build();
 
             assignment = assessmentRepository.save(assignment);

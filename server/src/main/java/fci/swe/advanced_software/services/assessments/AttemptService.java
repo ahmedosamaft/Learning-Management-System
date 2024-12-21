@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -33,9 +34,13 @@ public class AttemptService implements IAttemptService {
     private final AuthUtils authUtils;
 
     @Override
-    public ResponseEntity<?> createAttempt(String course_id, AssessmentType type, String assessment_id) {
+    public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
+        if(attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You already attempted this " + type.name().toLowerCase() + "!");
+        }
+
         Assessment assessment = assessmentRepository
-                .findById(assessment_id)
+                .findById(assessmentId)
                 .orElse(null);
 
         if (assessment == null) {
