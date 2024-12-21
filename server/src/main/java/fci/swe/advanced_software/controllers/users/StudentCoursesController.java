@@ -5,6 +5,7 @@ import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.assessments.IAnswerService;
 import fci.swe.advanced_software.services.assessments.IAttemptService;
+import fci.swe.advanced_software.services.assessments.IQuestionService;
 import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
 import fci.swe.advanced_software.services.courses.announcement.IAnnouncementService;
 import fci.swe.advanced_software.services.courses.course.ICourseService;
@@ -32,6 +33,7 @@ public class StudentCoursesController {
     private final IAttemptService attemptService;
     private final IAnswerService answerService;
     private final IAnnouncementService announcementService;
+    private final IQuestionService questionService;
 
     @PostMapping
     public ResponseEntity<?> enroll(@PathVariable String courseId) {
@@ -100,6 +102,24 @@ public class StudentCoursesController {
     @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
     public ResponseEntity<?> startQuizAttempt(@PathVariable String courseId, @PathVariable String quiz_id) {
         return attemptService.createAttempt(courseId, AssessmentType.QUIZ, quiz_id);
+    }
+
+    @GetMapping("/assignments/{assignmentId}/questions")
+    @PreAuthorize("@authorizationService.isEnrolled(#courseId) AND @authorizationService.containsAssessment(#courseId, #assignmentId)")
+    public ResponseEntity<?> getAssignmentQuestions(@PathVariable String courseId,
+                                                    @PathVariable String assignmentId,
+                                                    @RequestParam(required = false, defaultValue = "1") Integer page,
+                                                    @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return assessmentService.getAssessmentQuestionsForStudent(assignmentId, AssessmentType.ASSIGNMENT, page, size);
+    }
+
+    @GetMapping("/quizzes/{quizId}/questions")
+    @PreAuthorize("@authorizationService.isEnrolled(#courseId) AND @authorizationService.containsAssessment(#courseId, #quizId)")
+    public ResponseEntity<?> getQuizzesQuestions(@PathVariable String courseId,
+                                                    @PathVariable String quizId,
+                                                    @RequestParam(required = false, defaultValue = "1") Integer page,
+                                                    @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return assessmentService.getAssessmentQuestionsForStudent(quizId, AssessmentType.QUIZ, page, size);
     }
 
     @PostMapping("/assignments/{assignment_id}/attempts/{attempt_id}")

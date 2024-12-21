@@ -2,7 +2,6 @@ package fci.swe.advanced_software.controllers.users.instructor;
 
 import fci.swe.advanced_software.dtos.assessments.QuestionAssessmentDto;
 import fci.swe.advanced_software.models.users.Roles;
-import fci.swe.advanced_software.services.assessments.assessment.AssessmentService;
 import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
@@ -25,8 +24,10 @@ public class InstructorQuizQuestionsController {
     @GetMapping
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
     public ResponseEntity<?> getQuestionsOfQuiz(@PathVariable String course_id,
-                                                      @PathVariable String quiz_id) {
-        return assessmentService.getQuestionsOfAssessment(quiz_id);
+                                                @PathVariable String quiz_id,
+                                                @RequestParam(required = false, defaultValue = "1") Integer page,
+                                                @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return assessmentService.getAssessmentQuestions(quiz_id, page, size);
     }
 
     @PostMapping

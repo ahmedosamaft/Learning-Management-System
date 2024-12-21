@@ -10,9 +10,13 @@ import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AttemptMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +25,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -33,6 +36,7 @@ public class AttemptService implements IAttemptService {
     private final StudentRepository studentRepository;
     private final AttemptMapper attemptMapper;
     private final AuthUtils authUtils;
+    private final RepositoryUtils repositoryUtils;
 
     @Override
     public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
@@ -121,15 +125,14 @@ public class AttemptService implements IAttemptService {
                 .build();
     }
 
-    @Override
-    public ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId) {
+    public ResponseEntity<?> oldGetAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
         if (!studentRepository.existsById(studentId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
         }
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Assessment> assessments = assessmentRepository.findAllByCourseId(courseId, pageable);
 
-        List<Assessment> assessments = assessmentRepository.findAllByCourseId(courseId);
-
-        List<Attempt> attempts = assessments.stream()
+        List<Attempt> attempts = assessments
                 .flatMap(assessment -> attemptRepository
                         .findAllByAssessmentAndStudentId(assessment, studentId).stream())
                 .toList();
@@ -144,18 +147,31 @@ public class AttemptService implements IAttemptService {
                 .build();
     }
 
+    @Override
+    public ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
+        }
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Attempt> attempts = attemptRepository.findAllByCourseIdAndStudentId(courseId, studentId, pageable);
+
+        List<AttemptResponseDto> response = attempts.stream()
+                .map(attemptMapper::toResponseDto)
+                .toList();
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("attempts", response)
+                .build();
+    }
+
 
     @Override
-    public ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId) {
-        List<Attempt> attempts = attemptRepository.findAllByAssessmentId(assessmentId);
-        if (attempts.isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("No attempts found for this assessment!")
-                    .build();
-        }
+    public ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId, Integer page, Integer size) {
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Attempt> attempts = attemptRepository.findAllByAssessmentId(assessmentId, pageable);
 
-        List<AttemptResponseDto> responseDtos = attempts.stream()
+        List<AttemptResponseDto> responseDtos = attempts
                 .map(attemptMapper::toResponseDto)
                 .toList();
 

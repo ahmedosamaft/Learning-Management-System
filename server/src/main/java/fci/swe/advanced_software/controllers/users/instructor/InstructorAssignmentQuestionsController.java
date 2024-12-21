@@ -2,7 +2,7 @@ package fci.swe.advanced_software.controllers.users.instructor;
 
 import fci.swe.advanced_software.dtos.assessments.QuestionAssessmentDto;
 import fci.swe.advanced_software.models.users.Roles;
-import fci.swe.advanced_software.services.assessments.assessment.AssessmentService;
+import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
@@ -19,13 +19,15 @@ import java.util.List;
 @RolesAllowed(Roles.INSTRUCTOR)
 public class InstructorAssignmentQuestionsController {
 
-    private final AssessmentService assessmentService;
+    private final IAssessmentService assessmentService;
 
     @GetMapping
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
     public ResponseEntity<?> getQuestionsOfAssignment(@PathVariable String course_id,
-                                                      @PathVariable String assignment_id) {
-        return assessmentService.getQuestionsOfAssessment(assignment_id);
+                                                      @PathVariable String assignment_id,
+                                                      @RequestParam(required = false, defaultValue = "1") Integer page,
+                                                      @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return assessmentService.getAssessmentQuestions(assignment_id, page, size);
     }
 
     @PostMapping

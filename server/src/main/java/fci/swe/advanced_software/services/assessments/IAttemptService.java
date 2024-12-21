@@ -9,11 +9,11 @@ public interface IAttemptService {
 
     ResponseEntity<?> getAttemptById(String id);
 
-    ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId);
+    ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId, Integer page, Integer size);
 
     ResponseEntity<?> getAttemptsByStudentId(String studentId);
 
-    ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId);
+    ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size);
 
     ResponseEntity<?> deleteAttempt(String id);
 }

@@ -22,7 +22,9 @@ public interface IAssessmentService {
 
     ResponseEntity<?> removeQuestionFromAssessment(String assessmentId, String questionId);
 
-    ResponseEntity<?> getQuestionsOfAssessment(String assessmentId);
+    ResponseEntity<?> getAssessmentQuestions(String assessmentId, Integer page, Integer size);
+
+    ResponseEntity<?> getAssessmentQuestionsForStudent(String assessmentId, AssessmentType assessmentType, Integer page, Integer size);
 }
 
 

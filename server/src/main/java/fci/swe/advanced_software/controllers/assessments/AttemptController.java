@@ -1,7 +1,5 @@
 package fci.swe.advanced_software.controllers.assessments;
 
-import fci.swe.advanced_software.models.assessments.Assessment;
-import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.services.assessments.IAttemptService;
@@ -25,10 +23,6 @@ public class AttemptController {
         return attemptService.getAttemptById(id);
     }
 
-    @GetMapping("/assessment/{assessmentId}")
-    public ResponseEntity<?> getAttemptsByAssessment(@PathVariable String assessmentId) {
-        return attemptService.getAttemptsByAssessmentId(assessmentId);
-    }
 
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getAttemptsByStudent(@PathVariable String studentId) {

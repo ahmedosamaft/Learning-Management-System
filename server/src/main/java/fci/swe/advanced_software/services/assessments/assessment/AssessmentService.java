@@ -4,16 +4,15 @@ import fci.swe.advanced_software.dtos.assessments.QuestionAssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentQuestionsDto;
 import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
+import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Question;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
+import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.utils.Constants;
-import fci.swe.advanced_software.utils.Helper;
-import fci.swe.advanced_software.utils.RepositoryUtils;
-import fci.swe.advanced_software.utils.ResponseEntityBuilder;
+import fci.swe.advanced_software.utils.*;
 import fci.swe.advanced_software.utils.mappers.assessments.AssessmentMapper;
 import fci.swe.advanced_software.utils.mappers.assessments.AssessmentQuestionsMapper;
 import fci.swe.advanced_software.utils.mappers.assessments.QuestionMapper;
@@ -24,7 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -39,6 +40,8 @@ public class AssessmentService implements IAssessmentService {
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
     private final AssessmentQuestionsMapper assessmentQuestionsMapper;
+    private final AttemptRepository attemptRepository;
+    private final AuthUtils authUtils;
 
     @Override
     public ResponseEntity<?> getAllAssessments(String course_id, AssessmentType type, Integer page, Integer size) {
@@ -189,7 +192,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> getQuestionsOfAssessment(String assessmentId) {
+    public ResponseEntity<?> getAssessmentQuestions(String assessmentId, Integer page, Integer size) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElse(null);
         if (assessment == null) {
             return ResponseEntityBuilder.create()
@@ -198,14 +201,30 @@ public class AssessmentService implements IAssessmentService {
                     .build();
         }
 
-        List<QuestionResponseDto> questions = assessment.getQuestions().stream().
-                map(questionMapper::toResponseDto)
+        List<QuestionResponseDto> questions = assessment.getQuestions().stream()
+                .sorted(Comparator.comparing(AbstractEntity::getCreatedAt))
+                .map(questionMapper::toResponseDto)
                 .toList();
+
+        page = Math.max(page - 1, 0);
+        size = Math.min(size, 100);
+
+        int start = Math.min(page * size, questions.size());
+        int end = Math.min(start + size, questions.size());
+        questions = questions.subList(start, end);
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
                 .withData("questions", questions)
                 .withMessage("Questions retrieved successfully!")
                 .build();
+    }
+
+    @Override
+    public ResponseEntity<?> getAssessmentQuestionsForStudent(String assessmentId, AssessmentType type, Integer page, Integer size) {
+        if (!attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to view this " + type.name().toLowerCase() + "!");
+        }
+        return getAssessmentQuestions(assessmentId, page, size);
     }
 }
