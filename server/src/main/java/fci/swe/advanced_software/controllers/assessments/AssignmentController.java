@@ -1,7 +1,6 @@
 package fci.swe.advanced_software.controllers.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
-import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.validation.Valid;
@@ -17,7 +16,7 @@ public class AssignmentController {
 
     @PostMapping
     public ResponseEntity<?> createAssignment(@Valid @RequestBody AssessmentDto assignment) {
-        assignment.setType(AssessmentType.ASSIGNMENT);
+//        assignment.setType(AssessmentType.ASSIGNMENT);
         return assessmentService.createAssessment(assignment);
     }
 
@@ -28,7 +27,7 @@ public class AssignmentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAssignment(@PathVariable String id, @Valid @RequestBody AssessmentDto assignment) {
-        assignment.setType(AssessmentType.ASSIGNMENT);
+//        assignment.setType(AssessmentType.ASSIGNMENT);
         return assessmentService.updateAssessment(id, assignment);
     }
 

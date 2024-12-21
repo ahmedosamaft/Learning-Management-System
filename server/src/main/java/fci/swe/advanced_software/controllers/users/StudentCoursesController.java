@@ -44,6 +44,22 @@ public class StudentCoursesController {
         return lessonService.getAllLessons(course_id, page, size);
     }
 
+    @GetMapping("/assignments")
+    @PreAuthorize("@authorizationService.isEnrolled(#course_id)")
+    public ResponseEntity<?> getAssignments(@PathVariable String course_id,
+                                            @RequestParam(required = false, defaultValue = "1") Integer page,
+                                            @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return assessmentService.getAllAssessments(course_id, AssessmentType.ASSIGNMENT, page, size);
+    }
+
+    @GetMapping("/quizzes")
+    @PreAuthorize("@authorizationService.isEnrolled(#course_id)")
+    public ResponseEntity<?> getQuizzes(@PathVariable String course_id,
+                                        @RequestParam(required = false, defaultValue = "1") Integer page,
+                                        @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return assessmentService.getAllAssessments(course_id, AssessmentType.QUIZ, page, size);
+    }
+
     @GetMapping("/lessons/{lesson_id}")
     @PreAuthorize("@authorizationService.isEnrolled(#course_id)")
     public ResponseEntity<?> getLesson(@PathVariable String course_id, @PathVariable String lesson_id) {
@@ -58,24 +74,21 @@ public class StudentCoursesController {
         return studentService.attendLesson(lesson_id, otp);
     }
 
-    @GetMapping("/assignments")
-    @PreAuthorize("@authorizationService.isEnrolled(#course_id)")
-    public ResponseEntity<?> getAssignments(@PathVariable String course_id,
-                                            @RequestParam(required = false, defaultValue = "1") Integer page,
-                                            @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return assessmentService.getAllAssessments(course_id, AssessmentType.ASSIGNMENT, page, size);
-    }
-
-
     @PostMapping("/assignments/{assignment_id}")
     @PreAuthorize("@authorizationService.isEnrolled(#course_id)")
     public ResponseEntity<?> startAssignmentAttempt(@PathVariable String course_id, @PathVariable String assignment_id) {
         return attemptService.createAttempt(course_id, AssessmentType.ASSIGNMENT, assignment_id);
     }
 
+    @PostMapping("/quizzes/{quiz_id}")
+    @PreAuthorize("@authorizationService.isEnrolled(#course_id)")
+    public ResponseEntity<?> startQuizAttempt(@PathVariable String course_id, @PathVariable String quiz_id) {
+        return attemptService.createAttempt(course_id, AssessmentType.QUIZ, quiz_id);
+    }
+
     @PostMapping("/assignments/{assignment_id}/attempts/{attempt_id}")
     @PreAuthorize("@authorizationService.isEnrolled(#course_id)")
-    public ResponseEntity<?> submitAnswers(@PathVariable String course_id,
+    public ResponseEntity<?> submitAssignmentAnswers(@PathVariable String course_id,
                                            @PathVariable String assignment_id,
                                            @PathVariable String attempt_id,
                                            @RequestBody @Valid List<AnswerRequestDto> answers) {
@@ -88,4 +101,18 @@ public class StudentCoursesController {
             answers);
     }
 
+    @PostMapping("/quizzes/{quiz_id}/attempts/{attempt_id}")
+    @PreAuthorize("@authorizationService.isEnrolled(#course_id)")
+    public ResponseEntity<?> submitQuizAnswers(@PathVariable String course_id,
+                                                     @PathVariable String quiz_id,
+                                                     @PathVariable String attempt_id,
+                                                     @RequestBody @Valid List<AnswerRequestDto> answers) {
+
+        return answerService.submitAnswers(
+                course_id,
+                quiz_id,
+                AssessmentType.QUIZ,
+                attempt_id,
+                answers);
+    }
 }

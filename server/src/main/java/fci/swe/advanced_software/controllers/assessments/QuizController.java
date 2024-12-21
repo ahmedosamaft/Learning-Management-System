@@ -1,7 +1,6 @@
 package fci.swe.advanced_software.controllers.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
-import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.validation.Valid;
@@ -17,7 +16,7 @@ public class QuizController {
 
     @PostMapping
     public ResponseEntity<?> createQuiz(@Valid @RequestBody AssessmentDto quiz) {
-        quiz.setType(AssessmentType.QUIZ);
+//        quiz.setType(AssessmentType.QUIZ);
         return assessmentService.createAssessment(quiz);
     }
 
@@ -28,7 +27,7 @@ public class QuizController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateQuiz(@PathVariable String id, @Valid @RequestBody AssessmentDto quiz) {
-        quiz.setType(AssessmentType.QUIZ);
+//        quiz.setType(AssessmentType.QUIZ);
         return assessmentService.updateAssessment(id, quiz);
     }
 
