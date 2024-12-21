@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class InstructorLessonsController {
     private final ILessonService lessonService;
 
-
     @PostMapping
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
     public ResponseEntity<?> createLesson(@PathVariable String course_id,@Valid @RequestBody LessonDto lessonDto) {

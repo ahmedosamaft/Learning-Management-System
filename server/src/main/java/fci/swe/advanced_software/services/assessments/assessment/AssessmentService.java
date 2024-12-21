@@ -1,15 +1,20 @@
 package fci.swe.advanced_software.services.assessments.assessment;
 
+import fci.swe.advanced_software.dtos.assessments.QuestionAssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
+import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentQuestionsDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
+import fci.swe.advanced_software.models.assessments.Question;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
+import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.Helper;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AssessmentMapper;
+import fci.swe.advanced_software.utils.mappers.assessments.AssessmentQuestionsMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +34,8 @@ public class AssessmentService implements IAssessmentService {
     private final CourseRepository courseRepository;
     private final RepositoryUtils repositoryUtils;
     private final Helper helper;
-
+    private final QuestionRepository questionRepository;
+    private final AssessmentQuestionsMapper assessmentQuestionsMapper;
 
     @Override
     public ResponseEntity<?> getAllAssessments(String course_id, AssessmentType type, Integer page, Integer size) {
@@ -120,5 +126,90 @@ public class AssessmentService implements IAssessmentService {
         assessmentRepository.delete(assessment);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<?> addQuestionsToAssessment(String assessmentId, List<QuestionAssessmentDto> questionAssessmentDtos) {
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElse(null);
+        if (assessment == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Assessment not found!")
+                    .build();
+        }
+        for (QuestionAssessmentDto questionAssessmentDto : questionAssessmentDtos) {
+            Question question = questionRepository.findById(questionAssessmentDto.getQuestionId()).orElse(null);
+            if (question == null) {
+                return ResponseEntityBuilder.create()
+                        .withStatus(HttpStatus.NOT_FOUND)
+                        .withMessage("Question not found!")
+                        .build();
+            }
+
+            assessment.addQuestion(question);
+        }
+        assessment = assessmentRepository.save(assessment);
+
+        AssessmentQuestionsDto assessmentQuestionsDto = assessmentQuestionsMapper.toResponseDto(assessment);
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withMessage("Questions added successfully!")
+                .withData("assessment", assessmentQuestionsDto)
+                .build();
+    }
+
+    @Override
+    public ResponseEntity<?> removeQuestionFromAssessment(String assessmentId, String questionId) {
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElse(null);
+        if (assessment == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Assessment not found!")
+                    .build();
+        }
+        Question question = questionRepository.findById(questionId).orElse(null);
+        if (question == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Question not found!")
+                    .build();
+        }
+        if (!assessmentRepository.existsByAssessmentIdAndQuestionId(assessmentId, questionId)) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.BAD_REQUEST)
+                    .withMessage("Question not found in assessment!")
+                    .build();
+        }
+
+        assessment.removeQuestion(question);
+        assessment = assessmentRepository.save(assessment);
+
+        AssessmentQuestionsDto assessmentQuestionsDto = assessmentQuestionsMapper.toResponseDto(assessment);
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withMessage("Question removed successfully!")
+                .withData("assessment", assessmentQuestionsDto)
+                .build();
+    }
+
+    @Override
+    public ResponseEntity<?> getQuestionsOfAssessment(String assessmentId) {
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElse(null);
+        if (assessment == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Assessment not found!")
+                    .build();
+        }
+
+        AssessmentQuestionsDto assessmentQuestionsDto = assessmentQuestionsMapper.toResponseDto(assessment);
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("assessment", assessmentQuestionsDto)
+                .withMessage("Questions retrieved successfully!")
+                .build();
     }
 }

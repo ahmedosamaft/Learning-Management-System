@@ -19,7 +19,6 @@ public abstract class AssessmentMapper {
     @Mapping(target = "type", ignore = true)
     public abstract Assessment toEntity(AssessmentDto requestDto);
 
-
     @Mapping(target = "courseId", source = "course.id")
     public abstract AssessmentDto toResponseDto(Assessment assessment);
 
