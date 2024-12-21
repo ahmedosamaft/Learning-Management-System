@@ -40,5 +40,5 @@ public class Announcement extends AbstractEntity {
     private List<Media> media;
 
     @OneToMany(mappedBy = "announcement", cascade = CascadeType.ALL)
-    private List<AnnouncementComment> comments;
+    private List<Comment> comments;
 }

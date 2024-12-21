@@ -1,15 +1,20 @@
 package fci.swe.advanced_software.services.courses.announcement;
 
-import fci.swe.advanced_software.dtos.course.AnnouncementRequestDto;
-import fci.swe.advanced_software.dtos.course.AnnouncementResponseDto;
+import fci.swe.advanced_software.dtos.course.announcement.AnnouncementListDto;
+import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto;
+import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
 import fci.swe.advanced_software.models.courses.Announcement;
-import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.repositories.course.AnnouncementRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.courses.AnnouncementMapper;
+import fci.swe.advanced_software.utils.mappers.users.UserResponseMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +28,8 @@ public class AnnouncementService implements IAnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementMapper announcementMapper;
     private final CourseRepository courseRepository;
+    private final RepositoryUtils repositoryUtils;
+    private final UserResponseMapper userResponseMapper;
 
     @Override
     public ResponseEntity<?> createAnnouncement(AnnouncementRequestDto requestDto) {
@@ -63,8 +70,8 @@ public class AnnouncementService implements IAnnouncementService {
             announcement.setContent(requestDto.getContent());
         }
 
-        if (requestDto.getPostedByUserId() != null) {
-            announcement.setPostedBy(announcementMapper.userDtoToUser(requestDto.getPostedByUserId()));
+        if (requestDto.getUserId() != null) {
+            announcement.setPostedBy(announcementMapper.userDtoToUser(requestDto.getUserId()));
         }
 
         announcement = announcementRepository.save(announcement);
@@ -79,7 +86,7 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<AnnouncementResponseDto> getAnnouncement(String id) {
+    public ResponseEntity<?> getAnnouncement(String id) {
         Announcement announcement = announcementRepository.findById(id).orElse(null);
 
         if (announcement == null) {
@@ -88,7 +95,10 @@ public class AnnouncementService implements IAnnouncementService {
 
         AnnouncementResponseDto responseDto = announcementMapper.toResponseDto(announcement);
 
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("announcement", responseDto)
+                .build();
     }
 
     @Override
@@ -111,17 +121,24 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<List<AnnouncementResponseDto>> getAllAnnouncementsForCourse(Course course) {
-        List<Announcement> announcements = announcementRepository.findByCourse(course);
+    public ResponseEntity<?> getAnnouncements(String courseId, Integer page, Integer size) {
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Announcement> announcements = announcementRepository.findByCourseId(courseId, pageable);
 
-        if (announcements.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        List<AnnouncementResponseDto> responseDtos = announcements.stream()
-                .map(announcementMapper::toResponseDto)
+        List<AnnouncementListDto> response = announcements.map(
+                (announcement) ->
+                        AnnouncementListDto.builder()
+                                .id(announcement.getId())
+                                .title(announcement.getTitle())
+                                .author(userResponseMapper.toDto(announcement.getPostedBy()))
+                                .postedAt(announcement.getPostedAt())
+                                .build()
+                )
                 .toList();
 
-        return ResponseEntity.ok(responseDtos);
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("announcements", response)
+                .build();
     }
 }

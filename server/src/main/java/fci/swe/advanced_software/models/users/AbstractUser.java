@@ -2,6 +2,7 @@ package fci.swe.advanced_software.models.users;
 
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.Notification;
+import fci.swe.advanced_software.models.courses.Comment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +11,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -34,7 +34,10 @@ public class AbstractUser extends AbstractEntity {
     @Column(nullable = false, length = 50)
     private Role role;
 
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private Set<Comment> comments;
+
     @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL)
     @Column(nullable = false)
-    private Set<Notification> notifications = new TreeSet<>();
+    private Set<Notification> notifications;
 }

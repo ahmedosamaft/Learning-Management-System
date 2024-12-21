@@ -1,5 +1,6 @@
-package fci.swe.advanced_software.dtos.course;
+package fci.swe.advanced_software.dtos.course.announcement;
 
+import fci.swe.advanced_software.dtos.users.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,10 +16,10 @@ import java.util.List;
 public class AnnouncementResponseDto {
     private String id;
     private String courseId;
-    private String postedByUserId;
+    private UserResponseDto author;
     private String title;
     private String content;
     private Timestamp postedAt;
     private List<String> mediaUrls;
-    private List<String> commentIds;
+    private List<CommentDto> comments;
 }
