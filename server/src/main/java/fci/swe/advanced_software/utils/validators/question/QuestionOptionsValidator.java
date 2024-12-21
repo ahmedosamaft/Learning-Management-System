@@ -1,16 +1,16 @@
 package fci.swe.advanced_software.utils.validators.question;
 
-import fci.swe.advanced_software.dtos.assessments.question.IQuestionDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
 import fci.swe.advanced_software.models.assessments.QuestionType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.Map;
 
-public class QuestionOptionsValidator implements ConstraintValidator<ValidQuestionOptions, IQuestionDto> {
+public class QuestionOptionsValidator implements ConstraintValidator<ValidQuestionOptions, QuestionRequestDto> {
 
     @Override
-    public boolean isValid(IQuestionDto dto, ConstraintValidatorContext context) {
+    public boolean isValid(QuestionRequestDto dto, ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();
 
         if (dto == null) {

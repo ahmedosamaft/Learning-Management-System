@@ -1,6 +1,6 @@
 package fci.swe.advanced_software.utils.validators.question;
 
-import fci.swe.advanced_software.dtos.assessments.question.IQuestionDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
 import fci.swe.advanced_software.models.assessments.QuestionType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -8,10 +8,10 @@ import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
-public class AnswerValidator implements ConstraintValidator<ValidAnswer, IQuestionDto> {
+public class AnswerValidator implements ConstraintValidator<ValidAnswer, QuestionRequestDto> {
 
     @Override
-    public boolean isValid(IQuestionDto dto, ConstraintValidatorContext context) {
+    public boolean isValid(QuestionRequestDto dto, ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();
 
         if (dto == null) {
