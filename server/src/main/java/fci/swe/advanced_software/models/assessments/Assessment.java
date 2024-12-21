@@ -53,4 +53,12 @@ public class Assessment extends AbstractEntity {
 
     @Column(nullable = false)
     private Timestamp endsAt;
+
+    public boolean addQuestion(Question question) {
+        return questions.add(question);
+    }
+
+    public boolean removeQuestion(Question question) {
+        return questions.remove(question);
+    }
 }

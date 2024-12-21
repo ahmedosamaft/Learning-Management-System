@@ -112,6 +112,17 @@ public class DataLoader implements CommandLineRunner {
                     .build()
             );
 
+            Course os = courseRepository.save(Course.builder()
+                    .code("CS316")
+                    .instructor(
+                            instructorRepository
+                                    .findByEmail("ahmed@fcai.instructor.com").orElseThrow(() -> new RuntimeException("NO INSTRUCTOR FOUND"))
+                    )
+                    .name("OS")
+                    .description("This course introduces students to the principles of OS.")
+                    .build()
+            );
+
             Course oop = courseRepository.save(Course.builder()
                     .code("CS311")
                     .instructor(
@@ -125,15 +136,20 @@ public class DataLoader implements CommandLineRunner {
 
             loadLessonsToCourse(softwareEngineering);
             loadLessonsToCourse(oop);
+            loadLessonsToCourse(os);
 
             loadQuestionsForCourse(softwareEngineering);
             loadQuestionsForCourse(oop);
+            loadQuestionsForCourse(os);
 
             loadAssessmentsForCourse(softwareEngineering);
             loadAssessmentsForCourse(oop);
+            loadAssessmentsForCourse(os);
+
             
             loadAnnouncementsForCourse(softwareEngineering);
             loadAnnouncementsForCourse(oop);
+            loadAnnouncementsForCourse(os);
         }
     }
 

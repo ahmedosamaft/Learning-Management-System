@@ -23,11 +23,6 @@ public class LessonController {
         return lessonService.getLessonById(id);
     }
 
-    @PostMapping
-    @RolesAllowed({Roles.INSTRUCTOR, Roles.ADMIN})
-    public ResponseEntity<?> createLesson(@Valid @RequestBody LessonDto lessonDto) {
-        return lessonService.createLesson(lessonDto);
-    }
 
     @PutMapping("/{id}")
     @RolesAllowed({Roles.INSTRUCTOR, Roles.ADMIN})

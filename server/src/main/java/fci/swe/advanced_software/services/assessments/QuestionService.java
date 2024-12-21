@@ -2,17 +2,22 @@ package fci.swe.advanced_software.services.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
 import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
-import fci.swe.advanced_software.dtos.assessments.question.QuestionUpdateDto;
 import fci.swe.advanced_software.models.assessments.Question;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.QuestionMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -21,9 +26,15 @@ public class QuestionService implements IQuestionService {
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
     private final CourseRepository courseRepository;
+    private final RepositoryUtils repositoryUtils;
 
-    public ResponseEntity<?> createQuestion(QuestionRequestDto requestDto) {
+
+    public ResponseEntity<?> createQuestion(String courseId, QuestionRequestDto requestDto) {
         Question question = questionMapper.toEntity(requestDto);
+
+        question.setCourse(courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + courseId)));
+
         question = questionRepository.save(question);
 
         QuestionResponseDto responseDto = questionMapper.toResponseDto(question);
@@ -36,7 +47,7 @@ public class QuestionService implements IQuestionService {
                 .build();
     }
 
-    public ResponseEntity<?> updateQuestion(String id, QuestionUpdateDto requestDto) {
+    public ResponseEntity<?> updateQuestion(String courseId, String id, QuestionRequestDto requestDto) {
         Question question = questionRepository.findById(id).orElse(null);
 
         if (question == null) {
@@ -46,25 +57,8 @@ public class QuestionService implements IQuestionService {
                     .build();
         }
 
-        if (requestDto.getCourseId() != null) {
-            question.setCourse(courseRepository.findById(requestDto.getCourseId()).orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + requestDto.getCourseId())));
-        }
-
-        if (requestDto.getText() != null) {
-            question.setText(requestDto.getText());
-        }
-
-//        if (requestDto.getImageUrl() != null) {
-//            question.setImageUrl(requestDto.getImageUrl());
-//        }
-
-        if (requestDto.getCorrectAnswer() != null) {
-            question.setCorrectAnswer(requestDto.getCorrectAnswer());
-        }
-
-        if (requestDto.getQuestionType() != null) {
-            question.setQuestionType(requestDto.getQuestionType());
-            question.setOptions(requestDto.getOptions());
+        if (requestDto.getCourseId() == null) {
+            requestDto.setCourseId(courseId);
         }
 
         question = questionRepository.save(question);
@@ -78,7 +72,7 @@ public class QuestionService implements IQuestionService {
                 .build();
     }
 
-    public ResponseEntity<?> getQuestion(String id) {
+    public ResponseEntity<?> getQuestionById(String id) {
         Question question = questionRepository.findById(id).orElse(null);
 
         if (question == null) {
@@ -114,4 +108,16 @@ public class QuestionService implements IQuestionService {
                 .withMessage("Question deleted successfully!")
                 .build();
     }
+
+    public ResponseEntity<?> getAllQuestions(String courseId, Integer page, Integer size) {
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Question> questionsPage = questionRepository.findAllByCourseId(courseId, pageable);
+        List<QuestionResponseDto> questions = questionsPage.map(questionMapper::toResponseDto).getContent();
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("questions", questions)
+                .withMessage("questions" + " retrieved successfully!")
+                .build();
+    }
+
 }

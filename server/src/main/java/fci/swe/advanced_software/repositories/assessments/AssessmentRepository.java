@@ -15,5 +15,10 @@ public interface AssessmentRepository extends AbstractEntityRepository<Assessmen
     List<Assessment> findAllByCourse(Course course);
 
     List<Assessment> findAllByCourseAndType(Course course, AssessmentType type);
+
     Page<Assessment> findAllByCourseIdAndType(String course_id, AssessmentType type, Pageable pageable);
+
+    boolean existsByIdAndCourseId(String assessmentId, String courseId);
+
+    List<Assessment> findAllByCourseId(String courseId);
 }

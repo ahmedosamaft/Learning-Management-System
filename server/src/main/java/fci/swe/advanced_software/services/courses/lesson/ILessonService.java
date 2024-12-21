@@ -8,7 +8,7 @@ public interface ILessonService {
 
     ResponseEntity<?> getLessonById(String id);
 
-    ResponseEntity<?> createLesson(LessonDto lessonDto);
+    ResponseEntity<?> createLesson(LessonDto lessonDto, String course_id);
 
     ResponseEntity<?> updateLesson(String id, LessonDto lessonDto);
 

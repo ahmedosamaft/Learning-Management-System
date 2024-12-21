@@ -27,16 +27,12 @@ public class AttemptController {
 
     @GetMapping("/assessment/{assessmentId}")
     public ResponseEntity<?> getAttemptsByAssessment(@PathVariable String assessmentId) {
-        Assessment assessment = assessmentRepository.findById(assessmentId)
-                .orElseThrow(() -> new RuntimeException("Assessment not found"));
-        return attemptService.getAttemptsByAssessment(assessment);
+        return attemptService.getAttemptsByAssessmentId(assessmentId);
     }
 
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getAttemptsByStudent(@PathVariable String studentId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        return attemptService.getAttemptsByStudent(student);
+        return attemptService.getAttemptsByStudentId(studentId);
     }
 
     @DeleteMapping("/{id}")

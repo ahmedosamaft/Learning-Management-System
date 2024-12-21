@@ -1,8 +1,6 @@
 package fci.swe.advanced_software.services.assessments;
 
-import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
-import fci.swe.advanced_software.models.users.Student;
 import org.springframework.http.ResponseEntity;
 
 public interface IAttemptService {
@@ -11,9 +9,11 @@ public interface IAttemptService {
 
     ResponseEntity<?> getAttemptById(String id);
 
-    ResponseEntity<?> getAttemptsByAssessment(Assessment assessment);
+    ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId);
 
-    ResponseEntity<?> getAttemptsByStudent(Student student);
+    ResponseEntity<?> getAttemptsByStudentId(String studentId);
+
+    ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId);
 
     ResponseEntity<?> deleteAttempt(String id);
 }

@@ -5,6 +5,7 @@ import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
+import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
@@ -26,6 +27,7 @@ public class CourseService implements ICourseService {
     private final CourseRepository courseRepository;
     private final InstructorRepository instructorRepository;
     private final CourseMapper courseMapper;
+    private final AuthUtils authUtils;
 
     @Override
     public ResponseEntity<?> getAllCourses(Pageable pageable) {
@@ -55,47 +57,44 @@ public class CourseService implements ICourseService {
 
     @Override
     public ResponseEntity<?> createCourse(CourseDto courseDto) {
-        Optional<Instructor> instructorOpt = instructorRepository.findById(courseDto.getInstructorId());
-        if (instructorOpt.isEmpty()) {
-            return createErrorResponse("Instructor not found", HttpStatus.NOT_FOUND);
-        }
 
+        courseDto.setInstructorId(authUtils.getCurrentUserId());
         Course course = courseMapper.toEntity(courseDto);
-        course.setInstructor(instructorOpt.get());
+        Instructor instructor = instructorRepository.findById(authUtils.getCurrentUserId()).orElse(null);
 
         Course savedCourse = courseRepository.save(course);
 
         String location = Constants.API_VERSION + "/courses/" + savedCourse.getId();
 
+        courseDto = courseMapper.toDto(savedCourse);
+        courseDto.setInstructorId(instructor.getName());
+
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
                 .withMessage("Course created successfully")
-                .withData("course", courseMapper.toDto(savedCourse))
+                .withData("course", courseDto)
                 .withLocation(location)
                 .build();
     }
 
     @Override
     public ResponseEntity<?> updateCourse(String id, CourseDto courseDto) {
-        Optional<Course> courseOpt = courseRepository.findById(id);
-        if (courseOpt.isEmpty()) {
-            return createErrorResponse("Course not found", HttpStatus.NOT_FOUND);
+        Course course = courseRepository.findById(id).orElse(null);
+
+        if (course == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Course not found")
+                    .build();
         }
 
-        Optional<Instructor> instructorOpt = instructorRepository.findById(courseDto.getInstructorId());
-        if (instructorOpt.isEmpty()) {
-            return createErrorResponse("Instructor not found", HttpStatus.NOT_FOUND);
+        if(courseDto.getInstructorId() == null) {
+            courseDto.setInstructorId(course.getInstructor().getId());
         }
 
-        // Get the existing course
-        Course existingCourse = courseOpt.get();
+        courseMapper.updateEntityFromDto(courseDto, course);
 
-        // Use the mapper to update fields of the existing entity
-        courseMapper.updateEntityFromDto(courseDto, existingCourse);
-        existingCourse.setInstructor(instructorOpt.get());
-
-        // Save the updated course
-        Course updatedCourse = courseRepository.save(existingCourse);
+        Course updatedCourse = courseRepository.save(course);
 
         return buildSuccessResponse("Course updated successfully", courseMapper.toDto(updatedCourse), HttpStatus.OK);
     }
@@ -109,7 +108,7 @@ public class CourseService implements ICourseService {
 
         courseRepository.deleteById(id);
 
-        return buildSuccessResponse("Course deleted successfully", null, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // Helper method for success responses
