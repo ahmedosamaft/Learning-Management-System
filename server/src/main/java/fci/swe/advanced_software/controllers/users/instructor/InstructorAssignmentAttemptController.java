@@ -12,24 +12,31 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{course_id}")
+@RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{courseId}")
 @RequiredArgsConstructor
 @RolesAllowed(Roles.INSTRUCTOR)
-@PreAuthorize("@authorizationService.isTeaching(#course_id) AND @authorizationService.isSameType(#quizId,#AssessmentType.ASSIGNMENT)")
 public class InstructorAssignmentAttemptController {
     private final IAttemptService attemptService;
 
     @GetMapping("students/{studentId}/attempts")
-    public ResponseEntity<?> getStudentAttempts(@PathVariable String course_id,
+    @PreAuthorize(""" 
+                       @authorizationService.isTeaching(#courseId)
+                       AND @authorizationService.isEnrolled(#courseId)
+            """)
+    public ResponseEntity<?> getStudentAttempts(@PathVariable String courseId,
                                                 @PathVariable String studentId,
                                                 @RequestParam(required = false, defaultValue = "1") Integer page,
                                                 @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return attemptService.getAttemptsByCourseIdAndStudentId(course_id, studentId, page, size);
+        return attemptService.getAttemptsByCourseIdAndStudentId(courseId, studentId, page, size);
     }
 
     @GetMapping("assignments/{assignmentId}/attempts")
-    @PreAuthorize("@authorizationService.containsAssessment(#course_id,#assignmentId,'Assignment')")
-    public ResponseEntity<?> getAssignmentAttempts(@PathVariable String course_id,
+    @PreAuthorize(""" 
+                       @authorizationService.containsAssessment(#courseId,#assignmentId,'Assignment')
+                       AND @authorizationService.isTeaching(#courseId)
+                       AND @authorizationService.isSameType(#assignmentId,'Assignment')
+            """)
+    public ResponseEntity<?> getAssignmentAttempts(@PathVariable String courseId,
                                                    @PathVariable String assignmentId,
                                                    @RequestParam(required = false, defaultValue = "1") Integer page,
                                                    @RequestParam(required = false, defaultValue = "10") Integer size) {
@@ -37,16 +44,26 @@ public class InstructorAssignmentAttemptController {
     }
 
     @GetMapping("assignments/{assignmentId}/attempts/{attemptId}")
-    @PreAuthorize("@authorizationService.containsAssessment(#course_id,#assignmentId,'Assignment')")
-    public ResponseEntity<?> getAttempt(@PathVariable String course_id,
+    @PreAuthorize(""" 
+                       @authorizationService.containsAssessment(#courseId,#assignmentId,'Assignment')
+                       AND @authorizationService.isTeaching(#courseId)
+                       AND @authorizationService.isSameType(#assignmentId,'Assignment')
+                       AND @authorizationService.containsAttempt(#assignmentId,#attemptId)
+            """)
+    public ResponseEntity<?> getAttempt(@PathVariable String courseId,
                                         @PathVariable String assignmentId,
                                         @PathVariable String attemptId) {
         return attemptService.getAttemptById(attemptId);
     }
 
     @PutMapping("assignments/{assignmentId}/attempts/{attemptId}")
-    @PreAuthorize("@authorizationService.containsAssessment(#course_id,#assignmentId,'Assignment')")
-    public ResponseEntity<?> updateAttempt(@PathVariable String course_id,
+    @PreAuthorize(""" 
+                       @authorizationService.containsAssessment(#courseId,#assignmentId,'Assignment')
+                       AND @authorizationService.isTeaching(#courseId)
+                       AND @authorizationService.isSameType(#assignmentId,'Assignment')
+                       AND @authorizationService.containsAttempt(#assignmentId,#attemptId)
+            """)
+    public ResponseEntity<?> updateAttempt(@PathVariable String courseId,
                                            @PathVariable String assignmentId,
                                            @PathVariable String attemptId,
                                            @Valid @RequestBody FeedbackUpdateDto feedbackDto) {
