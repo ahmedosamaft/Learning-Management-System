@@ -13,4 +13,6 @@ public interface CourseRepository extends AbstractEntityRepository<Course> {
     boolean existsByInstructorId(String instructorId);
 
     boolean existsByIdAndInstructorId(String id, String instructorId);
+
+    Page<Course> findAllByNameContainingIgnoreCase(String name, Pageable pageable);
 }

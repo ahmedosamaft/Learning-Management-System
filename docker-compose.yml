@@ -24,6 +24,37 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  elasticsearch:
+    image: elasticsearch:8.17.0
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - xpack.security.http.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  kibana:
+    depends_on:
+      - elasticsearch
+    image: kibana:8.17.0
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - xpack.security.transport.ssl.enabled=false
+      - xpack.security.enabled=false
+      - xpack.enterpriseSearch.enabled=false
+      - xpack.security.management.enabled=false
+      - xpack.monitoring.ui.enabled=false
+
   server1:
     image: lms
     depends_on:
@@ -55,3 +86,4 @@ services:
 volumes:
   postgres_data:
   pgadmin_data:
+  elasticsearch_data:
