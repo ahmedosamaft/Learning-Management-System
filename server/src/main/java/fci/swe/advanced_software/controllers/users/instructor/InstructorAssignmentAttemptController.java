@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{course_id}")
 @RequiredArgsConstructor
 @RolesAllowed(Roles.INSTRUCTOR)
-@PreAuthorize("@authorizationService.isTeaching(#course_id)")
+@PreAuthorize("@authorizationService.isTeaching(#course_id) AND @authorizationService.isSameType(#quizId,#AssessmentType.ASSIGNMENT)")
 public class InstructorAssignmentAttemptController {
     private final IAttemptService attemptService;
 
