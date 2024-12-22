@@ -20,7 +20,7 @@ public class InstructorController {
         return instructorService.getInstructor(id);
     }
 
-    @GetMapping("")
+    @GetMapping
     @RolesAllowed(Roles.ADMIN)
     public ResponseEntity<?> getAllInstructors(@RequestParam(required = false, defaultValue = "1") Integer page,
                                                @RequestParam(required = false, defaultValue = "10") Integer size) {

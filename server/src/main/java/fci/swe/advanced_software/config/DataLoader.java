@@ -1,12 +1,10 @@
 package fci.swe.advanced_software.config;
 
-import fci.swe.advanced_software.models.assessments.Assessment;
-import fci.swe.advanced_software.models.assessments.AssessmentType;
-import fci.swe.advanced_software.models.assessments.Question;
-import fci.swe.advanced_software.models.assessments.QuestionType;
+import fci.swe.advanced_software.models.assessments.*;
 import fci.swe.advanced_software.models.courses.*;
 import fci.swe.advanced_software.models.users.*;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
+import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
 import fci.swe.advanced_software.repositories.course.*;
 import fci.swe.advanced_software.repositories.users.AdminRepository;
@@ -36,6 +34,7 @@ public class DataLoader implements CommandLineRunner {
     private AdminRepository adminRepository;
     private StudentRepository studentRepository;
     private AssessmentRepository assessmentRepository;
+    private AttemptRepository attemptRepository;
     private QuestionRepository questionRepository;
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -146,7 +145,7 @@ public class DataLoader implements CommandLineRunner {
             loadAssessmentsForCourse(oop);
             loadAssessmentsForCourse(os);
 
-            
+
             loadAnnouncementsForCourse(softwareEngineering);
             loadAnnouncementsForCourse(oop);
             loadAnnouncementsForCourse(os);
@@ -237,6 +236,8 @@ public class DataLoader implements CommandLineRunner {
             assignment = assessmentRepository.save(assignment);
             quiz = assessmentRepository.save(quiz);
 
+            Student student = studentRepository.findByEmail("pop@fcai.student.com").orElseThrow(() -> new RuntimeException("NO STUDENT FOUND"));
+            loadAttemptsForAssessmentAndStudent(assignment, student);
             // Assign questions to assessments
             Set<Question> questions = new HashSet<>(questionRepository.findByCourse(course));
             assignment.setQuestions(questions);
@@ -248,7 +249,7 @@ public class DataLoader implements CommandLineRunner {
             questionRepository.flush();
         }
     }
-    
+
     private void loadAnnouncementsForCourse(Course course) {
         AbstractUser instructor = course.getInstructor();
         AbstractUser student = studentRepository.findByEmail("sayed@fcai.student.com").orElseThrow(() -> new RuntimeException("NO STUDENT FOUND"));
@@ -271,6 +272,15 @@ public class DataLoader implements CommandLineRunner {
             commentRepository.saveAndFlush(comment);
         }
 
+    }
+
+    private void loadAttemptsForAssessmentAndStudent(Assessment assessment, Student student) {
+        Attempt attempt = Attempt.builder()
+                .assessment(assessment)
+                .student(student)
+                .attemptedAt(Timestamp.valueOf("2024-12-20 08:00:00"))
+                .build();
+        attemptRepository.saveAndFlush(attempt);
     }
 
     @Override

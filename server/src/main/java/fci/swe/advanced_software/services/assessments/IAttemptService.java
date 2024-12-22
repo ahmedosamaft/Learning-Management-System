@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.assessments;
 
+import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackUpdateDto;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import org.springframework.http.ResponseEntity;
 
@@ -14,6 +15,8 @@ public interface IAttemptService {
     ResponseEntity<?> getAttemptsByStudentId(String studentId);
 
     ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size);
+
+    ResponseEntity<?> updateAttempt(String id, FeedbackUpdateDto feedbackDto);
 
     ResponseEntity<?> deleteAttempt(String id);
 }

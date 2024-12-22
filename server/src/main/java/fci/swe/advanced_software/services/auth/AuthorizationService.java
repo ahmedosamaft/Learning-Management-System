@@ -35,15 +35,15 @@ public class AuthorizationService {
         return courseRepository.existsByIdAndInstructorId(courseId, instructorId);
     }
 
-    public boolean containsAssessment(String courseId, String assessmentId) {
+    public boolean containsAssessment(String courseId, String assessmentId, String typeName) {
         if (!assessmentRepository.existsByIdAndCourseId(assessmentId, courseId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, typeName + " not found!");
         }
         return true;
     }
 
-    public boolean containsLesson(String courseId, String lessonId){
-        if (!lessonRepository.existsByIdAndCourseId(lessonId, courseId)){
+    public boolean containsLesson(String courseId, String lessonId) {
+        if (!lessonRepository.existsByIdAndCourseId(lessonId, courseId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lesson not found!");
         }
         return true;
