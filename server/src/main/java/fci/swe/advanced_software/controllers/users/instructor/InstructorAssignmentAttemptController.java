@@ -6,7 +6,9 @@ import fci.swe.advanced_software.services.assessments.IAttemptService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,8 @@ public class InstructorAssignmentAttemptController {
             """)
     public ResponseEntity<?> getStudentAttempts(@PathVariable String courseId,
                                                 @PathVariable String studentId,
-                                                @RequestParam(required = false, defaultValue = "1") Integer page,
-                                                @RequestParam(required = false, defaultValue = "10") Integer size) {
+                                                @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
+                                                @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
         return attemptService.getAttemptsByCourseIdAndStudentId(courseId, studentId, page, size);
     }
 
@@ -38,8 +40,8 @@ public class InstructorAssignmentAttemptController {
             """)
     public ResponseEntity<?> getAssignmentAttempts(@PathVariable String courseId,
                                                    @PathVariable String assignmentId,
-                                                   @RequestParam(required = false, defaultValue = "1") Integer page,
-                                                   @RequestParam(required = false, defaultValue = "10") Integer size) {
+                                                   @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
+                                                   @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
         return attemptService.getAttemptsByAssessmentId(assignmentId, page, size);
     }
 
