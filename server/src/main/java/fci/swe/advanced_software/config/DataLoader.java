@@ -262,16 +262,22 @@ public class DataLoader implements CommandLineRunner {
                     .postedBy(instructor)
                     .build();
             announcement = announcementRepository.save(announcement);
-            Comment comment = Comment.builder()
-                    .content("Comment " + i + " for the announcement " + announcement.getTitle() + " posted by " + instructor.getName())
+            Comment comment1 = Comment.builder()
+                    .content("Comment 1" + " for the announcement " + announcement.getTitle() + " posted by " + instructor.getName())
+                    .announcement(announcement)
+                    .author(student)
+                    .commentedAt(Timestamp.valueOf("2024-12-20 08:00:00"))
+                    .build();
+            Comment comment2 = Comment.builder()
+                    .content("Comment 2" + " for the announcement " + announcement.getTitle() + " posted by " + instructor.getName())
                     .announcement(announcement)
                     .author(student)
                     .commentedAt(Timestamp.valueOf("2024-12-20 08:00:00"))
                     .build();
             announcementRepository.flush();
-            commentRepository.saveAndFlush(comment);
+            commentRepository.saveAndFlush(comment1);
+            commentRepository.saveAndFlush(comment2);
         }
-
     }
 
     private void loadAttemptsForAssessmentAndStudent(Assessment assessment, Student student) {

@@ -4,6 +4,7 @@ import fci.swe.advanced_software.dtos.course.announcement.AnnouncementListDto;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
 import fci.swe.advanced_software.models.courses.Announcement;
+import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.repositories.course.AnnouncementRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.utils.Constants;
@@ -19,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -34,13 +37,14 @@ public class AnnouncementService implements IAnnouncementService {
     @Override
     public ResponseEntity<?> createAnnouncement(AnnouncementRequestDto requestDto) {
         Announcement announcement = announcementMapper.toEntity(requestDto);
+        announcement.setPostedAt(Timestamp.from(Instant.now()));
         announcement = announcementRepository.save(announcement);
 
         AnnouncementResponseDto responseDto = announcementMapper.toResponseDto(announcement);
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
-                .withLocation(Constants.API_VERSION + "/announcements/" + announcement.getId())
+                .withLocation(Constants.INSTRUCTOR_CONTROLLER + '/' + requestDto.getCourseId() + '/' + announcement.getId())
                 .withData("announcement", responseDto)
                 .withMessage("Announcement created successfully!")
                 .build();
@@ -57,23 +61,11 @@ public class AnnouncementService implements IAnnouncementService {
                     .build();
         }
 
-        if (requestDto.getCourseId() != null) {
-            announcement.setCourse(courseRepository.findById(requestDto.getCourseId())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + requestDto.getCourseId())));
-        }
-
-        if (requestDto.getTitle() != null) {
-            announcement.setTitle(requestDto.getTitle());
-        }
-
-        if (requestDto.getContent() != null) {
-            announcement.setContent(requestDto.getContent());
-        }
-
-        if (requestDto.getUserId() != null) {
-            announcement.setPostedBy(announcementMapper.userDtoToUser(requestDto.getUserId()));
-        }
-
+        Course course = courseRepository.findById(requestDto.getCourseId()).orElse(null);
+        announcement.setCourse(course);
+        announcement.setTitle(requestDto.getTitle());
+        announcement.setContent(requestDto.getContent());
+        announcement.setPostedBy(announcementMapper.userDtoToUser(requestDto.getUserId()));
         announcement = announcementRepository.save(announcement);
 
         AnnouncementResponseDto responseDto = announcementMapper.toResponseDto(announcement);
@@ -90,7 +82,10 @@ public class AnnouncementService implements IAnnouncementService {
         Announcement announcement = announcementRepository.findById(id).orElse(null);
 
         if (announcement == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Announcement not found!")
+                    .build();
         }
 
         AnnouncementResponseDto responseDto = announcementMapper.toResponseDto(announcement);
@@ -98,6 +93,7 @@ public class AnnouncementService implements IAnnouncementService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
                 .withData("announcement", responseDto)
+                .withMessage("Announcement retrieved successfully!")
                 .build();
     }
 
@@ -126,13 +122,13 @@ public class AnnouncementService implements IAnnouncementService {
         Page<Announcement> announcements = announcementRepository.findByCourseId(courseId, pageable);
 
         List<AnnouncementListDto> response = announcements.map(
-                (announcement) ->
-                        AnnouncementListDto.builder()
-                                .id(announcement.getId())
-                                .title(announcement.getTitle())
-                                .author(userResponseMapper.toDto(announcement.getPostedBy()))
-                                .postedAt(announcement.getPostedAt())
-                                .build()
+                        (announcement) ->
+                                AnnouncementListDto.builder()
+                                        .id(announcement.getId())
+                                        .title(announcement.getTitle())
+                                        .author(userResponseMapper.toDto(announcement.getPostedBy()))
+                                        .postedAt(announcement.getPostedAt())
+                                        .build()
                 )
                 .toList();
 
