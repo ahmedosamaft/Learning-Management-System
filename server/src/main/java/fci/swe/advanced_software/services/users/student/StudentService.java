@@ -3,6 +3,7 @@ package fci.swe.advanced_software.services.users.student;
 import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackDto;
 import fci.swe.advanced_software.dtos.course.AttendanceDto;
 import fci.swe.advanced_software.dtos.course.CourseDto;
+import fci.swe.advanced_software.dtos.course.CourseSearchDto;
 import fci.swe.advanced_software.dtos.course.EnrollmentDto;
 import fci.swe.advanced_software.dtos.users.StudentRequestDto;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
@@ -15,12 +16,10 @@ import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.assessments.FeedbackRepository;
-import fci.swe.advanced_software.repositories.course.AttendanceRepository;
-import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.repositories.course.EnrollmentRepository;
-import fci.swe.advanced_software.repositories.course.LessonRepository;
+import fci.swe.advanced_software.repositories.course.*;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
+import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AttemptMapper;
 import fci.swe.advanced_software.utils.mappers.assessments.FeedbackMapper;
@@ -29,6 +28,9 @@ import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
 import fci.swe.advanced_software.utils.mappers.courses.LessonMapper;
 import fci.swe.advanced_software.utils.mappers.users.StudentMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,8 @@ public class StudentService implements IStudentService {
     private final AttemptMapper attemptMapper;
     private final AuthUtils authUtils;
     private final FeedbackMapper feedbackMapper;
+    private final RepositoryUtils repositoryUtils;
+    private final CourseSearchRepository courseSearchRepository;
 
 
     @Override
@@ -95,10 +99,11 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public ResponseEntity<?> getCourses() {
+    public ResponseEntity<?> getCourses(Integer page, Integer size) {
         Student student = validateAndRetrieveCurrentStudent();
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
 
-        List<CourseDto> coursesDto = enrollmentRepository.findAllByStudent(student).stream()
+        List<CourseDto> coursesDto = enrollmentRepository.findAllByStudent(student, pageable)
                 .map(enrollment -> courseMapper.toDto(enrollment.getCourse()))
                 .toList();
 
@@ -109,8 +114,15 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public ResponseEntity<?> searchCourses(String keyword) {
-        return null;
+    public ResponseEntity<?> searchCourses(String query, Integer page, Integer size) {
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+
+        Page<CourseSearchDto> courses = courseSearchRepository.searchAllByCodeOrNameOrDescription(query, query, query, pageable);
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("courses", courses.getContent())
+                .build();
     }
 
     @Override
@@ -147,7 +159,7 @@ public class StudentService implements IStudentService {
     public ResponseEntity<?> attendLesson(String lessonId, String otp) {
         Student student = validateAndRetrieveCurrentStudent();
         Lesson lesson = validateAndRetrieveLesson(lessonId);
-        if(attendanceRepository.existsByLessonIdAndStudentId(lessonId, student.getId())) {
+        if (attendanceRepository.existsByLessonIdAndStudentId(lessonId, student.getId())) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.BAD_REQUEST)
                     .withMessage("You already attended this lesson!")

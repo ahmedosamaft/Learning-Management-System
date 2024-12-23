@@ -4,3 +4,7 @@ spring:
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 1000
+    socket-timeout: 3000

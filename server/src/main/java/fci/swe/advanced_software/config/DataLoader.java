@@ -10,6 +10,7 @@ import fci.swe.advanced_software.repositories.course.*;
 import fci.swe.advanced_software.repositories.users.AdminRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
+import fci.swe.advanced_software.utils.mappers.courses.CourseToElasticsearchMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -28,6 +29,8 @@ public class DataLoader implements CommandLineRunner {
     private final MediaRepository mediaRepository;
     private final AnnouncementRepository announcementRepository;
     private final CommentRepository commentRepository;
+    private final CourseSearchRepository courseSearchRepository;
+    private final CourseToElasticsearchMapper courseToElasticsearchMapper;
     private CourseRepository courseRepository;
     private LessonRepository lessonRepository;
     private InstructorRepository instructorRepository;
@@ -132,6 +135,10 @@ public class DataLoader implements CommandLineRunner {
                     .description("This course introduces students to the principles of OOP.")
                     .build()
             );
+
+            courseSearchRepository.save(courseToElasticsearchMapper.toES(softwareEngineering));
+            courseSearchRepository.save(courseToElasticsearchMapper.toES(oop));
+            courseSearchRepository.save(courseToElasticsearchMapper.toES(os));
 
             loadLessonsToCourse(softwareEngineering);
             loadLessonsToCourse(oop);
