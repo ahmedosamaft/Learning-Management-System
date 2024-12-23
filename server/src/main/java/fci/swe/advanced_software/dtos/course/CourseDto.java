@@ -2,15 +2,13 @@ package fci.swe.advanced_software.dtos.course;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CourseDto {
 
     @NotBlank(message = "Course code is required.")
