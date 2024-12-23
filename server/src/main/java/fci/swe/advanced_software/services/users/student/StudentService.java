@@ -166,12 +166,6 @@ public class StudentService implements IStudentService {
                 .build();
     }
 
-    @Override
-    public ResponseEntity<?> comment(String announcementId, String comment) {
-        return null;
-    }
-
-
     private Student validateAndRetrieveCurrentStudent() {
         Student student = studentRepository.findById(authUtils.getCurrentUserId()).orElse(null);
         if (student == null) {

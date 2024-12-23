@@ -38,12 +38,4 @@ public class StudentController {
                                         @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
         return studentService.getCourses(page, size);
     }
-
-    @GetMapping("/courses/search")
-    public ResponseEntity<?> searchCourses(@RequestParam String query,
-                                           @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
-                                           @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
-        return studentService.searchCourses(query, page, size);
-    }
-
 }
