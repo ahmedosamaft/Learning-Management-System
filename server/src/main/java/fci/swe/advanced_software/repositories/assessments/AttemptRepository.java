@@ -25,6 +25,8 @@ public interface AttemptRepository extends AbstractEntityRepository<Attempt> {
 
     boolean existsByStudentIdAndAssessmentId(String studentId, String assessmentId);
 
+    boolean existsByIdAndAssessmentId(String attemptId, String assessmentId);
+
     List<Attempt> findAllByAssessmentAndStudentId(Assessment assessment, String studentId);
 
     @Query("SELECT a FROM Attempt a WHERE a.assessment.course.id = :courseId AND a.student.id = :studentId")

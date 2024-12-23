@@ -9,9 +9,9 @@ public interface IStudentService {
 
     ResponseEntity<?> enrollCourse(String courseId);
 
-    ResponseEntity<?> getCourses();
+    ResponseEntity<?> getCourses(Integer page, Integer size);
 
-    ResponseEntity<?> searchCourses(String keyword);
+    ResponseEntity<?> searchCourses(String keyword, Integer page, Integer size);
 
     ResponseEntity<?> getAttendance();
 

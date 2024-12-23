@@ -20,7 +20,8 @@ public class AttemptController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAttemptById(@PathVariable String id) {
-        return attemptService.getAttemptById(id);
+//        return attemptService.getAttemptById(id);
+        return null;
     }
 
 

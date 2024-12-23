@@ -1,18 +1,23 @@
 package fci.swe.advanced_software.services.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptResponseDto;
+import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptShortDto;
+import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackUpdateDto;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
+import fci.swe.advanced_software.repositories.assessments.FeedbackRepository;
+import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.assessments.AttemptMapper;
+import fci.swe.advanced_software.utils.mappers.users.UserResponseMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,8 +40,11 @@ public class AttemptService implements IAttemptService {
     private final AssessmentRepository assessmentRepository;
     private final StudentRepository studentRepository;
     private final AttemptMapper attemptMapper;
+    private final UserResponseMapper userResponseMapper;
     private final AuthUtils authUtils;
     private final RepositoryUtils repositoryUtils;
+    private final InstructorRepository instructorRepository;
+    private final FeedbackRepository feedbackRepository;
 
     @Override
     public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
@@ -85,15 +93,16 @@ public class AttemptService implements IAttemptService {
 
     @Override
     public ResponseEntity<?> getAttemptById(String id) {
-        Optional<Attempt> attemptOpt = attemptRepository.findById(id);
-        if (attemptOpt.isEmpty()) {
+        Attempt attempt = attemptRepository.findById(id).orElse(null);
+
+        if (attempt == null) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.NOT_FOUND)
                     .withMessage("Attempt not found!")
                     .build();
         }
 
-        AttemptResponseDto responseDto = attemptMapper.toResponseDto(attemptOpt.get());
+        AttemptResponseDto responseDto = attemptMapper.toResponseDto(attempt);
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
@@ -165,14 +174,48 @@ public class AttemptService implements IAttemptService {
                 .build();
     }
 
+    @Override
+    public ResponseEntity<?> updateAttempt(String id, FeedbackUpdateDto feedbackDto) {
+        Attempt attempt = attemptRepository.findById(id).orElse(null);
+        if (attempt == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Attempt not found!")
+                    .build();
+        }
+
+        if (attempt.getFeedback() == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.BAD_REQUEST)
+                    .withMessage("Feedback not found!")
+                    .build();
+        }
+
+
+        attempt.getFeedback().setComments(feedbackDto.getComments());
+        attempt.getFeedback().setGrade(feedbackDto.getGrade());
+        attempt = attemptRepository.save(attempt);
+
+        AttemptResponseDto responseDto = attemptMapper.toResponseDto(attempt);
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withMessage("Feedback updated successfully!")
+                .withData("attempt", responseDto)
+                .build();
+    }
 
     @Override
     public ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId, Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
         Page<Attempt> attempts = attemptRepository.findAllByAssessmentId(assessmentId, pageable);
 
-        List<AttemptResponseDto> responseDtos = attempts
-                .map(attemptMapper::toResponseDto)
+        List<AttemptShortDto> responseDtos = attempts
+                .map(attempt -> new AttemptShortDto(attempt.getId(),
+                        userResponseMapper.toDto(attempt.getStudent()),
+                        (attempt.getFeedback() != null && attempt.getFeedback().getGrade() != null),
+                        attempt.getAttemptedAt()
+                ))
                 .toList();
 
         return ResponseEntityBuilder.create()

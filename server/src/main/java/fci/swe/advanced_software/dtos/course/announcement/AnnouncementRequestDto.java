@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.UUID;
 
-import java.sql.Timestamp;
-
 @Data
 @Builder
 public class AnnouncementRequestDto {
@@ -29,7 +27,4 @@ public class AnnouncementRequestDto {
     @NotNull(message = "Content is required.")
     @NotBlank(message = "Content cannot be blank.")
     private String content;
-
-    @NotNull(message = "Posted timestamp is required.")
-    private Timestamp postedAt;
 }

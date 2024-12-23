@@ -1,7 +1,6 @@
 package fci.swe.advanced_software.dtos.assessments.feedback;
 
-import fci.swe.advanced_software.dtos.users.UserResponseDto;
-import fci.swe.advanced_software.models.assessments.FeedbackType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,16 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FeedbackDto {
-
-    private String id;
-
+public class FeedbackUpdateDto {
+    @NotNull(message = "Comments is required")
+    @NotBlank(message = "Comments is required")
     private String comments;
 
+    @NotNull(message = "Grade is required")
     private Integer grade;
-
-    private UserResponseDto instructor;
-
-    @NotNull
-    private FeedbackType feedbackType;
 }
