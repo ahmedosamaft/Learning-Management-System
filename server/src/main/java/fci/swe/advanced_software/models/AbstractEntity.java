@@ -32,7 +32,7 @@ public class AbstractEntity {
     private Long version;
 
     @PrePersist
-    private void onCreate() {
+    protected void onCreate() {
         Instant now = Instant.now();
         this.createdAt = now;
         this.updatedAt = now;

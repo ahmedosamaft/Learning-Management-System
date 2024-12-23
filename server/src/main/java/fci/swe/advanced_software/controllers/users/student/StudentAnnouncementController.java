@@ -1,9 +1,11 @@
 package fci.swe.advanced_software.controllers.users.student;
 
+import fci.swe.advanced_software.dtos.course.announcement.CommentDto;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.courses.announcement.IAnnouncementService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
@@ -31,5 +33,30 @@ public class StudentAnnouncementController {
     @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
     public ResponseEntity<?> getAnnouncement(@PathVariable @UUID String courseId, @PathVariable @UUID String announcementId) {
         return announcementService.getAnnouncement(announcementId);
+    }
+
+    @PostMapping("/{announcementId}/comments")
+    @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
+    public ResponseEntity<?> createComment(@PathVariable @UUID String courseId,
+                                           @PathVariable @UUID String announcementId,
+                                           @RequestBody @Valid CommentDto comment) {
+        return announcementService.createComment(announcementId, comment);
+    }
+
+    @PutMapping("/{announcementId}/comments/{commentId}")
+    @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
+    public ResponseEntity<?> updateComment(@PathVariable @UUID String courseId,
+                                           @PathVariable @UUID String announcementId,
+                                           @PathVariable @UUID String commentId,
+                                           @RequestBody @Valid CommentDto comment) {
+        return announcementService.updateComment(announcementId, commentId, comment);
+    }
+
+    @DeleteMapping("/{announcementId}/comments/{commentId}")
+    @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
+    public ResponseEntity<?> deleteComment(@PathVariable @UUID String courseId,
+                                           @PathVariable @UUID String announcementId,
+                                           @PathVariable @UUID String commentId) {
+        return announcementService.deleteComment(announcementId, commentId);
     }
 }

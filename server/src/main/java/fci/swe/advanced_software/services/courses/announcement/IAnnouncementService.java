@@ -1,6 +1,7 @@
 package fci.swe.advanced_software.services.courses.announcement;
 
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto;
+import fci.swe.advanced_software.dtos.course.announcement.CommentDto;
 import org.springframework.http.ResponseEntity;
 
 public interface IAnnouncementService {
@@ -13,4 +14,10 @@ public interface IAnnouncementService {
     ResponseEntity<?> deleteAnnouncement(String id);
 
     ResponseEntity<?> getAnnouncements(String course, Integer page, Integer size);
+
+    ResponseEntity<?> createComment(String announcementId, CommentDto comment);
+
+    ResponseEntity<?> updateComment(String announcementId, String commentId, CommentDto comment);
+
+    ResponseEntity<?> deleteComment(String announcementId, String commentId);
 }
