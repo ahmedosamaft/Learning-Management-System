@@ -77,8 +77,105 @@ public class InstructorRepositoryTests {
 
         Iterable<Instructor> instructors = instructorRepository.findAll();
 
-        assertThat(instructors).isNotNull();
         assertThat(instructors).hasSize(2);
         assertThat(instructors).contains(instructor1, instructor2);
+    }
+
+    @Test
+    public void InstructorRepository_FindByEmail_ReturnsInstructor() {
+        Instructor instructor = Instructor.builder()
+                .name("test")
+                .email("test@fci.swe.com")
+                .password("123456")
+                .role(Role.INSTRUCTOR)
+                .build();
+
+        instructor = instructorRepository.save(instructor);
+
+        Instructor foundInstructor = instructorRepository.findByEmail(instructor.getEmail()).orElse(null);
+
+        assertThat(foundInstructor).isNotNull();
+        assertThat(foundInstructor.getId()).isEqualTo(instructor.getId());
+    }
+
+    @Test
+    public void InstructorRepository_FindByEmail_ReturnsNull() {
+        Instructor foundInstructor = instructorRepository.findByEmail("test@fci.swe.com").orElse(null);
+
+        assertThat(foundInstructor).isNull();
+    }
+
+    @Test
+    public void InstructorRepository_ExistsById_ReturnsTrue() {
+        Instructor instructor = Instructor.builder()
+                .name("test")
+                .email("test@fci.swe.com")
+                .password("123456")
+                .role(Role.INSTRUCTOR)
+                .build();
+
+        instructorRepository.save(instructor);
+
+        assertThat(instructorRepository.existsById(instructor.getEmail())).isTrue();
+    }
+
+    @Test
+    public void InstructorRepository_ExistsById_ReturnsFalse() {
+        assertThat(instructorRepository.existsById(String.valueOf(UUID.randomUUID()))).isFalse();
+    }
+
+    @Test
+    public void InstructorRepository_ExistsByEmail_ReturnsTrue() {
+        Instructor instructor = Instructor.builder()
+                .name("test")
+                .email("test@fci.swe.com")
+                .password("123456")
+                .role(Role.INSTRUCTOR)
+                .build();
+
+        instructorRepository.save(instructor);
+
+        assertThat(instructorRepository.existsByEmail(instructor.getEmail())).isTrue();
+    }
+
+    @Test
+    public void InstructorRepository_ExistsByEmail_ReturnsFalse() {
+        assertThat(instructorRepository.existsByEmail("test@fci.swe.com")).isFalse();
+    }
+
+    @Test
+    public void InstructorRepository_Delete_DeletesInstructor() {
+        Instructor instructor = Instructor.builder()
+                .name("test")
+                .email("test@fci.swe.com")
+                .password("123456")
+                .role(Role.INSTRUCTOR)
+                .build();
+
+        instructor = instructorRepository.save(instructor);
+
+        instructorRepository.delete(instructor);
+
+        Instructor foundInstructor = instructorRepository.findById(instructor.getId()).orElse(null);
+
+        assertThat(foundInstructor).isNull();
+    }
+
+    @Test
+    public void InstructorRepository_DeleteById_DeletesInstructor() {
+        Instructor instructor = Instructor.builder()
+                .name("test")
+                .email("test@fci.swe.com")
+                .password("123456")
+                .role(Role.INSTRUCTOR)
+                .build();
+
+        instructor = instructorRepository.save(instructor);
+
+        instructorRepository.deleteById(instructor.getId());
+
+        Instructor foundInstructor = instructorRepository.findById(instructor.getId()).orElse(null);
+
+        assertThat(foundInstructor).isNull();
     }
 }
