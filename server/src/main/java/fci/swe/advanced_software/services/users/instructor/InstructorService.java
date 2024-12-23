@@ -1,7 +1,6 @@
 package fci.swe.advanced_software.services.users.instructor;
 
 import fci.swe.advanced_software.dtos.course.CourseDto;
-import fci.swe.advanced_software.dtos.course.LessonDto;
 import fci.swe.advanced_software.dtos.users.UserResponseDto;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.Instructor;

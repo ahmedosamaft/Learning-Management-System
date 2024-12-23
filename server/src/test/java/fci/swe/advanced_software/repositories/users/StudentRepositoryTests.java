@@ -1,8 +1,7 @@
-package fci.swe.advanced_software.repositories.course;
+package fci.swe.advanced_software.repositories.users;
 
 import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.models.users.Student;
-import fci.swe.advanced_software.repositories.users.StudentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
