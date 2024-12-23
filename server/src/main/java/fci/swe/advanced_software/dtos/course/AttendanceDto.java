@@ -1,6 +1,5 @@
 package fci.swe.advanced_software.dtos.course;
 
-import fci.swe.advanced_software.utils.validators.lesson.ValidLesson;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.*;
@@ -12,7 +11,6 @@ import java.sql.Timestamp;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ValidLesson
 @Builder
 public class AttendanceDto {
     private String id;

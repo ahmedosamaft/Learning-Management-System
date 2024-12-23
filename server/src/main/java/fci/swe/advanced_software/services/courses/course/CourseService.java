@@ -9,8 +9,6 @@ import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.CourseSearchRepository;
 import fci.swe.advanced_software.repositories.course.EnrollmentRepository;
-import fci.swe.advanced_software.repositories.users.InstructorRepository;
-import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -33,9 +31,7 @@ import java.util.Optional;
 public class CourseService implements ICourseService {
 
     private final CourseRepository courseRepository;
-    private final InstructorRepository instructorRepository;
     private final CourseMapper courseMapper;
-    private final AuthUtils authUtils;
     private final CourseSearchRepository courseSearchRepository;
     private final CourseToElasticsearchMapper courseToElasticsearchMapper;
     private final RepositoryUtils repositoryUtils;

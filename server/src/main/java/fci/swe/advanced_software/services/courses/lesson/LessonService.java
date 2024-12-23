@@ -2,7 +2,6 @@ package fci.swe.advanced_software.services.courses.lesson;
 
 import fci.swe.advanced_software.dtos.course.LessonDto;
 import fci.swe.advanced_software.models.courses.Lesson;
-import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.LessonRepository;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.RepositoryUtils;
@@ -26,7 +25,6 @@ public class LessonService implements ILessonService {
     private final LessonRepository lessonRepository;
     private final LessonMapper lessonMapper;
     private final RepositoryUtils repositoryUtils;
-    private final CourseRepository courseRepository;
 
     @Override
     public ResponseEntity<?> getAllLessons(String courseId, Integer page, Integer size) {

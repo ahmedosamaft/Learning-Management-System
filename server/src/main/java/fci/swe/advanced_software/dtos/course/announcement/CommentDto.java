@@ -1,7 +1,6 @@
 package fci.swe.advanced_software.dtos.course.announcement;
 
 import fci.swe.advanced_software.dtos.users.UserResponseDto;
-import fci.swe.advanced_software.utils.validators.lesson.ValidLesson;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -10,7 +9,6 @@ import java.sql.Timestamp;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ValidLesson
 @Builder
 public class CommentDto {
     private String id;
