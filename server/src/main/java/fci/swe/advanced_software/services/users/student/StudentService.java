@@ -1,32 +1,20 @@
 package fci.swe.advanced_software.services.users.student;
 
-import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackDto;
-import fci.swe.advanced_software.dtos.course.AttendanceDto;
 import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.dtos.course.CourseSearchDto;
 import fci.swe.advanced_software.dtos.course.EnrollmentDto;
-import fci.swe.advanced_software.dtos.users.StudentRequestDto;
-import fci.swe.advanced_software.models.assessments.AssessmentType;
-import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.courses.Attendance;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.courses.Enrollment;
 import fci.swe.advanced_software.models.courses.Lesson;
 import fci.swe.advanced_software.models.users.Student;
-import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
-import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
-import fci.swe.advanced_software.repositories.assessments.FeedbackRepository;
 import fci.swe.advanced_software.repositories.course.*;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
-import fci.swe.advanced_software.utils.mappers.assessments.AttemptMapper;
-import fci.swe.advanced_software.utils.mappers.assessments.FeedbackMapper;
 import fci.swe.advanced_software.utils.mappers.courses.AttendanceMapper;
 import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
-import fci.swe.advanced_software.utils.mappers.courses.LessonMapper;
-import fci.swe.advanced_software.utils.mappers.users.StudentMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,37 +36,11 @@ public class StudentService implements IStudentService {
     private final EnrollmentRepository enrollmentRepository;
     private final AttendanceRepository attendanceRepository;
     private final LessonRepository lessonRepository;
-    private final AttemptRepository attemptRepository;
-    private final AssessmentRepository assessmentRepository;
-    private final FeedbackRepository feedbackRepository;
-    private final StudentMapper studentMapper;
     private final CourseMapper courseMapper;
     private final AttendanceMapper attendanceMapper;
-    private final LessonMapper lessonMapper;
-    private final AttemptMapper attemptMapper;
     private final AuthUtils authUtils;
-    private final FeedbackMapper feedbackMapper;
     private final RepositoryUtils repositoryUtils;
     private final CourseSearchRepository courseSearchRepository;
-
-
-    @Override
-    public ResponseEntity<?> getStudent(String id) {
-        Student student = studentRepository.findById(id).orElse(null);
-
-        if (student == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Student not found!")
-                    .build();
-        }
-
-        StudentRequestDto studentDto = studentMapper.toDto(student);
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData("student", studentDto)
-                .build();
-    }
 
     @Override
     public ResponseEntity<?> enrollCourse(String courseId, String studentId) {
@@ -131,7 +93,6 @@ public class StudentService implements IStudentService {
                 .withStatus(HttpStatus.NO_CONTENT)
                 .withMessage("Course dropped successfully!")
                 .build();
-
     }
 
     @Override
@@ -158,36 +119,6 @@ public class StudentService implements IStudentService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
                 .withData("courses", courses.getContent())
-                .build();
-    }
-
-    @Override
-    public ResponseEntity<?> getAttendance() {
-        Student student = validateAndRetrieveCurrentStudent();
-
-        List<AttendanceDto> attendanceDtos = attendanceRepository.findAllByStudent(student).stream()
-                .map(attendanceMapper::toDto)
-                .toList();
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData("attendances", attendanceDtos)
-                .build();
-    }
-
-    @Override
-    public ResponseEntity<?> getCourseAttendance(String courseId) {
-        Student student = validateAndRetrieveCurrentStudent();
-        Course course = validateAndRetrieveCourse(courseId);
-
-        List<AttendanceDto> attendanceDtos = attendanceRepository.findAllByStudentAndCourse(student, course)
-                .stream()
-                .map(attendanceMapper::toDto)
-                .toList();
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData("attendances", attendanceDtos)
                 .build();
     }
 
@@ -225,57 +156,10 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public ResponseEntity<?> getFeedbacks(AssessmentType assessmentType) {
-        Student student = validateAndRetrieveCurrentStudent();
-
-        List<Attempt> attempts = attemptRepository.findAllByStudent(student);
-
-        List<FeedbackDto> feedbacksDto = attempts.stream()
-                .filter(
-                        attempt -> attempt.getAssessment() != null &&
-                                attempt.getAssessment().getType() == assessmentType &&
-                                attempt.getFeedback() != null
-                )
-                .map(attempt -> feedbackMapper.toDto(attempt.getFeedback()))
-                .toList();
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData("feedbacks", feedbacksDto)
-                .build();
-    }
-
-    @Override
-    public ResponseEntity<?> getCourseFeedbacks(AssessmentType assessmentType, String courseId) {
-        Student student = validateAndRetrieveCurrentStudent();
-        Course course = validateAndRetrieveCourse(courseId);
-
-        List<FeedbackDto> feedbacksDto = assessmentRepository.findAllByCourseAndType(course, assessmentType).stream()
-                .map(assessment -> attemptRepository.findByAssessmentAndStudent(assessment, student))
-                .filter(attempt -> attempt != null && attempt.getFeedback() != null)
-                .map(attempt -> feedbackMapper.toDto(attempt.getFeedback()))
-                .toList();
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData("feedbacks", feedbacksDto)
-                .build();
-    }
-
-    @Override
-    public ResponseEntity<?> getReports() {
-        return null;
-    }
-
-    @Override
     public ResponseEntity<?> comment(String announcementId, String comment) {
         return null;
     }
 
-    @Override
-    public ResponseEntity<?> updateProfile(StudentRequestDto requestDto) {
-        return null;
-    }
 
     private Student validateAndRetrieveCurrentStudent() {
         Student student = studentRepository.findById(authUtils.getCurrentUserId()).orElse(null);

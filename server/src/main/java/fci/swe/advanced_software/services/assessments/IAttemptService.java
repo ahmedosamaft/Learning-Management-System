@@ -14,9 +14,11 @@ public interface IAttemptService {
 
     ResponseEntity<?> getAttemptsByStudentId(String studentId);
 
-    ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size);
+    ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, String type, Integer page, Integer size);
 
     ResponseEntity<?> updateAttempt(String id, FeedbackUpdateDto feedbackDto);
 
     ResponseEntity<?> deleteAttempt(String id);
+
+    ResponseEntity<?> getAttemptByIdForStudent(String courseId, String attemptId);
 }

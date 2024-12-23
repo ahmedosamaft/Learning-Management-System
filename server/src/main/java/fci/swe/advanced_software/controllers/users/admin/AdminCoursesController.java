@@ -4,6 +4,7 @@ import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.courses.course.ICourseService;
 import fci.swe.advanced_software.services.users.student.StudentService;
+import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/admin/courses")
+@RequestMapping(Constants.API_VERSION + "/admin/courses")
 @AllArgsConstructor
 @RolesAllowed(Roles.ADMIN)
 public class AdminCoursesController {

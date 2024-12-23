@@ -1,6 +1,7 @@
 package fci.swe.advanced_software.repositories.assessments;
 
 import fci.swe.advanced_software.models.assessments.Assessment;
+import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.AbstractEntityRepository;
@@ -33,4 +34,7 @@ public interface AttemptRepository extends AbstractEntityRepository<Attempt> {
     Page<Attempt> findAllByCourseIdAndStudentId(@Param("courseId") String courseId,
                                                 @Param("studentId") String studentId,
                                                 Pageable pageable);
+
+    @Query("SELECT a FROM Attempt a WHERE a.assessment.course.id = :courseId AND a.student.id = :studentId AND a.assessment.type = :assessmentType")
+    Page<Attempt> findAllByCourseIdAndStudentIdAndType(String courseId, String studentId, AssessmentType assessmentType, Pageable pageable);
 }

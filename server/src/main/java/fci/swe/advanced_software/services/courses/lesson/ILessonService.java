@@ -4,11 +4,11 @@ import fci.swe.advanced_software.dtos.course.LessonDto;
 import org.springframework.http.ResponseEntity;
 
 public interface ILessonService {
-    ResponseEntity<?> getAllLessons(String course_id, Integer page, Integer size);
+    ResponseEntity<?> getAllLessons(String courseId, Integer page, Integer size);
 
     ResponseEntity<?> getLessonById(String id);
 
-    ResponseEntity<?> createLesson(LessonDto lessonDto, String course_id);
+    ResponseEntity<?> createLesson(LessonDto lessonDto, String courseId);
 
     ResponseEntity<?> updateLesson(String id, LessonDto lessonDto);
 

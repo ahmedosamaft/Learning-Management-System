@@ -29,9 +29,9 @@ public class LessonService implements ILessonService {
     private final CourseRepository courseRepository;
 
     @Override
-    public ResponseEntity<?> getAllLessons(String course_id, Integer page, Integer size) {
+    public ResponseEntity<?> getAllLessons(String courseId, Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
-        Page<Lesson> lessonsPage = lessonRepository.findAllByCourseId(course_id, pageable);
+        Page<Lesson> lessonsPage = lessonRepository.findAllByCourseId(courseId, pageable);
         List<LessonDto> lessonsDto = lessonsPage.map(lessonMapper::toDto).getContent();
         return buildSuccessResponse("Lessons retrieved successfully", lessonsDto, HttpStatus.OK);
     }
@@ -52,9 +52,9 @@ public class LessonService implements ILessonService {
     }
 
     @Override
-    public ResponseEntity<?> createLesson(LessonDto lessonDto, String course_id) {
+    public ResponseEntity<?> createLesson(LessonDto lessonDto, String courseId) {
 
-        lessonDto.setCourseId(course_id);
+        lessonDto.setCourseId(courseId);
         Lesson lesson = lessonMapper.toEntity(lessonDto);
 
         // Auto-generate the lesson OTP
