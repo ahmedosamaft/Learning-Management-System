@@ -5,7 +5,11 @@ import fci.swe.advanced_software.services.courses.lesson.ILessonService;
 import fci.swe.advanced_software.services.users.student.IStudentService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,29 +24,29 @@ public class StudentLessonController {
 
     @GetMapping
     @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
-    public ResponseEntity<?> getLessons(@PathVariable String courseId,
-                                        @RequestParam(required = false, defaultValue = "1") Integer page,
-                                        @RequestParam(required = false, defaultValue = "10") Integer size) {
+    public ResponseEntity<?> getLessons(@PathVariable @UUID String courseId,
+                                        @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
+                                        @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
         return lessonService.getAllLessons(courseId, page, size);
     }
 
-    @GetMapping("/{lesson_id}")
+    @GetMapping("/{lessonId}")
     @PreAuthorize("""
             @authorizationService.isEnrolled(#courseId)
-            AND @authorizationService.containsLesson(#courseId, #lesson_id)
+            AND @authorizationService.containsLesson(#courseId, #lessonId)
             """)
-    public ResponseEntity<?> getLesson(@PathVariable String courseId, @PathVariable String lesson_id) {
-        return lessonService.getLessonById(lesson_id);
+    public ResponseEntity<?> getLesson(@PathVariable @UUID String courseId, @PathVariable @UUID String lessonId) {
+        return lessonService.getLessonById(lessonId);
     }
 
-    @PostMapping("/{lesson_id}")
+    @PostMapping("/{lessonId}")
     @PreAuthorize("""
             @authorizationService.isEnrolled(#courseId)
-            AND @authorizationService.containsLesson(#courseId, #lesson_id)
+            AND @authorizationService.containsLesson(#courseId, #lessonId)
             """)
-    public ResponseEntity<?> attendLesson(@PathVariable String courseId,
-                                          @PathVariable String lesson_id,
-                                          @RequestParam(name = "otp", defaultValue = "") String otp) {
-        return studentService.attendLesson(lesson_id, otp);
+    public ResponseEntity<?> attendLesson(@PathVariable @UUID String courseId,
+                                          @PathVariable @UUID String lessonId,
+                                          @RequestParam(name = "otp", defaultValue = "") @Length(min = 4, max = 4) String otp) {
+        return studentService.attendLesson(lessonId, otp);
     }
 }

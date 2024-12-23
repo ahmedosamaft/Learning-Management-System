@@ -2,6 +2,7 @@ package fci.swe.advanced_software.utils.mappers.assessments;
 
 import fci.swe.advanced_software.dtos.assessments.question.QuestionRequestDto;
 import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionStudentDto;
 import fci.swe.advanced_software.models.assessments.Question;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
@@ -21,6 +22,10 @@ public abstract class QuestionMapper {
     @Mapping(target = "id", source = "question.id")
     @Mapping(target = "courseId", source = "course.id")
     public abstract QuestionResponseDto toResponseDto(Question question);
+
+    @Mapping(target = "id", source = "question.id")
+    @Mapping(target = "courseId", source = "course.id")
+    public abstract QuestionStudentDto toStudentDto(Question question);
 
     @Named("courseDtoToCourse")
     public Course courseDtoToCourse(String courseId) {

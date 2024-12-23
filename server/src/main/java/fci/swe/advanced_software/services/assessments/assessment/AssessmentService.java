@@ -4,6 +4,7 @@ import fci.swe.advanced_software.dtos.assessments.QuestionAssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentQuestionsDto;
 import fci.swe.advanced_software.dtos.assessments.question.QuestionResponseDto;
+import fci.swe.advanced_software.dtos.assessments.question.QuestionStudentDto;
 import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
@@ -225,6 +226,30 @@ public class AssessmentService implements IAssessmentService {
         if (!attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to view this " + type.name().toLowerCase() + "!");
         }
-        return getAssessmentQuestions(assessmentId, page, size);
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElse(null);
+        if (assessment == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Assessment not found!")
+                    .build();
+        }
+
+        List<QuestionStudentDto> questions = assessment.getQuestions().stream()
+                .sorted(Comparator.comparing(AbstractEntity::getCreatedAt))
+                .map(questionMapper::toStudentDto)
+                .toList();
+
+        page = Math.max(page - 1, 0);
+        size = Math.min(size, 100);
+
+        int start = Math.min(page * size, questions.size());
+        int end = Math.min(start + size, questions.size());
+        questions = questions.subList(start, end);
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.OK)
+                .withData("questions", questions)
+                .withMessage("Questions retrieved successfully!")
+                .build();
     }
 }
