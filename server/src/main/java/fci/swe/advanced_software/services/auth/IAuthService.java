@@ -7,7 +7,10 @@ import org.springframework.http.ResponseEntity;
 
 public interface IAuthService {
     ResponseEntity<?> register(RegisterDto registerDto, Boolean isAdmin);
+
     ResponseEntity<?> login(AuthDto authDto);
+
     ResponseEntity<?> getProfile();
-    ResponseEntity<?> updateProfile(UserUpdateDto userUpdateDto);
+
+    ResponseEntity<?> updateProfile(UserUpdateDto userUpdateDto, String id);
 }

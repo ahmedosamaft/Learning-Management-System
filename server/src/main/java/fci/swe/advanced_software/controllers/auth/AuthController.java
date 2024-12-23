@@ -5,6 +5,7 @@ import fci.swe.advanced_software.dtos.auth.RegisterDto;
 import fci.swe.advanced_software.dtos.users.UserUpdateDto;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.auth.IAuthService;
+import fci.swe.advanced_software.utils.AuthUtils;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class AuthController {
     private final IAuthService authService;
+    private final AuthUtils authUtils;
 
     @PostMapping("/admin")
     @RolesAllowed(Roles.ADMIN)
@@ -43,6 +45,6 @@ public class AuthController {
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(@Valid @RequestBody UserUpdateDto userUpdateDto) {
-        return authService.updateProfile(userUpdateDto);
+        return authService.updateProfile(userUpdateDto, authUtils.getCurrentUserId());
     }
 }

@@ -1,6 +1,6 @@
 package fci.swe.advanced_software.services.users.admin;
 
-import fci.swe.advanced_software.dtos.users.UserResponseDto;
+import fci.swe.advanced_software.dtos.users.UserUpdateDto;
 import org.springframework.http.ResponseEntity;
 
 public interface IAdminService {
@@ -10,5 +10,5 @@ public interface IAdminService {
 
     ResponseEntity<?> getUserById(String id);
 
-    ResponseEntity<?> updateUser(String id, UserResponseDto registerDto);
+    ResponseEntity<?> updateUser(String id, UserUpdateDto registerDto);
 }

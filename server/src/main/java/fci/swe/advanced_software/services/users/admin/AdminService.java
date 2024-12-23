@@ -1,9 +1,10 @@
 package fci.swe.advanced_software.services.users.admin;
 
-import fci.swe.advanced_software.dtos.users.UserResponseDto;
+import fci.swe.advanced_software.dtos.users.UserIdDto;
+import fci.swe.advanced_software.dtos.users.UserUpdateDto;
 import fci.swe.advanced_software.models.users.AbstractUser;
 import fci.swe.advanced_software.repositories.users.AbstractUserRepository;
-import fci.swe.advanced_software.services.auth.IAuthService;
+import fci.swe.advanced_software.services.auth.AuthService;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.users.UserResponseMapper;
@@ -20,11 +21,10 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class AdminService implements IAdminService {
-    private final IAdminService adminService;
-    private final IAuthService authService;
     private final AbstractUserRepository<AbstractUser> userRepository;
     private final RepositoryUtils repositoryUtils;
     private final UserResponseMapper userResponseMapper;
+    private final AuthService authService;
 
     @Override
     public ResponseEntity<?> deleteUser(String id) {
@@ -45,10 +45,10 @@ public class AdminService implements IAdminService {
     @Override
     public ResponseEntity<?> getUsers(Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
-        Page<AbstractUser> users = userRepository.findAllUsers(pageable);
+        Page<AbstractUser> users = userRepository.findAll(pageable);
 
-        List<UserResponseDto> response = users.stream()
-                .map(userResponseMapper::toDto)
+        List<UserIdDto> response = users.stream()
+                .map(userResponseMapper::toUserIdDto)
                 .toList();
 
         return ResponseEntityBuilder.create()
@@ -70,30 +70,13 @@ public class AdminService implements IAdminService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
-                .withData("user", user)
+                .withData("user", userResponseMapper.toUserIdDto(user))
                 .build();
     }
 
     @Override
-    public ResponseEntity<?> updateUser(String id, UserResponseDto registerDto) {
-        AbstractUser user = userRepository.findById(id).orElse(null);
-
-        if (user == null) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("User not found!")
-                    .build();
-        }
-
-        user = userResponseMapper.toEntity(registerDto);
-
-        userRepository.save(user);
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withMessage("User updated successfully!")
-                .withData("user", user)
-                .build();
+    public ResponseEntity<?> updateUser(String id, UserUpdateDto updateDto) {
+        return authService.updateProfile(updateDto, id);
     }
 
 }
