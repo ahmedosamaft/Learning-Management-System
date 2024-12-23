@@ -4,6 +4,7 @@ import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.courses.course.ICourseService;
 import fci.swe.advanced_software.services.users.instructor.IInstructorService;
+import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class InstructorCoursesController {
     private final ICourseService courseService;
     private final IInstructorService instructorService;
+    private final AuthUtils authUtils;
 
     @GetMapping
     public ResponseEntity<?> getCourses(@RequestParam(required = false, defaultValue = "1") Integer page,
@@ -28,6 +30,7 @@ public class InstructorCoursesController {
 
     @PostMapping
     public ResponseEntity<?> createCourse(@RequestBody @Valid CourseDto courseDto) {
+        courseDto.setInstructorId(authUtils.getCurrentUserId());
         return courseService.createCourse(courseDto);
     }
 
