@@ -9,9 +9,6 @@ import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
-import fci.swe.advanced_software.repositories.assessments.FeedbackRepository;
-import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
@@ -43,9 +40,6 @@ public class AttemptService implements IAttemptService {
     private final UserResponseMapper userResponseMapper;
     private final AuthUtils authUtils;
     private final RepositoryUtils repositoryUtils;
-    private final InstructorRepository instructorRepository;
-    private final FeedbackRepository feedbackRepository;
-    private final CourseRepository courseRepository;
 
     @Override
     public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
