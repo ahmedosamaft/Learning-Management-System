@@ -10,6 +10,7 @@ import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.assessments.FeedbackRepository;
+import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
@@ -45,6 +46,7 @@ public class AttemptService implements IAttemptService {
     private final RepositoryUtils repositoryUtils;
     private final InstructorRepository instructorRepository;
     private final FeedbackRepository feedbackRepository;
+    private final CourseRepository courseRepository;
 
     @Override
     public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
@@ -157,13 +159,22 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
+    public ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, String type, Integer page, Integer size) {
         if (!studentRepository.existsById(studentId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
         }
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
-        Page<Attempt> attempts = attemptRepository.findAllByCourseIdAndStudentId(courseId, studentId, pageable);
-
+        Page<Attempt> attempts;
+        if (type != null) {
+            AssessmentType assessmentType = switch (type) {
+                case "assignment" -> AssessmentType.ASSIGNMENT;
+                case "quiz" -> AssessmentType.QUIZ;
+                default -> throw new IllegalArgumentException("Invalid assignment type: " + type);
+            };
+            attempts = attemptRepository.findAllByCourseIdAndStudentIdAndType(courseId, studentId, assessmentType, pageable);
+        } else {
+            attempts = attemptRepository.findAllByCourseIdAndStudentId(courseId, studentId, pageable);
+        }
         List<AttemptResponseDto> response = attempts.stream()
                 .map(attemptMapper::toResponseDto)
                 .toList();
@@ -241,4 +252,14 @@ public class AttemptService implements IAttemptService {
                 .withMessage("Attempt deleted successfully!")
                 .build();
     }
+
+    @Override
+    public ResponseEntity<?> getAttemptByIdForStudent(String courseId, String attemptId) {
+        Attempt attempt = attemptRepository.findById(attemptId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found!"));
+        if(!attempt.getAssessment().getCourse().getId().equals(courseId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found!");
+        }
+        return getAttemptById(attemptId);
+    }
+
 }

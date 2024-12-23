@@ -93,8 +93,12 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public ResponseEntity<?> updateProfile(UserUpdateDto userUpdateDto) {
-        AbstractUser user = userRepository.findById(authUtils.getCurrentUserId()).orElse(null);
+    public ResponseEntity<?> updateProfile(UserUpdateDto userUpdateDto, String id) {
+        AbstractUser user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            return createErrorResponse("User not found!", HttpStatus.NOT_FOUND);
+        }
 
         user.setName(userUpdateDto.getName());
         user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
