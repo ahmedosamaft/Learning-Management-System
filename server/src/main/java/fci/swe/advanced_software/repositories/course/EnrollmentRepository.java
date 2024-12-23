@@ -8,13 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface EnrollmentRepository extends AbstractEntityRepository<Enrollment> {
     Page<Enrollment> findAllByStudent(Student student, Pageable pageable);
 
-    List<Enrollment> findByCourse(Course course);
+    Page<Enrollment> findAllByCourseId(String courseId, Pageable pageable);
 
     Enrollment findByStudentAndCourse(Student student, Course course);
 

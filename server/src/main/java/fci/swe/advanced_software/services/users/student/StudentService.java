@@ -81,9 +81,19 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public ResponseEntity<?> enrollCourse(String courseId) {
-        Student student = validateAndRetrieveCurrentStudent();
+    public ResponseEntity<?> enrollCourse(String courseId, String studentId) {
+        Student student = studentRepository.findById(studentId).orElse(null);
+        if (student == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
+        }
         Course course = validateAndRetrieveCourse(courseId);
+
+        if(enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.BAD_REQUEST)
+                    .withMessage("You are already enrolled in this course!")
+                    .build();
+        }
 
         EnrollmentDto enrollmentDto = EnrollmentDto.builder()
                 .studentId(student.getId())
@@ -96,6 +106,32 @@ public class StudentService implements IStudentService {
                 .withMessage("Course enrolled successfully!")
                 .withData("enrollment", enrollmentDto)
                 .build();
+    }
+
+    @Override
+    public ResponseEntity<?> dropCourse(String courseId, String StudentId) {
+        Student student = studentRepository.findById(StudentId).orElse(null);
+        if (student == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
+        }
+        Course course = validateAndRetrieveCourse(courseId);
+
+        Enrollment enrollment = enrollmentRepository.findByStudentAndCourse(student, course);
+
+        if (enrollment == null) {
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("Course not found!")
+                    .build();
+        }
+
+        enrollmentRepository.delete(enrollment);
+
+        return ResponseEntityBuilder.create()
+                .withStatus(HttpStatus.NO_CONTENT)
+                .withMessage("Course dropped successfully!")
+                .build();
+
     }
 
     @Override

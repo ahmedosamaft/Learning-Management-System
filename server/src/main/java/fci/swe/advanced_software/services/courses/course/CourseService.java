@@ -2,10 +2,13 @@ package fci.swe.advanced_software.services.courses.course;
 
 import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.dtos.course.CourseSearchDto;
+import fci.swe.advanced_software.dtos.users.UserResponseDto;
 import fci.swe.advanced_software.models.courses.Course;
+import fci.swe.advanced_software.models.courses.Enrollment;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.CourseSearchRepository;
+import fci.swe.advanced_software.repositories.course.EnrollmentRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
@@ -13,6 +16,7 @@ import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
 import fci.swe.advanced_software.utils.mappers.courses.CourseToElasticsearchMapper;
+import fci.swe.advanced_software.utils.mappers.users.UserResponseMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +39,8 @@ public class CourseService implements ICourseService {
     private final CourseSearchRepository courseSearchRepository;
     private final CourseToElasticsearchMapper courseToElasticsearchMapper;
     private final RepositoryUtils repositoryUtils;
+    private final EnrollmentRepository enrollmentRepository;
+    private final UserResponseMapper userResponseMapper;
 
     @Override
     public ResponseEntity<?> getAllCourses(Integer page, Integer size) {
@@ -123,6 +129,24 @@ public class CourseService implements ICourseService {
         courseSearchRepository.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<?> getStudents(String courseId, Integer page, Integer size) {
+        Optional<Course> courseOpt = courseRepository.findById(courseId);
+
+        if (courseOpt.isEmpty()) {
+            return createErrorResponse("Course not found", HttpStatus.NOT_FOUND);
+        }
+
+        Course course = courseOpt.get();
+        Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        Page<Enrollment> enrollments = enrollmentRepository.findAllByCourseId(courseId, pageable);
+
+        List<UserResponseDto> students = enrollments.stream()
+                .map(enrollment -> userResponseMapper.toDto(enrollment.getStudent())).toList();
+
+        return buildSuccessResponse("Students retrieved successfully", students, HttpStatus.OK);
     }
 
     // Helper method for success responses

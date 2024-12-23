@@ -13,4 +13,6 @@ public interface ICourseService {
     ResponseEntity<?> updateCourse(String id, CourseDto courseDto);
 
     ResponseEntity<?> deleteCourse(String name);
+
+    ResponseEntity<?> getStudents(String course_id, Integer page, Integer size);
 }

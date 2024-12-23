@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 public interface IStudentService {
     ResponseEntity<?> getStudent(String id);
 
-    ResponseEntity<?> enrollCourse(String courseId);
+    ResponseEntity<?> enrollCourse(String courseId, String StudentId);
+
+    ResponseEntity<?> dropCourse(String courseId, String StudentId);
 
     ResponseEntity<?> getCourses(Integer page, Integer size);
 

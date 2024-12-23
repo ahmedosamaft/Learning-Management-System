@@ -2,6 +2,7 @@ package fci.swe.advanced_software.controllers.users.student;
 
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.users.student.IStudentService;
+import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.RolesAllowed;
@@ -17,10 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Student", description = "Student related endpoints")
 public class StudentController {
     private final IStudentService studentService;
+    private final AuthUtils authUtils;
 
     @PostMapping("/courses/{courseId}")
     public ResponseEntity<?> enroll(@PathVariable String courseId) {
-        return studentService.enrollCourse(courseId);
+        return studentService.enrollCourse(courseId, authUtils.getCurrentUserId());
     }
 
     @GetMapping("/{id}")
