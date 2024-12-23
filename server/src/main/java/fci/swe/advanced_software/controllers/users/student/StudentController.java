@@ -10,12 +10,14 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.API_VERSION + "/students")
 @RequiredArgsConstructor
 @Tag(name = "Student", description = "Student related endpoints")
+@RolesAllowed(Roles.STUDENT)
 public class StudentController {
     private final IStudentService studentService;
     private final AuthUtils authUtils;
@@ -25,10 +27,10 @@ public class StudentController {
         return studentService.enrollCourse(courseId, authUtils.getCurrentUserId());
     }
 
-    @GetMapping("/{id}")
-    @RolesAllowed({Roles.INSTRUCTOR, Roles.ADMIN})
-    public ResponseEntity<?> getStudent(@PathVariable String id) {
-        return studentService.getStudent(id);
+    @DeleteMapping("/courses/{courseId}")
+    @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
+    public ResponseEntity<?> drop(@PathVariable String courseId) {
+        return studentService.dropCourse(courseId, authUtils.getCurrentUserId());
     }
 
     @GetMapping("/courses")
