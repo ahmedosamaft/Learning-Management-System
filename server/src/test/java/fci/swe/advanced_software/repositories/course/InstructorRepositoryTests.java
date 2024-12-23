@@ -116,7 +116,7 @@ public class InstructorRepositoryTests {
 
         instructorRepository.save(instructor);
 
-        assertThat(instructorRepository.existsById(instructor.getEmail())).isTrue();
+        assertThat(instructorRepository.existsById(instructor.getId())).isTrue();
     }
 
     @Test
