@@ -31,7 +31,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -109,30 +108,6 @@ public class AttemptService implements IAttemptService {
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
                 .withData("attempt", responseDto)
-                .build();
-    }
-
-    @Override
-    public ResponseEntity<?> getAttemptsByStudentId(String studentId) {
-        if (!studentRepository.existsById(studentId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
-        }
-
-        List<Attempt> attempts = attemptRepository.findAllByStudentId(studentId);
-        if (attempts.isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("No attempts found for this student!")
-                    .build();
-        }
-
-        List<AttemptResponseDto> responseDtos = attempts.stream()
-                .map(attemptMapper::toResponseDto)
-                .toList();
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData("attempts", responseDtos)
                 .build();
     }
 
@@ -236,27 +211,9 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> deleteAttempt(String id) {
-        Optional<Attempt> attemptOpt = attemptRepository.findById(id);
-        if (attemptOpt.isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Attempt not found!")
-                    .build();
-        }
-
-        attemptRepository.delete(attemptOpt.get());
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.NO_CONTENT)
-                .withMessage("Attempt deleted successfully!")
-                .build();
-    }
-
-    @Override
     public ResponseEntity<?> getAttemptByIdForStudent(String courseId, String attemptId) {
         Attempt attempt = attemptRepository.findById(attemptId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found!"));
-        if(!attempt.getAssessment().getCourse().getId().equals(courseId)) {
+        if (!attempt.getAssessment().getCourse().getId().equals(courseId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found!");
         }
         return getAttemptById(attemptId);
