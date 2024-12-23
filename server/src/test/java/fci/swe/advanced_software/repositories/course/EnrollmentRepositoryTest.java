@@ -45,22 +45,17 @@ class EnrollmentRepositoryTest {
 
     @Test
     void testFindByCourse() {
-        // Create Instructor and Course
         Instructor instructor = createInstructor();
         Course course = createCourse(instructor, "CS101", "Introduction to Computer Science");
 
-        // Create Students
         Student student1 = createStudent("student1@example.com");
         Student student2 = createStudent("student2@example.com");
 
-        // Enroll Students in Course
         createEnrollment(student1, course);
         createEnrollment(student2, course);
 
-        // Fetch Enrollments for the Course
         List<Enrollment> enrollments = enrollmentRepository.findByCourse(course);
 
-        // Assertions
         assertNotNull(enrollments);
         assertEquals(2, enrollments.size());
         assertTrue(enrollments.stream().anyMatch(e -> e.getStudent().getEmail().equals("student1@example.com")));
@@ -72,7 +67,6 @@ class EnrollmentRepositoryTest {
         Instructor instructor = createInstructor();
         Course course = createCourse(instructor, "CS102", "Data Structures");
 
-        // Fetch Enrollments for the Course
         List<Enrollment> enrollments = enrollmentRepository.findByCourse(course);
 
         assertNotNull(enrollments);
@@ -81,21 +75,16 @@ class EnrollmentRepositoryTest {
 
     @Test
     void testFindAllByStudent() {
-        // Create Instructor, Course, and Student
         Instructor instructor = createInstructor();
         Course course = createCourse(instructor, "CS101", "Introduction to Computer Science");
         Student student = createStudent("student@example.com");
 
-        // Enroll Student in Course
         createEnrollment(student, course);
 
-        // Create Pageable
         Pageable pageable = repositoryUtils.getPageable(0, 10, Sort.Direction.ASC, "course.name");
 
-        // Fetch Enrollments by Student
         Page<Enrollment> enrollmentsPage = enrollmentRepository.findAllByStudent(student, pageable);
 
-        // Assertions
         assertNotNull(enrollmentsPage);
         assertEquals(1, enrollmentsPage.getTotalElements());
         assertTrue(enrollmentsPage.getContent().stream().anyMatch(e -> e.getCourse().getCode().equals("CS101")));
@@ -103,18 +92,14 @@ class EnrollmentRepositoryTest {
 
     @Test
     void testFindByStudentAndCourse() {
-        // Create Instructor, Course, and Student
         Instructor instructor = createInstructor();
         Course course = createCourse(instructor, "CS101", "Introduction to Computer Science");
         Student student = createStudent("student@example.com");
 
-        // Enroll Student in Course
         Enrollment enrollment = createEnrollment(student, course);
 
-        // Fetch Enrollment by Student and Course
         Enrollment foundEnrollment = enrollmentRepository.findByStudentAndCourse(student, course);
 
-        // Assertions
         assertNotNull(foundEnrollment);
         assertEquals(enrollment.getStudent().getEmail(), foundEnrollment.getStudent().getEmail());
         assertEquals(enrollment.getCourse().getCode(), foundEnrollment.getCourse().getCode());
@@ -122,34 +107,26 @@ class EnrollmentRepositoryTest {
 
     @Test
     void testExistsByStudentIdAndCourseId() {
-        // Create Instructor, Course, and Student
         Instructor instructor = createInstructor();
         Course course = createCourse(instructor, "CS101", "Introduction to Computer Science");
         Student student = createStudent("student@example.com");
 
-        // Enroll Student in Course
         createEnrollment(student, course);
 
-        // Check if enrollment exists
         boolean exists = enrollmentRepository.existsByStudentIdAndCourseId(student.getId(), course.getId());
 
-        // Assertions
         assertTrue(exists);
     }
 
     @Test
     void testExistsByStudentIdAndCourseId_NoEnrollment() {
-        // Create Instructor and Course
         Instructor instructor = createInstructor();
         Course course = createCourse(instructor, "CS102", "Data Structures");
 
-        // Create Student (but do not enroll)
         Student student = createStudent("student@example.com");
 
-        // Check if enrollment exists
         boolean exists = enrollmentRepository.existsByStudentIdAndCourseId(student.getId(), course.getId());
 
-        // Assertions
         assertFalse(exists);
     }
 
@@ -178,7 +155,7 @@ class EnrollmentRepositoryTest {
         student.setName("Student Name");
         student.setEmail(email);
         student.setPassword("studentpassword");
-        student.setRole(Role.STUDENT);  // Ensure the role is set
+        student.setRole(Role.STUDENT);
         entityManager.persist(student);
         return student;
     }
