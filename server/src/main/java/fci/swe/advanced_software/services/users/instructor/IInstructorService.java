@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 public interface IInstructorService {
     ResponseEntity<Response> getInstructor(String id);
 
-    ResponseEntity<?> getAllInstructors(Integer page, Integer size);
+    ResponseEntity<Response> getAllInstructors(Integer page, Integer size);
 
-    ResponseEntity<?> getCourses(Integer page, Integer size);
+    ResponseEntity<Response> getCourses(Integer page, Integer size);
 }

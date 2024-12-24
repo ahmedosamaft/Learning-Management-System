@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InstructorServiceTests {
@@ -76,6 +76,8 @@ class InstructorServiceTests {
 
         ResponseEntity<Response> response = instructorService.getInstructor(instructor.getId());
 
+        verify(instructorRepository, times(1)).findById(instructor.getId());
+        verify(userResponseMapper, times(1)).toDto(instructor);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Instructor retrieved successfully!", response.getBody().getMessage());
         assertEquals(Map.of("instructor", userResponseDto), response.getBody().getData());
@@ -89,6 +91,8 @@ class InstructorServiceTests {
 
         ResponseEntity<Response> response = instructorService.getInstructor(id);
 
+        verify(instructorRepository, times(1)).findById(id);
+        verify(userResponseMapper, never()).toDto(any());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Instructor not found!", response.getBody().getMessage());
     }
@@ -122,6 +126,9 @@ class InstructorServiceTests {
 
         ResponseEntity<Response> response = instructorService.getAllInstructors(page, size);
 
+        verify(repositoryUtils, times(1)).getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        verify(instructorRepository, times(1)).findAll(pageable);
+        verify(userResponseMapper, times(1)).toDto(instructor);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Instructors retrieved successfully!", response.getBody().getMessage());
         assertEquals(Map.of("instructors", instructors.map(userResponseMapper::toDto).getContent()), response.getBody().getData());
@@ -164,6 +171,10 @@ class InstructorServiceTests {
 
         ResponseEntity<Response> response = instructorService.getCourses(page, size);
 
+        verify(authUtils, times(1)).getCurrentUserId();
+        verify(repositoryUtils, times(1)).getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        verify(courseRepository, times(1)).findAllByInstructorId(instructor.getId(), pageable);
+        verify(courseMapper, times(1)).toDto(course);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Courses retrieved successfully!", response.getBody().getMessage());
         assertEquals(Map.of("courses", courses.map(courseMapper::toDto).getContent()), response.getBody().getData());

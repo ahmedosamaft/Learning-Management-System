@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.users.admin;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.users.UserIdDto;
 import fci.swe.advanced_software.dtos.users.UserUpdateDto;
 import fci.swe.advanced_software.models.users.AbstractUser;
@@ -27,7 +28,7 @@ public class AdminService implements IAdminService {
     private final AuthService authService;
 
     @Override
-    public ResponseEntity<?> deleteUser(String id) {
+    public ResponseEntity<Response> deleteUser(String id) {
         AbstractUser user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
