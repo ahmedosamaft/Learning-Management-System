@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.users.student;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.dtos.course.CourseSearchDto;
 import fci.swe.advanced_software.dtos.course.EnrollmentDto;
@@ -46,7 +47,7 @@ public class StudentService implements IStudentService {
     private final INotificationsService notificationsService;
 
     @Override
-    public ResponseEntity<?> enrollCourse(String courseId, String studentId) {
+    public ResponseEntity<Response> enrollCourse(String courseId, String studentId) {
         Student student = studentRepository.findById(studentId).orElse(null);
         if (student == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
@@ -82,7 +83,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public ResponseEntity<?> dropCourse(String courseId, String StudentId) {
+    public ResponseEntity<Response> dropCourse(String courseId, String StudentId) {
         Student student = studentRepository.findById(StudentId).orElse(null);
         if (student == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
@@ -107,7 +108,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public ResponseEntity<?> getCourses(Integer page, Integer size) {
+    public ResponseEntity<Response> getCourses(Integer page, Integer size) {
         Student student = validateAndRetrieveCurrentStudent();
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
 
@@ -117,6 +118,7 @@ public class StudentService implements IStudentService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
+                .withMessage("Courses retrieved successfully!")
                 .withData("courses", coursesDto)
                 .build();
     }
