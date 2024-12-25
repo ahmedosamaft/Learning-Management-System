@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.auth;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.auth.AuthDto;
 import fci.swe.advanced_software.dtos.auth.AuthResponseDto;
 import fci.swe.advanced_software.dtos.auth.RegisterDto;
@@ -93,11 +94,14 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public ResponseEntity<?> updateProfile(UserUpdateDto userUpdateDto, String id) {
+    public ResponseEntity<Response> updateProfile(UserUpdateDto userUpdateDto, String id) {
         AbstractUser user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
-            return createErrorResponse("User not found!", HttpStatus.NOT_FOUND);
+            return ResponseEntityBuilder.create()
+                    .withStatus(HttpStatus.NOT_FOUND)
+                    .withMessage("User not found!")
+                    .build();
         }
 
         user.setName(userUpdateDto.getName());

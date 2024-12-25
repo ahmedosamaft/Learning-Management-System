@@ -44,7 +44,7 @@ public class AdminService implements IAdminService {
     }
 
     @Override
-    public ResponseEntity<?> getUsers(Integer page, Integer size) {
+    public ResponseEntity<Response> getUsers(Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
         Page<AbstractUser> users = userRepository.findAll(pageable);
 
@@ -54,12 +54,13 @@ public class AdminService implements IAdminService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
+                .withMessage("Users retrieved successfully!")
                 .withData("users", response)
                 .build();
     }
 
     @Override
-    public ResponseEntity<?> getUserById(String id) {
+    public ResponseEntity<Response> getUserById(String id) {
         AbstractUser user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
@@ -71,13 +72,13 @@ public class AdminService implements IAdminService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
+                .withMessage("User retrieved successfully!")
                 .withData("user", userResponseMapper.toUserIdDto(user))
                 .build();
     }
 
     @Override
-    public ResponseEntity<?> updateUser(String id, UserUpdateDto updateDto) {
+    public ResponseEntity<Response> updateUser(String id, UserUpdateDto updateDto) {
         return authService.updateProfile(updateDto, id);
     }
-
 }
