@@ -2,12 +2,19 @@ package fci.swe.advanced_software.models;
 
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.AbstractUser;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@SuperBuilder
+@NoArgsConstructor
 public class Notification extends AbstractEntity implements Comparable<Notification> {
     @Column(nullable = false)
     private String title;
@@ -18,11 +25,11 @@ public class Notification extends AbstractEntity implements Comparable<Notificat
     @Column(nullable = false)
     private Boolean isRead;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient", nullable = false)
     private AbstractUser recipient;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
 

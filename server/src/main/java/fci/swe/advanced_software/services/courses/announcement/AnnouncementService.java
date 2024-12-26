@@ -5,8 +5,10 @@ import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
 import fci.swe.advanced_software.models.courses.Announcement;
 import fci.swe.advanced_software.models.courses.Course;
+import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.repositories.course.AnnouncementRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
+import fci.swe.advanced_software.services.INotificationsService;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -33,6 +35,7 @@ public class AnnouncementService implements IAnnouncementService {
     private final CourseRepository courseRepository;
     private final RepositoryUtils repositoryUtils;
     private final UserResponseMapper userResponseMapper;
+    private final INotificationsService notificationsService;
 
     @Override
     public ResponseEntity<?> createAnnouncement(AnnouncementRequestDto requestDto) {
@@ -41,6 +44,13 @@ public class AnnouncementService implements IAnnouncementService {
         announcement = announcementRepository.save(announcement);
 
         AnnouncementResponseDto responseDto = announcementMapper.toResponseDto(announcement);
+
+        notificationsService.broadcastNotification(
+                "New Announcement",
+                "A new announcement has been posted in " + announcement.getCourse().getName(),
+                announcement.getCourse().getId(),
+                Role.STUDENT
+        );
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
