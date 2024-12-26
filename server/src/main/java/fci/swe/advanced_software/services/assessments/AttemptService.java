@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.assessments;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptResponseDto;
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptShortDto;
 import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackUpdateDto;
@@ -42,7 +43,7 @@ public class AttemptService implements IAttemptService {
     private final RepositoryUtils repositoryUtils;
 
     @Override
-    public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
+    public ResponseEntity<Response> createAttempt(String courseId, AssessmentType type, String assessmentId) {
         if (attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You already attempted this " + type.name().toLowerCase() + "!");
         }
@@ -87,7 +88,7 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptById(String id) {
+    public ResponseEntity<Response> getAttemptById(String id) {
         Attempt attempt = attemptRepository.findById(id).orElse(null);
 
         if (attempt == null) {
@@ -101,11 +102,12 @@ public class AttemptService implements IAttemptService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
+                .withMessage("Attempt retrieved successfully!")
                 .withData("attempt", responseDto)
                 .build();
     }
 
-    public ResponseEntity<?> oldGetAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
+    public ResponseEntity<Response> oldGetAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
         if (!studentRepository.existsById(studentId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
         }
@@ -128,7 +130,7 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, String type, Integer page, Integer size) {
+    public ResponseEntity<Response> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, String type, Integer page, Integer size) {
         if (!studentRepository.existsById(studentId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
         }
@@ -155,7 +157,7 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> updateAttempt(String id, FeedbackUpdateDto feedbackDto) {
+    public ResponseEntity<Response> updateAttempt(String id, FeedbackUpdateDto feedbackDto) {
         Attempt attempt = attemptRepository.findById(id).orElse(null);
         if (attempt == null) {
             return ResponseEntityBuilder.create()
@@ -186,7 +188,7 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId, Integer page, Integer size) {
+    public ResponseEntity<Response> getAttemptsByAssessmentId(String assessmentId, Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
         Page<Attempt> attempts = attemptRepository.findAllByAssessmentId(assessmentId, pageable);
 
@@ -205,12 +207,11 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptByIdForStudent(String courseId, String attemptId) {
+    public ResponseEntity<Response> getAttemptByIdForStudent(String courseId, String attemptId) {
         Attempt attempt = attemptRepository.findById(attemptId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found!"));
         if (!attempt.getAssessment().getCourse().getId().equals(courseId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found!");
         }
         return getAttemptById(attemptId);
     }
-
 }
