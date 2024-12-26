@@ -5,6 +5,7 @@ import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.CourseSearchRepository;
+import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
 import fci.swe.advanced_software.utils.mappers.courses.CourseToElasticsearchMapper;
@@ -37,6 +38,9 @@ class CourseServiceTest {
     private CourseSearchRepository courseSearchRepository;
 
     @Mock
+    private InstructorRepository instructorRepository;
+
+    @Mock
     private CourseMapper courseMapper;
 
     @Mock
@@ -45,39 +49,44 @@ class CourseServiceTest {
     @Mock
     private RepositoryUtils repositoryUtils;
 
-    private Course mockCourse;
-    private CourseDto mockCourseDto;
-    private Instructor mockInstructor;
+    private Course buildMockCourse() {
+        return Course.builder()
+                .id("CS101")
+                .code("CS101")
+                .name("Introduction to Computer Science")
+                .instructor(buildMockInstructor())
+                .build();
+    }
+
+    private Instructor buildMockInstructor() {
+        return Instructor.builder()
+                .id("INS001")
+                .name("John Doe")
+                .build();
+    }
+
+    private CourseDto buildMockCourseDto() {
+        return CourseDto.builder()
+                .id("CS101")
+                .code("CS101")
+                .name("Introduction to Computer Science")
+                .build();
+    }
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        mockInstructor = new Instructor();
-        mockInstructor.setId("INS001");
-        mockInstructor.setName("John Doe");
-
-        mockCourse = new Course();
-        mockCourse.setId("CS101");
-        mockCourse.setCode("CS101");
-        mockCourse.setName("Introduction to Computer Science");
-        mockCourse.setInstructor(mockInstructor);
-
-        mockCourseDto = new CourseDto();
-        mockCourseDto.setId("CS101");
-        mockCourseDto.setCode("CS101");
-        mockCourseDto.setName("Introduction to Computer Science");
     }
 
     @Test
-    void testGetAllCourses() {
+    void CourseService_GetAllCourses_ReturnsCourses() {
         List<Course> courseList = new ArrayList<>();
-        courseList.add(mockCourse);
+        courseList.add(buildMockCourse());
         Page<Course> coursePage = new PageImpl<>(courseList);
 
         when(repositoryUtils.getPageable(anyInt(), anyInt(), any(), any())).thenReturn(PageRequest.of(0, 10));
         when(courseRepository.findAll(any(PageRequest.class))).thenReturn(coursePage);
-        when(courseMapper.toDto(any(Course.class))).thenReturn(mockCourseDto);
+        when(courseMapper.toDto(any(Course.class))).thenReturn(buildMockCourseDto());
 
         ResponseEntity<?> response = courseService.getAllCourses(0, 10);
         assertNotNull(response);
@@ -85,48 +94,79 @@ class CourseServiceTest {
     }
 
     @Test
-    void testGetCourseById() {
-        when(courseRepository.findById("CS101")).thenReturn(Optional.of(mockCourse));
-        when(courseMapper.toDto(mockCourse)).thenReturn(mockCourseDto);
+    void CourseService_GetCourseById_ReturnsCourse() {
+        when(courseRepository.findById("CS101")).thenReturn(Optional.of(buildMockCourse()));
+        when(courseMapper.toDto(any(Course.class))).thenReturn(buildMockCourseDto());
 
         ResponseEntity<?> response = courseService.getCourseById("CS101");
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
     }
+    @Test
+    void CourseService_GetCourseById_ReturnsNotFound() {
+        when(courseRepository.findById("CS999")).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = courseService.getCourseById("CS999");
+        assertNotNull(response);
+        assertEquals(404, response.getStatusCodeValue());
+    }
 
     @Test
-    void testCreateCourse() {
-        when(courseMapper.toEntity(any(CourseDto.class))).thenReturn(mockCourse);
-        when(courseRepository.save(any(Course.class))).thenReturn(mockCourse);
-        when(courseToElasticsearchMapper.toES(mockCourse)).thenReturn(null);
-        when(courseSearchRepository.save(any())).thenReturn(null);
-        when(courseMapper.toDto(mockCourse)).thenReturn(mockCourseDto);
+    void CourseService_CreateCourse_ReturnsCreatedCourse() {
+        Course course = buildMockCourse();
+        CourseDto courseDto = buildMockCourseDto();
 
-        ResponseEntity<?> response = courseService.createCourse(mockCourseDto);
+        when(courseMapper.toEntity(courseDto)).thenReturn(course);
+        when(courseRepository.save(course)).thenReturn(course);
+        when(courseToElasticsearchMapper.toES(course)).thenReturn(null);
+        when(courseSearchRepository.save(any())).thenReturn(null);
+        when(courseMapper.toDto(course)).thenReturn(courseDto); // Ensure DTO mapping
+
+        ResponseEntity<?> response = courseService.createCourse(courseDto);
         assertNotNull(response);
         assertEquals(201, response.getStatusCodeValue());
     }
 
     @Test
-    void testUpdateCourse() {
-        when(courseRepository.findById("CS101")).thenReturn(Optional.of(mockCourse));
-        when(courseMapper.toEntity(mockCourseDto)).thenReturn(mockCourse);
-        when(courseRepository.save(mockCourse)).thenReturn(mockCourse);
-        when(courseToElasticsearchMapper.toES(mockCourse)).thenReturn(null);
+    void CourseService_UpdateCourse_ReturnsUpdatedCourse() {
+        Course course = buildMockCourse();
+        CourseDto courseDto = buildMockCourseDto();
+
+        when(courseRepository.findById("CS101")).thenReturn(Optional.of(course));
+        when(courseMapper.toEntity(courseDto)).thenReturn(course);
+        when(courseRepository.save(course)).thenReturn(course);
+        when(courseToElasticsearchMapper.toES(course)).thenReturn(null);
         when(courseSearchRepository.save(any())).thenReturn(null);
 
-        ResponseEntity<?> response = courseService.updateCourse("CS101", mockCourseDto);
+        ResponseEntity<?> response = courseService.updateCourse("CS101", courseDto);
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
     }
+    @Test
+    void CourseService_UpdateCourse_ReturnsNotFound() {
+        when(courseRepository.findById("CS999")).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = courseService.updateCourse("CS999", buildMockCourseDto());
+        assertNotNull(response);
+        assertEquals(404, response.getStatusCodeValue());
+    }
+
 
     @Test
-    void testDeleteCourse() {
+    void CourseService_DeleteCourse_DeletesCourse() {
         when(courseRepository.existsById("CS101")).thenReturn(true);
         doNothing().when(courseRepository).deleteById("CS101");
 
         ResponseEntity<?> response = courseService.deleteCourse("CS101");
         assertNotNull(response);
         assertEquals(204, response.getStatusCodeValue());
+    }
+    @Test
+    void CourseService_DeleteCourse_ReturnsNotFound() {
+        when(courseRepository.existsById("CS999")).thenReturn(false);
+
+        ResponseEntity<?> response = courseService.deleteCourse("CS999");
+        assertNotNull(response);
+        assertEquals(404, response.getStatusCodeValue());
     }
 }
