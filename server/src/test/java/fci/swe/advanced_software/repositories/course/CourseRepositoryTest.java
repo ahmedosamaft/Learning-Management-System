@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -24,116 +24,131 @@ class CourseRepositoryTest {
     private EntityManager entityManager;
 
     @Test
-    void testFindAllByInstructorId() {
-        Instructor instructor = new Instructor();
-        instructor.setName("Instructor Name");
-        instructor.setEmail("instructor@example.com");
-        instructor.setPassword("securepassword");
-        instructor.setRole(Role.INSTRUCTOR);
+    void CourseRepository_FindAllByInstructorId_ReturnsCourses() {
+        Instructor instructor = Instructor.builder()
+                .name("Instructor Name")
+                .email("instructor@example.com")
+                .password("securepassword")
+                .role(Role.INSTRUCTOR)
+                .build();
         entityManager.persist(instructor);
 
-        Course course1 = new Course();
-        course1.setCode("CS101");
-        course1.setName("Introduction to Computer Science");
-        course1.setDescription("This is a basic course in computer science.");
-        course1.setInstructor(instructor);
+        Course course1 = Course.builder()
+                .code("CS101")
+                .name("Introduction to Computer Science")
+                .description("This is a basic course in computer science.")
+                .instructor(instructor)
+                .build();
         entityManager.persist(course1);
 
-        Course course2 = new Course();
-        course2.setCode("CS102");
-        course2.setName("Data Structures");
-        course2.setDescription("This is a course on data structures.");
-        course2.setInstructor(instructor);
+        Course course2 = Course.builder()
+                .code("CS102")
+                .name("Data Structures")
+                .description("This is a course on data structures.")
+                .instructor(instructor)
+                .build();
         entityManager.persist(course2);
 
         Page<Course> coursesPage = courseRepository.findAllByInstructorId(instructor.getId(), PageRequest.of(0, 10));
 
-        assertNotNull(coursesPage);
-        assertEquals(2, coursesPage.getTotalElements());
+        assertThat(coursesPage).isNotNull();
+        assertThat(coursesPage.getTotalElements()).isEqualTo(2);
     }
 
     @Test
-    void testExistsByInstructorId() {
-        Instructor instructor = new Instructor();
-        instructor.setName("Instructor Name");
-        instructor.setEmail("instructor@example.com");
-        instructor.setPassword("securepassword");
-        instructor.setRole(Role.INSTRUCTOR);
+    void CourseRepository_ExistsByInstructorId_ReturnsTrue() {
+        Instructor instructor = Instructor.builder()
+                .name("Instructor Name")
+                .email("instructor@example.com")
+                .password("securepassword")
+                .role(Role.INSTRUCTOR)
+                .build();
         entityManager.persist(instructor);
 
-        Course course = new Course();
-        course.setCode("CS101");
-        course.setName("Introduction to Computer Science");
-        course.setDescription("This is a basic course in computer science.");
-        course.setInstructor(instructor);
+        Course course = Course.builder()
+                .code("CS101")
+                .name("Introduction to Computer Science")
+                .description("This is a basic course in computer science.")
+                .instructor(instructor)
+                .build();
         entityManager.persist(course);
 
         boolean exists = courseRepository.existsByInstructorId(instructor.getId());
-        assertTrue(exists);
+        assertThat(exists).isTrue();
     }
 
     @Test
-    void testExistsByIdAndInstructorId() {
-        Instructor instructor = new Instructor();
-        instructor.setName("Instructor Name");
-        instructor.setEmail("instructor@example.com");
-        instructor.setPassword("securepassword");
-        instructor.setRole(Role.INSTRUCTOR);
+    void CourseRepository_ExistsByIdAndInstructorId_ReturnsTrue() {
+        Instructor instructor = Instructor.builder()
+                .name("Instructor Name")
+                .email("instructor@example.com")
+                .password("securepassword")
+                .role(Role.INSTRUCTOR)
+                .build();
         entityManager.persist(instructor);
 
-        Course course = new Course();
-        course.setCode("CS101");
-        course.setName("Introduction to Computer Science");
-        course.setDescription("This is a basic course in computer science.");
-        course.setInstructor(instructor);
+        Course course = Course.builder()
+                .code("CS101")
+                .name("Introduction to Computer Science")
+                .description("This is a basic course in computer science.")
+                .instructor(instructor)
+                .build();
         entityManager.persist(course);
 
         boolean exists = courseRepository.existsByIdAndInstructorId(course.getId(), instructor.getId());
-        assertTrue(exists);
+        assertThat(exists).isTrue();
     }
 
+
     @Test
-    void testFindAllByNameContainingIgnoreCase() {
-        Instructor instructor = new Instructor();
-        instructor.setName("Instructor Name");
-        instructor.setEmail("instructor@example.com");
-        instructor.setPassword("securepassword");
-        instructor.setRole(Role.INSTRUCTOR);
+    void CourseRepository_FindAllByNameContainingIgnoreCase_ReturnsCourses() {
+        Instructor instructor = Instructor.builder()
+                .name("Instructor Name")
+                .email("instructor@example.com")
+                .password("securepassword")
+                .role(Role.INSTRUCTOR)
+                .build();
         entityManager.persist(instructor);
 
-        Course course1 = new Course();
-        course1.setCode("CS101");
-        course1.setName("Introduction to Computer Science");
-        course1.setDescription("This is a basic course in computer science.");
-        course1.setInstructor(instructor);
+        Course course1 = Course.builder()
+                .code("CS101")
+                .name("Introduction to Computer Science")
+                .description("This is a basic course in computer science.")
+                .instructor(instructor)
+                .build();
         entityManager.persist(course1);
 
-        Course course2 = new Course();
-        course2.setCode("CS102");
-        course2.setName("Advanced Data Structures");
-        course2.setDescription("This is a course on advanced data structures.");
-        course2.setInstructor(instructor);
+        Course course2 = Course.builder()
+                .code("CS102")
+                .name("Advanced Data Structures")
+                .description("This is a course on advanced data structures.")
+                .instructor(instructor)
+                .build();
         entityManager.persist(course2);
 
         Page<Course> coursesPage = courseRepository.findAllByNameContainingIgnoreCase("Data", PageRequest.of(0, 10));
 
-        assertNotNull(coursesPage);
-        assertEquals(1, coursesPage.getTotalElements());
-        assertEquals("Advanced Data Structures", coursesPage.getContent().get(0).getName());
+        assertThat(coursesPage).isNotNull();
+        assertThat(coursesPage.getTotalElements()).isEqualTo(1);
+        assertThat(coursesPage.getContent().get(0).getName()).isEqualTo("Advanced Data Structures");
     }
 
+
     @Test
-    void testFindAllByInstructorId_Empty() {
-        Instructor instructor = new Instructor();
-        instructor.setName("Instructor Name");
-        instructor.setEmail("instructor@example.com");
-        instructor.setPassword("securepassword");
-        instructor.setRole(Role.INSTRUCTOR);
+    void CourseRepository_FindAllByInstructorId_Empty_ReturnsEmptyPage() {
+        Instructor instructor = Instructor.builder()
+                .name("Instructor Name")
+                .email("instructor@example.com")
+                .password("securepassword")
+                .role(Role.INSTRUCTOR)
+                .build();
         entityManager.persist(instructor);
 
         Page<Course> coursesPage = courseRepository.findAllByInstructorId(instructor.getId(), PageRequest.of(0, 10));
 
-        assertNotNull(coursesPage);
-        assertEquals(0, coursesPage.getTotalElements());
+        assertThat(coursesPage).isNotNull();
+        assertThat(coursesPage.getTotalElements()).isEqualTo(0);
     }
+
+    // Add more tests for other edge cases/scenarios as needed
 }
