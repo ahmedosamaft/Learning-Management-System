@@ -25,11 +25,11 @@ public class Notification extends AbstractEntity implements Comparable<Notificat
     @Column(nullable = false)
     private Boolean isRead;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient", nullable = false)
     private AbstractUser recipient;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
 

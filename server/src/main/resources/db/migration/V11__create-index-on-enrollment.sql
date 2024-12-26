@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX idx_enrollment_course_student ON enrollment (course_id, student_id);

@@ -1,10 +1,7 @@
 package fci.swe.advanced_software.models.users;
 
 import fci.swe.advanced_software.models.courses.Course;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +18,6 @@ import java.util.Set;
 @AllArgsConstructor
 @SuperBuilder
 public class Instructor extends AbstractUser {
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Course> courses;
 }
