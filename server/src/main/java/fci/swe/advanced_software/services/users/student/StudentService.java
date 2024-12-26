@@ -7,9 +7,11 @@ import fci.swe.advanced_software.models.courses.Attendance;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.courses.Enrollment;
 import fci.swe.advanced_software.models.courses.Lesson;
+import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.course.*;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
+import fci.swe.advanced_software.services.INotificationsService;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -41,6 +43,7 @@ public class StudentService implements IStudentService {
     private final AuthUtils authUtils;
     private final RepositoryUtils repositoryUtils;
     private final CourseSearchRepository courseSearchRepository;
+    private final INotificationsService notificationsService;
 
     @Override
     public ResponseEntity<?> enrollCourse(String courseId, String studentId) {
@@ -50,7 +53,7 @@ public class StudentService implements IStudentService {
         }
         Course course = validateAndRetrieveCourse(courseId);
 
-        if(enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
+        if (enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
             return ResponseEntityBuilder.create()
                     .withStatus(HttpStatus.BAD_REQUEST)
                     .withMessage("You are already enrolled in this course!")
@@ -61,6 +64,14 @@ public class StudentService implements IStudentService {
                 .studentId(student.getId())
                 .courseId(course.getId())
                 .build();
+
+        notificationsService.broadcastNotification(
+                "New Enrollment",
+                "Student " + student.getName() + " has enrolled in " + course.getName(),
+                courseId,
+                Role.INSTRUCTOR
+        );
+
         Enrollment enrollment = new Enrollment(student, course, null);
         enrollmentRepository.save(enrollment);
         return ResponseEntityBuilder.create()

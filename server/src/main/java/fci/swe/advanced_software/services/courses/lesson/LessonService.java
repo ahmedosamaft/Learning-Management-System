@@ -2,8 +2,10 @@ package fci.swe.advanced_software.services.courses.lesson;
 
 import fci.swe.advanced_software.dtos.course.LessonDto;
 import fci.swe.advanced_software.models.courses.Lesson;
+import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.LessonRepository;
+import fci.swe.advanced_software.services.INotificationsService;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -27,6 +29,7 @@ public class LessonService implements ILessonService {
     private final LessonMapper lessonMapper;
     private final RepositoryUtils repositoryUtils;
     private final CourseRepository courseRepository;
+    private final INotificationsService notificationsService;
 
     @Override
     public ResponseEntity<?> getAllLessons(String courseId, Integer page, Integer size) {
@@ -62,6 +65,13 @@ public class LessonService implements ILessonService {
 
         Lesson savedLesson = lessonRepository.save(lesson);
         String location = Constants.API_VERSION + "/lessons/" + savedLesson.getId();
+
+        notificationsService.broadcastNotification(
+                "New Lesson",
+                "Lesson " + lesson.getTitle() + " has been added to the course",
+                courseId,
+                Role.STUDENT
+        );
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)

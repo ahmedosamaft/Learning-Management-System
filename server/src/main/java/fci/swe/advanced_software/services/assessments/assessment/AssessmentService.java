@@ -9,10 +9,12 @@ import fci.swe.advanced_software.models.AbstractEntity;
 import fci.swe.advanced_software.models.assessments.Assessment;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.assessments.Question;
+import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
 import fci.swe.advanced_software.repositories.assessments.QuestionRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
+import fci.swe.advanced_software.services.INotificationsService;
 import fci.swe.advanced_software.utils.*;
 import fci.swe.advanced_software.utils.mappers.assessments.AssessmentMapper;
 import fci.swe.advanced_software.utils.mappers.assessments.AssessmentQuestionsMapper;
@@ -43,6 +45,7 @@ public class AssessmentService implements IAssessmentService {
     private final AssessmentQuestionsMapper assessmentQuestionsMapper;
     private final AttemptRepository attemptRepository;
     private final AuthUtils authUtils;
+    private final INotificationsService notificationsService;
 
     @Override
     public ResponseEntity<?> getAllAssessments(String course_id, AssessmentType type, Integer page, Integer size) {
@@ -66,6 +69,13 @@ public class AssessmentService implements IAssessmentService {
         assessment = assessmentRepository.save(assessment);
 
         AssessmentDto responseDto = assessmentMapper.toResponseDto(assessment);
+
+        notificationsService.broadcastNotification(
+                "New " + type.name().toLowerCase(),
+                "A new " + type.name().toLowerCase() + " has been created in " + assessment.getCourse().getName(),
+                assessment.getCourse().getId(),
+                Role.STUDENT
+        );
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.CREATED)
