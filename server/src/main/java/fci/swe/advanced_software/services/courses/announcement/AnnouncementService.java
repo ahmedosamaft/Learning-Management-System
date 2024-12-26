@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.courses.announcement;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementListDto;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
@@ -50,7 +51,7 @@ public class AnnouncementService implements IAnnouncementService {
     private final INotificationsService notificationsService;
 
     @Override
-    public ResponseEntity<?> createAnnouncement(AnnouncementRequestDto requestDto) {
+    public ResponseEntity<Response> createAnnouncement(AnnouncementRequestDto requestDto) {
         requestDto.setUserId(authUtils.getCurrentUserId());
         Announcement announcement = announcementMapper.toEntity(requestDto);
         announcement.setPostedAt(Timestamp.from(Instant.now()));
@@ -74,7 +75,7 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<?> updateAnnouncement(String id, AnnouncementRequestDto requestDto) {
+    public ResponseEntity<Response> updateAnnouncement(String id, AnnouncementRequestDto requestDto) {
         Announcement announcement = announcementRepository.findById(id).orElse(null);
 
         if (announcement == null) {
@@ -101,7 +102,7 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<?> getAnnouncement(String id) {
+    public ResponseEntity<Response> getAnnouncement(String id) {
         Announcement announcement = announcementRepository.findById(id).orElse(null);
 
         if (announcement == null) {
@@ -121,7 +122,7 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<?> deleteAnnouncement(String id) {
+    public ResponseEntity<Response> deleteAnnouncement(String id) {
         Announcement announcement = announcementRepository.findById(id).orElse(null);
 
         if (announcement == null) {
@@ -140,9 +141,9 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<?> getAnnouncements(String courseId, Integer page, Integer size) {
+    public ResponseEntity<Response> getAnnouncements(String courseId, Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
-        Page<Announcement> announcements = announcementRepository.findByCourseId(courseId, pageable);
+        Page<Announcement> announcements = announcementRepository.findAllByCourseId(courseId, pageable);
 
         List<AnnouncementListDto> response = announcements.map(
                         (announcement) ->
@@ -157,6 +158,7 @@ public class AnnouncementService implements IAnnouncementService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
+                .withMessage("Announcements retrieved successfully!")
                 .withData("announcements", response)
                 .build();
     }
