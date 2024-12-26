@@ -2,8 +2,11 @@ package fci.swe.advanced_software.services.users;
 
 import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.course.CourseDto;
+import fci.swe.advanced_software.dtos.course.CourseSearchDto;
+import fci.swe.advanced_software.models.courses.Attendance;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.courses.Enrollment;
+import fci.swe.advanced_software.models.courses.Lesson;
 import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.course.*;
@@ -177,13 +180,13 @@ public class StudentServiceTests {
 
         when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
         when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
-        when(enrollmentRepository.findByStudentAndCourse(student, course)).thenReturn(enrollment);
+        when(enrollmentRepository.findByStudentIdAndCourseId(student.getId(), course.getId())).thenReturn(enrollment);
 
         ResponseEntity<Response> response = studentService.dropCourse(course.getId(), student.getId());
 
         verify(studentRepository, times(1)).findById(student.getId());
         verify(courseRepository, times(1)).findById(course.getId());
-        verify(enrollmentRepository, times(1)).findByStudentAndCourse(student, course);
+        verify(enrollmentRepository, times(1)).findByStudentIdAndCourseId(student.getId(), course.getId());
         verify(enrollmentRepository, times(1)).delete(any());
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertEquals("Course dropped successfully!", response.getBody().getMessage());
@@ -209,13 +212,13 @@ public class StudentServiceTests {
 
         when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
         when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
-        when(enrollmentRepository.findByStudentAndCourse(student, course)).thenReturn(null);
+        when(enrollmentRepository.findByStudentIdAndCourseId(student.getId(), course.getId())).thenReturn(null);
 
         ResponseEntity<Response> response = studentService.dropCourse(course.getId(), student.getId());
 
         verify(studentRepository, times(1)).findById(student.getId());
         verify(courseRepository, times(1)).findById(course.getId());
-        verify(enrollmentRepository, times(1)).findByStudentAndCourse(student, course);
+        verify(enrollmentRepository, times(1)).findByStudentIdAndCourseId(student.getId(), course.getId());
         verify(enrollmentRepository, never()).delete(any());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Course not found!", response.getBody().getMessage());
@@ -234,7 +237,7 @@ public class StudentServiceTests {
 
         verify(studentRepository, times(1)).findById(id);
         verify(courseRepository, never()).findById(any());
-        verify(enrollmentRepository, never()).findByStudentAndCourse(any(), any());
+        verify(enrollmentRepository, never()).findByStudentIdAndCourseId(any(), any());
         verify(enrollmentRepository, never()).delete(any());
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         assertEquals("Student not found!", exception.getReason());
@@ -289,5 +292,165 @@ public class StudentServiceTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Courses retrieved successfully!", response.getBody().getMessage());
         assertEquals(Map.of("courses", List.of(courseDto)), response.getBody().getData());
+    }
+
+    @Test
+    public void searchCourses_ShouldReturnCourses() {
+        Integer page = 1;
+        Integer size = 10;
+        String keyword = "CS101";
+
+        Course course = Course.builder()
+                .id(UUID.randomUUID().toString())
+                .code("CS101")
+                .name("cs")
+                .description("desc")
+                .build();
+
+        CourseSearchDto courseSearchDto = CourseSearchDto.builder()
+                .code("CS101")
+                .name("cs")
+                .description("desc")
+                .build();
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "createdAt");
+
+        Page<CourseSearchDto> courses = new PageImpl<>(List.of(courseSearchDto), pageable, 1);
+
+        when(repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt")).thenReturn(pageable);
+        when(courseSearchRepository.searchAllByCodeOrNameOrDescription(keyword, keyword, keyword, pageable)).thenReturn(courses);
+
+        ResponseEntity<Response> response = studentService.searchCourses(keyword, page, size);
+
+        verify(repositoryUtils, times(1)).getPageable(page, size, Sort.Direction.ASC, "createdAt");
+        verify(courseSearchRepository, times(1)).searchAllByCodeOrNameOrDescription(keyword, keyword, keyword, pageable);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Courses retrieved successfully!", response.getBody().getMessage());
+        assertEquals(Map.of("courses", List.of(courseSearchDto)), response.getBody().getData());
+    }
+
+    @Test
+    public void attendLesson_StudentFoundAndLessonFoundAndOtpMatchedAndLessonNotAttemptedYet_ShouldReturnCreated() {
+
+        Student student = Student.builder()
+                .id(UUID.randomUUID().toString())
+                .name("test")
+                .email("test@fci.swe.com")
+                .password("123456")
+                .role(Role.STUDENT)
+                .build();
+
+        Course course = Course.builder()
+                .id(UUID.randomUUID().toString())
+                .code("CS101")
+                .name("cs")
+                .description("desc")
+                .build();
+
+        Lesson lesson = Lesson.builder()
+                .id(UUID.randomUUID().toString())
+                .course(course)
+                .otp("1234")
+                .build();
+
+        Attendance attendance = Attendance.builder()
+                .student(student)
+                .lesson(lesson)
+                .course(course)
+                .build();
+
+        when(authUtils.getCurrentUserId()).thenReturn(student.getId());
+        when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
+        when(lessonRepository.findById(lesson.getId())).thenReturn(Optional.of(lesson));
+        when(attendanceRepository.existsByLessonIdAndStudentId(lesson.getId(), student.getId())).thenReturn(false);
+        when(attendanceRepository.save(any())).thenReturn(attendance);
+
+        ResponseEntity<Response> response = studentService.attendLesson(lesson.getId(), "1234");
+
+        verify(authUtils, times(1)).getCurrentUserId();
+        verify(studentRepository, times(1)).findById(student.getId());
+        verify(lessonRepository, times(1)).findById(lesson.getId());
+        verify(attendanceRepository, times(1)).existsByLessonIdAndStudentId(lesson.getId(), student.getId());
+        verify(attendanceRepository, times(1)).save(any());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("Lesson attended successfully!", response.getBody().getMessage());
+    }
+
+    @Test
+    public void attendLesson_StudentFoundAndLessonFoundAndLessonAlreadyAttempted_ShouldReturnBadRequest() {
+        Student student = Student.builder()
+                .id(UUID.randomUUID().toString())
+                .name("test")
+                .email("test@fci.swe.com")
+                .password("123456")
+                .role(Role.STUDENT)
+                .build();
+
+        Course course = Course.builder()
+                .id(UUID.randomUUID().toString())
+                .code("CS101")
+                .name("cs")
+                .description("desc")
+                .build();
+
+        Lesson lesson = Lesson.builder()
+                .id(UUID.randomUUID().toString())
+                .course(course)
+                .otp("1234")
+                .build();
+
+        when(authUtils.getCurrentUserId()).thenReturn(student.getId());
+        when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
+        when(lessonRepository.findById(lesson.getId())).thenReturn(Optional.of(lesson));
+        when(attendanceRepository.existsByLessonIdAndStudentId(lesson.getId(), student.getId())).thenReturn(true);
+
+        ResponseEntity<Response> response = studentService.attendLesson(lesson.getId(), "1234");
+
+        verify(authUtils, times(1)).getCurrentUserId();
+        verify(studentRepository, times(1)).findById(student.getId());
+        verify(lessonRepository, times(1)).findById(lesson.getId());
+        verify(attendanceRepository, times(1)).existsByLessonIdAndStudentId(lesson.getId(), student.getId());
+        verify(attendanceRepository, never()).save(any());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("You already attended this lesson!", response.getBody().getMessage());
+    }
+
+    @Test
+    public void attendLesson_StudentFoundAndLessonFoundAndOtpNotMatched_ShouldReturnBadRequest() {
+        Student student = Student.builder()
+                .id(UUID.randomUUID().toString())
+                .name("test")
+                .email("test@fci.swe.com")
+                .password("123456")
+                .role(Role.STUDENT)
+                .build();
+
+        Course course = Course.builder()
+                .id(UUID.randomUUID().toString())
+                .code("CS101")
+                .name("cs")
+                .description("desc")
+                .build();
+
+        Lesson lesson = Lesson.builder()
+                .id(UUID.randomUUID().toString())
+                .course(course)
+                .otp("1234")
+                .build();
+
+        when(authUtils.getCurrentUserId()).thenReturn(student.getId());
+        when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
+        when(lessonRepository.findById(lesson.getId())).thenReturn(Optional.of(lesson));
+        when(attendanceRepository.existsByLessonIdAndStudentId(lesson.getId(), student.getId())).thenReturn(false);
+
+        ResponseEntity<Response> response = studentService.attendLesson(lesson.getId(), "1233");
+
+        verify(authUtils, times(1)).getCurrentUserId();
+        verify(studentRepository, times(1)).findById(student.getId());
+        verify(lessonRepository, times(1)).findById(lesson.getId());
+        verify(attendanceRepository, times(1)).existsByLessonIdAndStudentId(lesson.getId(), student.getId());
+        verify(attendanceRepository, never()).save(any());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Invalid OTP!", response.getBody().getMessage());
     }
 }

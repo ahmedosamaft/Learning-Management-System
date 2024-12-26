@@ -10,7 +10,7 @@ public interface IStudentService {
 
     ResponseEntity<Response> getCourses(Integer page, Integer size);
 
-    ResponseEntity<?> searchCourses(String keyword, Integer page, Integer size);
+    ResponseEntity<Response> searchCourses(String keyword, Integer page, Integer size);
 
-    ResponseEntity<?> attendLesson(String lessonId, String otp);
+    ResponseEntity<Response> attendLesson(String lessonId, String otp);
 }

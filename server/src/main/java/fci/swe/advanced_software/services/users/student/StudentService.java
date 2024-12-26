@@ -90,7 +90,7 @@ public class StudentService implements IStudentService {
         }
         Course course = validateAndRetrieveCourse(courseId);
 
-        Enrollment enrollment = enrollmentRepository.findByStudentAndCourse(student, course);
+        Enrollment enrollment = enrollmentRepository.findByStudentIdAndCourseId(StudentId, courseId);
 
         if (enrollment == null) {
             return ResponseEntityBuilder.create()
@@ -124,19 +124,20 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public ResponseEntity<?> searchCourses(String query, Integer page, Integer size) {
+    public ResponseEntity<Response> searchCourses(String query, Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
 
         Page<CourseSearchDto> courses = courseSearchRepository.searchAllByCodeOrNameOrDescription(query, query, query, pageable);
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
+                .withMessage("Courses retrieved successfully!")
                 .withData("courses", courses.getContent())
                 .build();
     }
 
     @Override
-    public ResponseEntity<?> attendLesson(String lessonId, String otp) {
+    public ResponseEntity<Response> attendLesson(String lessonId, String otp) {
         Student student = validateAndRetrieveCurrentStudent();
         Lesson lesson = validateAndRetrieveLesson(lessonId);
         if (attendanceRepository.existsByLessonIdAndStudentId(lessonId, student.getId())) {
