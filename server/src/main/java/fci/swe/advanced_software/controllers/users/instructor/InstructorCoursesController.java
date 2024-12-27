@@ -4,7 +4,7 @@ import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.courses.course.ICourseService;
 import fci.swe.advanced_software.services.users.instructor.IInstructorService;
-import fci.swe.advanced_software.services.users.student.StudentService;
+import fci.swe.advanced_software.services.users.student.IStudentService;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
@@ -22,7 +22,7 @@ public class InstructorCoursesController {
     private final ICourseService courseService;
     private final IInstructorService instructorService;
     private final AuthUtils authUtils;
-    private final StudentService studentService;
+    private final IStudentService studentService;
 
     @GetMapping
     public ResponseEntity<?> getCourses(@RequestParam(required = false, defaultValue = "1") Integer page,

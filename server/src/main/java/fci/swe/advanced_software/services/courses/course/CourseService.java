@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.courses.course;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.dtos.course.CourseSearchDto;
 import fci.swe.advanced_software.dtos.users.UserResponseDto;
@@ -39,7 +40,7 @@ public class CourseService implements ICourseService {
     private final UserResponseMapper userResponseMapper;
 
     @Override
-    public ResponseEntity<?> getAllCourses(Integer page, Integer size) {
+    public ResponseEntity<Response> getAllCourses(Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
         Page<Course> courses = courseRepository.findAll(pageable);
 
@@ -51,7 +52,7 @@ public class CourseService implements ICourseService {
     }
 
     @Override
-    public ResponseEntity<?> getCourseById(String id) {
+    public ResponseEntity<Response> getCourseById(String id) {
         Optional<Course> courseOpt = courseRepository.findById(id);
         return courseOpt
                 .map(course -> ResponseEntityBuilder.create()
@@ -66,7 +67,7 @@ public class CourseService implements ICourseService {
     }
 
     @Override
-    public ResponseEntity<?> createCourse(CourseDto courseDto) {
+    public ResponseEntity<Response> createCourse(CourseDto courseDto) {
 
         Course course = courseMapper.toEntity(courseDto);
 
@@ -89,7 +90,7 @@ public class CourseService implements ICourseService {
     }
 
     @Override
-    public ResponseEntity<?> updateCourse(String id, CourseDto courseDto) {
+    public ResponseEntity<Response> updateCourse(String id, CourseDto courseDto) {
         Course course = courseRepository.findById(id).orElse(null);
 
         if (course == null) {
@@ -116,7 +117,7 @@ public class CourseService implements ICourseService {
 
 
     @Override
-    public ResponseEntity<?> deleteCourse(String id) {
+    public ResponseEntity<Response> deleteCourse(String id) {
         if (!courseRepository.existsById(id)) {
             return createErrorResponse("Course not found", HttpStatus.NOT_FOUND);
         }
@@ -128,7 +129,7 @@ public class CourseService implements ICourseService {
     }
 
     @Override
-    public ResponseEntity<?> getStudents(String courseId, Integer page, Integer size) {
+    public ResponseEntity<Response> getStudents(String courseId, Integer page, Integer size) {
         Optional<Course> courseOpt = courseRepository.findById(courseId);
 
         if (courseOpt.isEmpty()) {
@@ -146,7 +147,7 @@ public class CourseService implements ICourseService {
     }
 
     // Helper method for success responses
-    private ResponseEntity<?> buildSuccessResponse(String message, Object data, HttpStatus status) {
+    private ResponseEntity<Response> buildSuccessResponse(String message, Object data, HttpStatus status) {
         return ResponseEntityBuilder.create()
                 .withStatus(status)
                 .withMessage(message)
@@ -155,7 +156,7 @@ public class CourseService implements ICourseService {
     }
 
     // Helper method for error responses
-    private ResponseEntity<?> createErrorResponse(String message, HttpStatus status) {
+    private ResponseEntity<Response> createErrorResponse(String message, HttpStatus status) {
         return ResponseEntityBuilder.create()
                 .withStatus(status)
                 .withMessage(message)

@@ -1,4 +1,4 @@
-package fci.swe.advanced_software.controllers;
+package fci.swe.advanced_software.controllers.student;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fci.swe.advanced_software.controllers.users.student.StudentAnnouncementController;
