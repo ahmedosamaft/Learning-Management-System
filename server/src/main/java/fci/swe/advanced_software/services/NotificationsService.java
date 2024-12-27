@@ -12,14 +12,15 @@ import fci.swe.advanced_software.repositories.NotificationRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.repositories.course.EnrollmentRepository;
 import fci.swe.advanced_software.repositories.users.AbstractUserRepository;
-import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
 import fci.swe.advanced_software.utils.mappers.NotificationMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,13 +47,21 @@ public class NotificationsService implements INotificationsService {
     private final AuthUtils authUtils;
     private final RepositoryUtils repositoryUtils;
     private final NotificationMapper notificationMapper;
-    private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final AbstractUserRepository<AbstractUser> abstractUserRepository;
-    private final int THREAD_POOL_SIZE = Math.min(5, Runtime.getRuntime().availableProcessors());
-    private final int BATCH_SIZE = 200;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+    @Value("${notifications.broadcast.batch-size:200}")
+    private int BATCH_SIZE;
+    @Value("${notifications.broadcast.thread-pool-size:5}")
+    private int THREAD_POOL_SIZE;
+    private ExecutorService executorService;
+
+    @PostConstruct
+    public void init() {
+        THREAD_POOL_SIZE = Math.min(THREAD_POOL_SIZE, Runtime.getRuntime().availableProcessors());
+        log.info("Initialized NotificationsService with thread pool size: {} and batch size: {}", THREAD_POOL_SIZE, BATCH_SIZE);
+        executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+    }
 
     @Override
     public ResponseEntity<Response> getNotifications(String filter, Integer page, Integer size) {
