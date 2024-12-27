@@ -12,6 +12,7 @@ import fci.swe.advanced_software.repositories.course.AnnouncementRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
 import fci.swe.advanced_software.services.INotificationsService;
 import fci.swe.advanced_software.services.courses.announcement.AnnouncementService;
+import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.mappers.courses.AnnouncementMapper;
@@ -50,6 +51,9 @@ public class AnnouncementServiceTests {
 
     @Mock
     private CourseRepository courseRepository;
+
+    @Mock
+    private AuthUtils authUtils;
 
     @Mock
     private RepositoryUtils repositoryUtils;
