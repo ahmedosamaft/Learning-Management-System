@@ -11,21 +11,21 @@ import java.util.List;
 public interface IAssessmentService {
     ResponseEntity<Response> getAllAssessments(String course_id, AssessmentType type, Integer page, Integer size);
 
-    ResponseEntity<?> createAssessment(String courseId, AssessmentType assessmentType, AssessmentDto requestDto);
+    ResponseEntity<Response> createAssessment(String courseId, AssessmentType assessmentType, AssessmentDto requestDto);
 
-    ResponseEntity<?> updateAssessment(String id, AssessmentType type, AssessmentDto requestDto);
+    ResponseEntity<Response> updateAssessment(String id, AssessmentType type, AssessmentDto requestDto);
 
-    ResponseEntity<?> getAssessment(String id);
+    ResponseEntity<Response> getAssessment(String id);
 
-    ResponseEntity<?> deleteAssessment(String id);
+    ResponseEntity<Response> deleteAssessment(String id);
 
-    ResponseEntity<?> addQuestionsToAssessment(String assessmentId, List<QuestionAssessmentDto> questionAssessmentDtos);
+    ResponseEntity<Response> addQuestionsToAssessment(String assessmentId, List<QuestionAssessmentDto> questionAssessmentDtos);
 
-    ResponseEntity<?> removeQuestionFromAssessment(String assessmentId, String questionId);
+    ResponseEntity<Response> removeQuestionFromAssessment(String assessmentId, String questionId);
 
-    ResponseEntity<?> getAssessmentQuestions(String assessmentId, Integer page, Integer size);
+    ResponseEntity<Response> getAssessmentQuestions(String assessmentId, Integer page, Integer size);
 
-    ResponseEntity<?> getAssessmentQuestionsForStudent(String assessmentId, AssessmentType assessmentType, Integer page, Integer size);
+    ResponseEntity<Response> getAssessmentQuestionsForStudent(String assessmentId, AssessmentType assessmentType, Integer page, Integer size);
 }
 
 
