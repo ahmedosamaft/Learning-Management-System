@@ -1,18 +1,19 @@
 package fci.swe.advanced_software.services.courses.course;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.course.CourseDto;
 import org.springframework.http.ResponseEntity;
 
 public interface ICourseService {
-    ResponseEntity<?> getAllCourses(Integer page, Integer size);
+    ResponseEntity<Response> getAllCourses(Integer page, Integer size);
 
-    ResponseEntity<?> getCourseById(String id);
+    ResponseEntity<Response> getCourseById(String id);
 
-    ResponseEntity<?> createCourse(CourseDto courseDto);
+    ResponseEntity<Response> createCourse(CourseDto courseDto);
 
-    ResponseEntity<?> updateCourse(String id, CourseDto courseDto);
+    ResponseEntity<Response> updateCourse(String id, CourseDto courseDto);
 
-    ResponseEntity<?> deleteCourse(String name);
+    ResponseEntity<Response> deleteCourse(String name);
 
-    ResponseEntity<?> getStudents(String course_id, Integer page, Integer size);
+    ResponseEntity<Response> getStudents(String course_id, Integer page, Integer size);
 }
