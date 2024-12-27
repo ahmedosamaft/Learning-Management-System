@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{course_id}/quizzes/{quiz_id}/questions")
+@RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{courseId}/quizzes/{quizId}/questions")
 @RequiredArgsConstructor
 @RolesAllowed(Roles.INSTRUCTOR)
 public class InstructorQuizQuestionsController {
@@ -22,27 +22,27 @@ public class InstructorQuizQuestionsController {
     private final IAssessmentService assessmentService;
 
     @GetMapping
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> getQuestionsOfQuiz(@PathVariable String course_id,
-                                                @PathVariable String quiz_id,
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> getQuestionsOfQuiz(@PathVariable String courseId,
+                                                @PathVariable String quizId,
                                                 @RequestParam(required = false, defaultValue = "1") Integer page,
                                                 @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return assessmentService.getAssessmentQuestions(quiz_id, page, size);
+        return assessmentService.getAssessmentQuestions(quizId, page, size);
     }
 
     @PostMapping
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> addQuestionsToQuiz(@PathVariable String course_id,
-                                                      @PathVariable String quiz_id,
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> addQuestionsToQuiz(@PathVariable String courseId,
+                                                      @PathVariable String quizId,
                                                       @Valid @RequestBody List<QuestionAssessmentDto> questionAssessmentDtos) {
-        return assessmentService.addQuestionsToAssessment(quiz_id, questionAssessmentDtos);
+        return assessmentService.addQuestionsToAssessment(quizId, questionAssessmentDtos);
     }
 
-    @DeleteMapping("/{question_id}")
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> removeQuestionFromQuiz(@PathVariable String course_id,
-                                                          @PathVariable String quiz_id,
-                                                          @PathVariable String question_id) {
-        return assessmentService.removeQuestionFromAssessment(quiz_id, question_id);
+    @DeleteMapping("/{questionId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> removeQuestionFromQuiz(@PathVariable String courseId,
+                                                          @PathVariable String quizId,
+                                                          @PathVariable String questionId) {
+        return assessmentService.removeQuestionFromAssessment(quizId, questionId);
     }
 }
