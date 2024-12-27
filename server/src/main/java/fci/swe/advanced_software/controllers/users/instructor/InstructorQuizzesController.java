@@ -4,6 +4,8 @@ import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
+import fci.swe.advanced_software.services.courses.IMediaService;
+import fci.swe.advanced_software.services.courses.ResourceType;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{course_id}/quizzes")
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RolesAllowed(Roles.INSTRUCTOR)
 public class InstructorQuizzesController {
     private final IAssessmentService quizService;
+    private final IMediaService mediaService;
 
     @GetMapping
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
@@ -49,5 +53,20 @@ public class InstructorQuizzesController {
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
     public ResponseEntity<?> deleteQuiz(@PathVariable String course_id, @PathVariable String quiz_id) {
         return quizService.deleteAssessment(quiz_id);
+    }
+
+    @PostMapping("/{quizId}/media")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> uploadMedia(@PathVariable("courseId") String courseId,
+                                         @PathVariable("quizId") String quizId,
+                                         @RequestParam("file") MultipartFile file) {
+        return mediaService.uploadFile(quizId, ResourceType.ASSESSMENT, file);
+    }
+
+    @DeleteMapping("/{quizId}/media/{mediaId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> deleteMedia(@PathVariable("courseId") String courseId,
+                                         @PathVariable("mediaId") String mediaId) {
+        return mediaService.deleteFile(mediaId);
     }
 }
