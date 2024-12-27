@@ -34,4 +34,10 @@ public class Comment extends AbstractEntity {
 
     @Column(nullable = false)
     private Timestamp commentedAt;
+
+    @Override
+    protected void onCreate() {
+        super.onCreate();
+        this.commentedAt = Timestamp.from(this.getCreatedAt());
+    }
 }

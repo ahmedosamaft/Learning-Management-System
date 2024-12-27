@@ -17,9 +17,4 @@ public interface AttendanceRepository extends AbstractEntityRepository<Attendanc
     List<Attendance> findAllByStudentAndCourse(Student student, Course course);
 
     boolean existsByLessonIdAndStudentId(String lessonId, String studentId);
-
-    List<Attendance> findByLesson(Lesson lesson);
-
-    List<Attendance> findByStudentAndLesson(Student student, Lesson lesson);
-
 }

@@ -10,7 +10,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class UserResponseMapper {
 
-    @Mapping(target = "notifications", ignore = true)
     @Mapping(target = "password", ignore = true)
     public abstract AbstractUser toEntity(UserResponseDto user);
 

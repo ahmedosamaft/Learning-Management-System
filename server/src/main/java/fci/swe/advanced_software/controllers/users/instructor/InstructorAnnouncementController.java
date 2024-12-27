@@ -1,8 +1,10 @@
 package fci.swe.advanced_software.controllers.users.instructor;
 
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto;
+import fci.swe.advanced_software.dtos.course.announcement.CommentDto;
 import fci.swe.advanced_software.services.courses.announcement.IAnnouncementService;
 import fci.swe.advanced_software.utils.Constants;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
@@ -28,6 +30,7 @@ public class InstructorAnnouncementController {
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
     public ResponseEntity<?> createAnnouncement(@PathVariable("courseId") String courseId,
                                                 @RequestBody AnnouncementRequestDto requestDto) {
+        requestDto.setCourseId(courseId);
         return announcementService.createAnnouncement(requestDto);
     }
 
@@ -51,5 +54,30 @@ public class InstructorAnnouncementController {
     public ResponseEntity<?> deleteAnnouncement(@PathVariable("courseId") String courseId,
                                                 @PathVariable("announcementId") String announcementId) {
         return announcementService.deleteAnnouncement(announcementId);
+    }
+
+    @PostMapping("/{announcementId}/comments")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> createComment(@PathVariable("courseId") String courseId,
+                                           @PathVariable("announcementId") String announcementId,
+                                           @Valid @RequestBody CommentDto comment) {
+        return announcementService.createComment(announcementId, comment);
+    }
+
+    @PutMapping("/{announcementId}/comments/{commentId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> updateComment(@PathVariable("courseId") String courseId,
+                                           @PathVariable("announcementId") String announcementId,
+                                           @PathVariable("commentId") String commentId,
+                                           @RequestBody CommentDto comment) {
+        return announcementService.updateComment(announcementId, commentId, comment);
+    }
+
+    @DeleteMapping("/{announcementId}/comments/{commentId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> deleteComment(@PathVariable("courseId") String courseId,
+                                           @PathVariable("announcementId") String announcementId,
+                                           @PathVariable("commentId") String commentId) {
+        return announcementService.deleteComment(announcementId, commentId);
     }
 }

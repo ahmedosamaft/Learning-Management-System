@@ -13,10 +13,4 @@ public interface IAnswerService {
                                     String attempt_id,
                                     List<AnswerRequestDto> answers
     );
-
-    ResponseEntity<?> createAnswer(AnswerRequestDto requestDto);
-
-    ResponseEntity<?> getAnswer(String id);
-
-    ResponseEntity<?> deleteAnswer(String id);
 }

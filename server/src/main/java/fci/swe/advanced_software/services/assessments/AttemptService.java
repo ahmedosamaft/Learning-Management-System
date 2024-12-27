@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.assessments;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptResponseDto;
 import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptShortDto;
 import fci.swe.advanced_software.dtos.assessments.feedback.FeedbackUpdateDto;
@@ -9,9 +10,6 @@ import fci.swe.advanced_software.models.assessments.Attempt;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.assessments.AssessmentRepository;
 import fci.swe.advanced_software.repositories.assessments.AttemptRepository;
-import fci.swe.advanced_software.repositories.assessments.FeedbackRepository;
-import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
@@ -31,7 +29,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -44,12 +41,9 @@ public class AttemptService implements IAttemptService {
     private final UserResponseMapper userResponseMapper;
     private final AuthUtils authUtils;
     private final RepositoryUtils repositoryUtils;
-    private final InstructorRepository instructorRepository;
-    private final FeedbackRepository feedbackRepository;
-    private final CourseRepository courseRepository;
 
     @Override
-    public ResponseEntity<?> createAttempt(String courseId, AssessmentType type, String assessmentId) {
+    public ResponseEntity<Response> createAttempt(String courseId, AssessmentType type, String assessmentId) {
         if (attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You already attempted this " + type.name().toLowerCase() + "!");
         }
@@ -94,7 +88,7 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptById(String id) {
+    public ResponseEntity<Response> getAttemptById(String id) {
         Attempt attempt = attemptRepository.findById(id).orElse(null);
 
         if (attempt == null) {
@@ -108,35 +102,12 @@ public class AttemptService implements IAttemptService {
 
         return ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
+                .withMessage("Attempt retrieved successfully!")
                 .withData("attempt", responseDto)
                 .build();
     }
 
-    @Override
-    public ResponseEntity<?> getAttemptsByStudentId(String studentId) {
-        if (!studentRepository.existsById(studentId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
-        }
-
-        List<Attempt> attempts = attemptRepository.findAllByStudentId(studentId);
-        if (attempts.isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("No attempts found for this student!")
-                    .build();
-        }
-
-        List<AttemptResponseDto> responseDtos = attempts.stream()
-                .map(attemptMapper::toResponseDto)
-                .toList();
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withData("attempts", responseDtos)
-                .build();
-    }
-
-    public ResponseEntity<?> oldGetAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
+    public ResponseEntity<Response> oldGetAttemptsByCourseIdAndStudentId(String courseId, String studentId, Integer page, Integer size) {
         if (!studentRepository.existsById(studentId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
         }
@@ -159,7 +130,7 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, String type, Integer page, Integer size) {
+    public ResponseEntity<Response> getAttemptsByCourseIdAndStudentId(String courseId, String studentId, String type, Integer page, Integer size) {
         if (!studentRepository.existsById(studentId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found!");
         }
@@ -186,7 +157,7 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> updateAttempt(String id, FeedbackUpdateDto feedbackDto) {
+    public ResponseEntity<Response> updateAttempt(String id, FeedbackUpdateDto feedbackDto) {
         Attempt attempt = attemptRepository.findById(id).orElse(null);
         if (attempt == null) {
             return ResponseEntityBuilder.create()
@@ -217,7 +188,7 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> getAttemptsByAssessmentId(String assessmentId, Integer page, Integer size) {
+    public ResponseEntity<Response> getAttemptsByAssessmentId(String assessmentId, Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
         Page<Attempt> attempts = attemptRepository.findAllByAssessmentId(assessmentId, pageable);
 
@@ -236,30 +207,11 @@ public class AttemptService implements IAttemptService {
     }
 
     @Override
-    public ResponseEntity<?> deleteAttempt(String id) {
-        Optional<Attempt> attemptOpt = attemptRepository.findById(id);
-        if (attemptOpt.isEmpty()) {
-            return ResponseEntityBuilder.create()
-                    .withStatus(HttpStatus.NOT_FOUND)
-                    .withMessage("Attempt not found!")
-                    .build();
-        }
-
-        attemptRepository.delete(attemptOpt.get());
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.NO_CONTENT)
-                .withMessage("Attempt deleted successfully!")
-                .build();
-    }
-
-    @Override
-    public ResponseEntity<?> getAttemptByIdForStudent(String courseId, String attemptId) {
+    public ResponseEntity<Response> getAttemptByIdForStudent(String courseId, String attemptId) {
         Attempt attempt = attemptRepository.findById(attemptId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found!"));
-        if(!attempt.getAssessment().getCourse().getId().equals(courseId)) {
+        if (!attempt.getAssessment().getCourse().getId().equals(courseId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found!");
         }
         return getAttemptById(attemptId);
     }
-
 }

@@ -12,5 +12,5 @@ import java.util.List;
 public interface AnnouncementRepository extends AbstractEntityRepository<Announcement> {
     List<Announcement> findByCourse(Course course);
     List<Announcement> findByPostedBy(AbstractUser postedBy);
-    Page<Announcement> findByCourseId(String courseId, Pageable pageable);
+    Page<Announcement> findAllByCourseId(String courseId, Pageable pageable);
 }

@@ -1,7 +1,7 @@
 package fci.swe.advanced_software.services.users.instructor;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.course.CourseDto;
-import fci.swe.advanced_software.dtos.course.LessonDto;
 import fci.swe.advanced_software.dtos.users.UserResponseDto;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.Instructor;
@@ -19,7 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class InstructorService implements IInstructorService {
     private final RepositoryUtils repositoryUtils;
 
     @Override
-    public ResponseEntity<?> getInstructor(String id) {
+    public ResponseEntity<Response> getInstructor(String id) {
         Instructor instructor = instructorRepository.findById(id).orElse(null);
         if (instructor == null) {
             return ResponseEntityBuilder.create()
@@ -52,7 +51,7 @@ public class InstructorService implements IInstructorService {
     }
 
     @Override
-    public ResponseEntity<?> getAllInstructors(Integer page, Integer size) {
+    public ResponseEntity<Response> getAllInstructors(Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
         Page<Instructor> instructorsPage = instructorRepository.findAll(pageable);
         List<UserResponseDto> instructorsDto = instructorsPage.map(userResponseMapper::toDto).getContent();
@@ -63,9 +62,8 @@ public class InstructorService implements IInstructorService {
                 .build();
     }
 
-
     @Override
-    public ResponseEntity<?> getCourses(Integer page, Integer size) {
+    public ResponseEntity<Response> getCourses(Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
         Page<Course> coursesPage = courseRepository.findAllByInstructorId(authUtils.getCurrentUserId(), pageable);
         List<CourseDto> coursesDto = coursesPage.map(courseMapper::toDto).getContent();
@@ -75,13 +73,5 @@ public class InstructorService implements IInstructorService {
                 .withMessage("Courses retrieved successfully!")
                 .withData("courses", coursesDto)
                 .build();
-    }
-
-    private Instructor validateAndRetrieveCurrentInstructor() {
-        Instructor instructor = instructorRepository.findById(authUtils.getCurrentUserId()).orElse(null);
-        if (instructor == null) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not a instructor!");
-        }
-        return instructor;
     }
 }
