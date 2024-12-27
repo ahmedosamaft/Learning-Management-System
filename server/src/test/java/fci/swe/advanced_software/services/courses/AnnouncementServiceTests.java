@@ -5,10 +5,12 @@ import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
 import fci.swe.advanced_software.dtos.users.UserResponseDto;
 import fci.swe.advanced_software.models.courses.Announcement;
+import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.AbstractUser;
 import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.repositories.course.AnnouncementRepository;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
+import fci.swe.advanced_software.services.INotificationsService;
 import fci.swe.advanced_software.services.courses.announcement.AnnouncementService;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.RepositoryUtils;
@@ -41,6 +43,9 @@ public class AnnouncementServiceTests {
     private AnnouncementRepository announcementRepository;
 
     @Mock
+    private INotificationsService notificationsService;
+
+    @Mock
     private AnnouncementMapper announcementMapper;
 
     @Mock
@@ -66,6 +71,7 @@ public class AnnouncementServiceTests {
                 .id(UUID.randomUUID().toString())
                 .title("announcement title")
                 .content("announcement content")
+                .course(new Course())
                 .build();
 
         AnnouncementRequestDto requestDto = AnnouncementRequestDto.builder()

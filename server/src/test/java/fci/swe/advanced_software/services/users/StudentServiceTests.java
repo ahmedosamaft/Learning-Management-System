@@ -11,6 +11,7 @@ import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.repositories.course.*;
 import fci.swe.advanced_software.repositories.users.StudentRepository;
+import fci.swe.advanced_software.services.INotificationsService;
 import fci.swe.advanced_software.services.users.student.StudentService;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.RepositoryUtils;
@@ -49,6 +50,9 @@ public class StudentServiceTests {
 
     @Mock
     private EnrollmentRepository enrollmentRepository;
+
+    @Mock
+    private INotificationsService notificationsService;
 
     @Mock
     private AttendanceRepository attendanceRepository;
