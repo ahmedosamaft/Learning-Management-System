@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.dtos.course;
 
+import fci.swe.advanced_software.utils.validators.internal.ULID;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.validator.constraints.UUID;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @SuperBuilder
 public class LessonDto {
 
-    @UUID
+    @ULID
     private String id;
 
     @NotNull
@@ -30,6 +30,8 @@ public class LessonDto {
     private String content;
 
     private String courseId;
+
+    private String otp;
 
     private List<MediaDto> media;
 }

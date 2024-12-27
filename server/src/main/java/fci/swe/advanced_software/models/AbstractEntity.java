@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.models;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,8 +19,7 @@ import java.util.Objects;
 @SuperBuilder
 public class AbstractEntity {
     @Id
-    @Column(name = "id", updatable = false, nullable = false, unique = true, length = 36)
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", updatable = false, nullable = false, unique = true, length = 26, columnDefinition = "VARCHAR")
     private String id;
 
     @Column(name = "created_at", updatable = false)
@@ -33,6 +33,7 @@ public class AbstractEntity {
 
     @PrePersist
     protected void onCreate() {
+        this.id = UlidCreator.getUlid().toString();
         Instant now = Instant.now();
         this.createdAt = now;
         this.updatedAt = now;

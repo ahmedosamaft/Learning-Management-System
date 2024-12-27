@@ -16,13 +16,13 @@ import java.util.Date;
 public class CourseSearchDto {
     private String id;
 
-    @Field(type = FieldType.Text, analyzer = "edge_ngram_analyzer")
+    @Field(type = FieldType.Text)
     private String code;
 
-    @Field(type = FieldType.Text, analyzer = "edge_ngram_analyzer")
+    @Field(type = FieldType.Text)
     private String name;
 
-    @Field(type = FieldType.Text, analyzer = "edge_ngram_analyzer")
+    @Field(type = FieldType.Text)
     private String description;
 
     @Field(type = FieldType.Date)
