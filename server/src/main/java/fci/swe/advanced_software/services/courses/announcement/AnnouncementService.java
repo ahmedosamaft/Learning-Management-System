@@ -164,7 +164,7 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<?> createComment(String announcementId, CommentDto content) {
+    public ResponseEntity<Response> createComment(String announcementId, CommentDto content) {
         Announcement announcement = announcementRepository.findById(announcementId).orElse(null);
 
         if (announcement == null) {
@@ -190,7 +190,7 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<?> updateComment(String announcementId, String commentId, CommentDto content) {
+    public ResponseEntity<Response> updateComment(String announcementId, String commentId, CommentDto content) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
 
         if (comment == null) {
@@ -232,7 +232,7 @@ public class AnnouncementService implements IAnnouncementService {
     }
 
     @Override
-    public ResponseEntity<?> deleteComment(String announcementId, String commentId) {
+    public ResponseEntity<Response> deleteComment(String announcementId, String commentId) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
 
         if (comment == null) {
