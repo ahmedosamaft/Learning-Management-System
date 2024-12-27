@@ -5,6 +5,7 @@ import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.courses.Lesson;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.LessonRepository;
+import fci.swe.advanced_software.services.INotificationsService;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.mappers.courses.LessonMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,9 @@ class LessonServiceTest {
 
     @Mock
     private LessonMapper lessonMapper;
+
+    @Mock
+    private INotificationsService notificationsService;
 
     @Mock
     private RepositoryUtils repositoryUtils;

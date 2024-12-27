@@ -10,7 +10,6 @@ import org.mapstruct.MappingConstants;
 public abstract class StudentMapper {
 
     @Mapping(target = "role", ignore = true)
-    @Mapping(target = "notifications", ignore = true)
     @Mapping(target = "enrollments", ignore = true)
     @Mapping(target = "comments", ignore = true)
     @Mapping(target = "attendances", ignore = true)

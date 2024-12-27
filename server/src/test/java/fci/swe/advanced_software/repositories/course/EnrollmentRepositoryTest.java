@@ -2,10 +2,9 @@ package fci.swe.advanced_software.repositories.course;
 
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.courses.Enrollment;
-import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.models.users.Role;
-import fci.swe.advanced_software.repositories.course.EnrollmentRepository;
+import fci.swe.advanced_software.models.users.Student;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -54,7 +53,7 @@ class EnrollmentRepositoryTest {
         createEnrollment(student1, course);
         createEnrollment(student2, course);
 
-        List<Enrollment> enrollments = enrollmentRepository.findByCourse(course);
+        List<Enrollment> enrollments = enrollmentRepository.findAllByCourseId(course.getId());
 
         assertNotNull(enrollments);
         assertEquals(2, enrollments.size());
@@ -67,7 +66,7 @@ class EnrollmentRepositoryTest {
         Instructor instructor = createInstructor();
         Course course = createCourse(instructor, "CS102", "Data Structures");
 
-        List<Enrollment> enrollments = enrollmentRepository.findByCourse(course);
+        List<Enrollment> enrollments = enrollmentRepository.findAllByCourseId(course.getId());
 
         assertNotNull(enrollments);
         assertEquals(0, enrollments.size());
