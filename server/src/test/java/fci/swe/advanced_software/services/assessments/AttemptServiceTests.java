@@ -239,7 +239,13 @@ public class AttemptServiceTests {
     }
 
     @Test
-    public void getAttemptsByCourseIdAndStudentId_StudentFoundAndAssessmentFound_ShouldReturnOk(){
+    public void getAttemptsByCourseIdAndStudentId_StudentFoundAndValidAssessmentType_ShouldReturnOk() {
+        String courseId = UUID.randomUUID().toString();
+        String studentId = UUID.randomUUID().toString();
+        String assessmentType = AssessmentType.QUIZ.name().toLowerCase();
+        Integer page = 1;
+        Integer size = 10;
+
 
     }
 }
