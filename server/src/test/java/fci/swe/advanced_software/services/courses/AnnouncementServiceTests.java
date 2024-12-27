@@ -47,13 +47,13 @@ public class AnnouncementServiceTests {
     private INotificationsService notificationsService;
 
     @Mock
+    private AuthUtils authUtils;
+
+    @Mock
     private AnnouncementMapper announcementMapper;
 
     @Mock
     private CourseRepository courseRepository;
-
-    @Mock
-    private AuthUtils authUtils;
 
     @Mock
     private RepositoryUtils repositoryUtils;
