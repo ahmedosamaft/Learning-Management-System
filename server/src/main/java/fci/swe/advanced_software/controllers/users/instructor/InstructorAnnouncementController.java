@@ -2,6 +2,8 @@ package fci.swe.advanced_software.controllers.users.instructor;
 
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto;
 import fci.swe.advanced_software.dtos.course.announcement.CommentDto;
+import fci.swe.advanced_software.services.courses.MediaService;
+import fci.swe.advanced_software.services.courses.ResourceType;
 import fci.swe.advanced_software.services.courses.announcement.IAnnouncementService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.validation.Valid;
@@ -11,12 +13,14 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{courseId}/announcements")
 @RequiredArgsConstructor
 public class InstructorAnnouncementController {
     private final IAnnouncementService announcementService;
+    private final MediaService mediaService;
 
     @GetMapping
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
@@ -37,7 +41,7 @@ public class InstructorAnnouncementController {
     @GetMapping("/{announcementId}")
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
     public ResponseEntity<?> getAnnouncement(@PathVariable("courseId") String courseId,
-                                            @PathVariable("announcementId") String announcementId) {
+                                             @PathVariable("announcementId") String announcementId) {
         return announcementService.getAnnouncement(announcementId);
     }
 
@@ -79,5 +83,20 @@ public class InstructorAnnouncementController {
                                            @PathVariable("announcementId") String announcementId,
                                            @PathVariable("commentId") String commentId) {
         return announcementService.deleteComment(announcementId, commentId);
+    }
+
+    @PostMapping("/{announcementId}/media")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> uploadMedia(@PathVariable("courseId") String courseId,
+                                         @PathVariable("announcementId") String announcementId,
+                                         @RequestParam("file") MultipartFile file) {
+        return mediaService.uploadFile(announcementId, ResourceType.ANNOUNCEMENT, file);
+    }
+
+    @DeleteMapping("/{announcementId}/media/{mediaId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> deleteMedia(@PathVariable("courseId") String courseId,
+                                         @PathVariable("mediaId") String mediaId) {
+        return mediaService.deleteFile(mediaId);
     }
 }

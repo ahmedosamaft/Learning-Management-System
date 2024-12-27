@@ -2,6 +2,8 @@ package fci.swe.advanced_software.controllers.users.instructor;
 
 import fci.swe.advanced_software.dtos.course.LessonDto;
 import fci.swe.advanced_software.models.users.Roles;
+import fci.swe.advanced_software.services.courses.IMediaService;
+import fci.swe.advanced_software.services.courses.ResourceType;
 import fci.swe.advanced_software.services.courses.lesson.ILessonService;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
@@ -13,6 +15,7 @@ import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{courseId}/lessons")
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RolesAllowed(Roles.INSTRUCTOR)
 public class InstructorLessonsController {
     private final ILessonService lessonService;
+    private final IMediaService mediaService;
 
     @PostMapping
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
@@ -53,4 +57,18 @@ public class InstructorLessonsController {
         return lessonService.updateLesson(lessonId, lessonDto);
     }
 
+    @PostMapping("/{lessonId}/media")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> uploadMedia(@PathVariable("courseId") String courseId,
+                                         @PathVariable("lessonId") String lessonId,
+                                         @RequestParam("file") MultipartFile file) {
+        return mediaService.uploadFile(lessonId, ResourceType.LESSON, file);
+    }
+
+    @DeleteMapping("/{lessonId}/media/{mediaId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> deleteMedia(@PathVariable("courseId") String courseId,
+                                         @PathVariable("mediaId") String mediaId) {
+        return mediaService.deleteFile(mediaId);
+    }
 }

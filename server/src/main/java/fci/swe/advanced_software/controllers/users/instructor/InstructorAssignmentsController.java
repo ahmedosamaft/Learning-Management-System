@@ -4,6 +4,8 @@ import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.models.assessments.AssessmentType;
 import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
+import fci.swe.advanced_software.services.courses.IMediaService;
+import fci.swe.advanced_software.services.courses.ResourceType;
 import fci.swe.advanced_software.utils.Constants;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{course_id}/assignments")
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RolesAllowed(Roles.INSTRUCTOR)
 public class InstructorAssignmentsController {
     private final IAssessmentService assignmentService;
+    private final IMediaService mediaService;
 
     @GetMapping
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
@@ -26,10 +30,10 @@ public class InstructorAssignmentsController {
         return assignmentService.getAllAssessments(course_id, AssessmentType.ASSIGNMENT, page, size);
     }
 
-    @GetMapping("/{assignment_id}")
+    @GetMapping("/{assignmentId}")
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> getAssignmentById(@PathVariable String course_id, @PathVariable String assignment_id) {
-        return assignmentService.getAssessment(assignment_id);
+    public ResponseEntity<?> getAssignmentById(@PathVariable String course_id, @PathVariable String assignmentId) {
+        return assignmentService.getAssessment(assignmentId);
     }
 
     @PostMapping
@@ -38,16 +42,31 @@ public class InstructorAssignmentsController {
         return assignmentService.createAssessment(course_id, AssessmentType.ASSIGNMENT, assignment);
     }
 
-    @PutMapping("/{assignment_id}")
+    @PutMapping("/{assignmentId}")
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> updateAssignment(@PathVariable String course_id, @PathVariable String assignment_id,
+    public ResponseEntity<?> updateAssignment(@PathVariable String course_id, @PathVariable String assignmentId,
                                               @Valid @RequestBody AssessmentDto assignment) {
-        return assignmentService.updateAssessment(assignment_id, AssessmentType.ASSIGNMENT, assignment);
+        return assignmentService.updateAssessment(assignmentId, AssessmentType.ASSIGNMENT, assignment);
     }
 
-    @DeleteMapping("/{assignment_id}")
+    @DeleteMapping("/{assignmentId}")
     @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> deleteAssignment(@PathVariable String course_id, @PathVariable String assignment_id) {
-        return assignmentService.deleteAssessment(assignment_id);
+    public ResponseEntity<?> deleteAssignment(@PathVariable String course_id, @PathVariable String assignmentId) {
+        return assignmentService.deleteAssessment(assignmentId);
+    }
+
+    @PostMapping("/{assignmentId}/media")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> uploadMedia(@PathVariable("courseId") String courseId,
+                                         @PathVariable("assignmentId") String assignmentId,
+                                         @RequestParam("file") MultipartFile file) {
+        return mediaService.uploadFile(assignmentId, ResourceType.ASSESSMENT, file);
+    }
+
+    @DeleteMapping("/{assignmentId}/media/{mediaId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> deleteMedia(@PathVariable("courseId") String courseId,
+                                         @PathVariable("mediaId") String mediaId) {
+        return mediaService.deleteFile(mediaId);
     }
 }
