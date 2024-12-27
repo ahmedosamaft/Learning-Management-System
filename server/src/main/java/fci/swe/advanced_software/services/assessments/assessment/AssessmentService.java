@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.services.assessments.assessment;
 
+import fci.swe.advanced_software.dtos.Response;
 import fci.swe.advanced_software.dtos.assessments.QuestionAssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentQuestionsDto;
@@ -48,7 +49,7 @@ public class AssessmentService implements IAssessmentService {
     private final INotificationsService notificationsService;
 
     @Override
-    public ResponseEntity<?> getAllAssessments(String course_id, AssessmentType type, Integer page, Integer size) {
+    public ResponseEntity<Response> getAllAssessments(String course_id, AssessmentType type, Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
         Page<Assessment> assessmentsPage = assessmentRepository.findAllByCourseIdAndType(course_id, type, pageable);
         List<AssessmentDto> assessments = assessmentsPage.map(assessmentMapper::toResponseDto).getContent();
@@ -61,7 +62,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> createAssessment(String courseId, AssessmentType type, AssessmentDto requestDto) {
+    public ResponseEntity<Response> createAssessment(String courseId, AssessmentType type, AssessmentDto requestDto) {
         requestDto.setCourseId(courseId);
 
         Assessment assessment = assessmentMapper.toEntity(requestDto);
@@ -86,7 +87,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> updateAssessment(String id, AssessmentType type, AssessmentDto requestDto) {
+    public ResponseEntity<Response> updateAssessment(String id, AssessmentType type, AssessmentDto requestDto) {
         Assessment assessment = assessmentRepository.findById(id).orElse(null);
 
         if (assessment == null) {
@@ -111,7 +112,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> getAssessment(String id) {
+    public ResponseEntity<Response> getAssessment(String id) {
         Assessment assessment = assessmentRepository.findById(id).orElse(null);
 
         if (assessment == null) {
@@ -130,7 +131,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> deleteAssessment(String id) {
+    public ResponseEntity<Response> deleteAssessment(String id) {
         Assessment assessment = assessmentRepository.findById(id).orElse(null);
 
         if (assessment == null) {
@@ -146,7 +147,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> addQuestionsToAssessment(String assessmentId, List<QuestionAssessmentDto> questionAssessmentDtos) {
+    public ResponseEntity<Response> addQuestionsToAssessment(String assessmentId, List<QuestionAssessmentDto> questionAssessmentDtos) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElse(null);
         if (assessment == null) {
             return ResponseEntityBuilder.create()
@@ -177,7 +178,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> removeQuestionFromAssessment(String assessmentId, String questionId) {
+    public ResponseEntity<Response> removeQuestionFromAssessment(String assessmentId, String questionId) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElse(null);
         if (assessment == null) {
             return ResponseEntityBuilder.create()
@@ -203,7 +204,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> getAssessmentQuestions(String assessmentId, Integer page, Integer size) {
+    public ResponseEntity<Response> getAssessmentQuestions(String assessmentId, Integer page, Integer size) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElse(null);
         if (assessment == null) {
             return ResponseEntityBuilder.create()
@@ -232,7 +233,7 @@ public class AssessmentService implements IAssessmentService {
     }
 
     @Override
-    public ResponseEntity<?> getAssessmentQuestionsForStudent(String assessmentId, AssessmentType type, Integer page, Integer size) {
+    public ResponseEntity<Response> getAssessmentQuestionsForStudent(String assessmentId, AssessmentType type, Integer page, Integer size) {
         if (!attemptRepository.existsByStudentIdAndAssessmentId(authUtils.getCurrentUserId(), assessmentId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to view this " + type.name().toLowerCase() + "!");
         }
