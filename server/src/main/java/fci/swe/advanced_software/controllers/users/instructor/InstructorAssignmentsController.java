@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{course_id}/assignments")
+@RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{courseId}/assignments")
 @RequiredArgsConstructor
 @RolesAllowed(Roles.INSTRUCTOR)
 public class InstructorAssignmentsController {
@@ -24,34 +24,34 @@ public class InstructorAssignmentsController {
     private final IMediaService mediaService;
 
     @GetMapping
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> getAllAssignments(@PathVariable String course_id, @RequestParam(required = false, defaultValue = "1") Integer page,
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> getAllAssignments(@PathVariable String courseId, @RequestParam(required = false, defaultValue = "1") Integer page,
                                                @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return assignmentService.getAllAssessments(course_id, AssessmentType.ASSIGNMENT, page, size);
+        return assignmentService.getAllAssessments(courseId, AssessmentType.ASSIGNMENT, page, size);
     }
 
     @GetMapping("/{assignmentId}")
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> getAssignmentById(@PathVariable String course_id, @PathVariable String assignmentId) {
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> getAssignmentById(@PathVariable String courseId, @PathVariable String assignmentId) {
         return assignmentService.getAssessment(assignmentId);
     }
 
     @PostMapping
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> createAssignment(@PathVariable String course_id, @Valid @RequestBody AssessmentDto assignment) {
-        return assignmentService.createAssessment(course_id, AssessmentType.ASSIGNMENT, assignment);
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> createAssignment(@PathVariable String courseId, @Valid @RequestBody AssessmentDto assignment) {
+        return assignmentService.createAssessment(courseId, AssessmentType.ASSIGNMENT, assignment);
     }
 
     @PutMapping("/{assignmentId}")
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> updateAssignment(@PathVariable String course_id, @PathVariable String assignmentId,
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> updateAssignment(@PathVariable String courseId, @PathVariable String assignmentId,
                                               @Valid @RequestBody AssessmentDto assignment) {
         return assignmentService.updateAssessment(assignmentId, AssessmentType.ASSIGNMENT, assignment);
     }
 
     @DeleteMapping("/{assignmentId}")
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> deleteAssignment(@PathVariable String course_id, @PathVariable String assignmentId) {
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> deleteAssignment(@PathVariable String courseId, @PathVariable String assignmentId) {
         return assignmentService.deleteAssessment(assignmentId);
     }
 

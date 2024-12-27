@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{course_id}/quizzes")
+@RequestMapping(Constants.INSTRUCTOR_CONTROLLER + "/{courseId}/quizzes")
 @RequiredArgsConstructor
 @RolesAllowed(Roles.INSTRUCTOR)
 public class InstructorQuizzesController {
@@ -24,35 +24,35 @@ public class InstructorQuizzesController {
     private final IMediaService mediaService;
 
     @GetMapping
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> getAllQuizzes(@PathVariable String course_id, @RequestParam(required = false, defaultValue = "1") Integer page,
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> getAllQuizzes(@PathVariable String courseId, @RequestParam(required = false, defaultValue = "1") Integer page,
                                                @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return quizService.getAllAssessments(course_id, AssessmentType.QUIZ, page, size);
+        return quizService.getAllAssessments(courseId, AssessmentType.QUIZ, page, size);
     }
 
-    @GetMapping("/{quiz_id}")
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> getQuizById(@PathVariable String course_id, @PathVariable String quiz_id) {
-        return quizService.getAssessment(quiz_id);
+    @GetMapping("/{quizId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> getQuizById(@PathVariable String courseId, @PathVariable String quizId) {
+        return quizService.getAssessment(quizId);
     }
 
     @PostMapping
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> createQuiz(@PathVariable String course_id, @Valid @RequestBody AssessmentDto quiz) {
-        return quizService.createAssessment(course_id, AssessmentType.QUIZ, quiz);
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> createQuiz(@PathVariable String courseId, @Valid @RequestBody AssessmentDto quiz) {
+        return quizService.createAssessment(courseId, AssessmentType.QUIZ, quiz);
     }
 
-    @PutMapping("/{quiz_id}")
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> updateQuiz(@PathVariable String course_id, @PathVariable String quiz_id,
+    @PutMapping("/{quizId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> updateQuiz(@PathVariable String courseId, @PathVariable String quizId,
                                         @Valid @RequestBody AssessmentDto quiz) {
-        return quizService.updateAssessment(quiz_id, AssessmentType.QUIZ, quiz);
+        return quizService.updateAssessment(quizId, AssessmentType.QUIZ, quiz);
     }
 
-    @DeleteMapping("/{quiz_id}")
-    @PreAuthorize("@authorizationService.isTeaching(#course_id)")
-    public ResponseEntity<?> deleteQuiz(@PathVariable String course_id, @PathVariable String quiz_id) {
-        return quizService.deleteAssessment(quiz_id);
+    @DeleteMapping("/{quizId}")
+    @PreAuthorize("@authorizationService.isTeaching(#courseId)")
+    public ResponseEntity<?> deleteQuiz(@PathVariable String courseId, @PathVariable String quizId) {
+        return quizService.deleteAssessment(quizId);
     }
 
     @PostMapping("/{quizId}/media")
