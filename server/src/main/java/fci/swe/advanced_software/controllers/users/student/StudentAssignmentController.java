@@ -8,12 +8,12 @@ import fci.swe.advanced_software.services.assessments.IAttemptService;
 import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.validators.internal.ULID;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
-import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class StudentAssignmentController {
 
     @GetMapping
     @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
-    public ResponseEntity<?> getAssignments(@PathVariable @UUID String courseId,
+    public ResponseEntity<?> getAssignments(@PathVariable @ULID String courseId,
                                             @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
                                             @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
         return assessmentService.getAllAssessments(courseId, AssessmentType.ASSIGNMENT, page, size);
@@ -44,7 +44,7 @@ public class StudentAssignmentController {
             @authorizationService.isEnrolled(#courseId)
             AND @authorizationService.containsAssessment(#courseId, #assignmentId, "Assignment")
             """)
-    public ResponseEntity<?> startAssignmentAttempt(@PathVariable @UUID String courseId, @PathVariable @UUID String assignmentId) {
+    public ResponseEntity<?> startAssignmentAttempt(@PathVariable @ULID String courseId, @PathVariable @ULID String assignmentId) {
         return attemptService.createAttempt(courseId, AssessmentType.ASSIGNMENT, assignmentId);
     }
 
@@ -53,8 +53,8 @@ public class StudentAssignmentController {
             @authorizationService.isEnrolled(#courseId)
             AND @authorizationService.containsAssessment(#courseId, #assignmentId, "Assignment")
             """)
-    public ResponseEntity<?> getAssignmentQuestions(@PathVariable @UUID String courseId,
-                                                    @PathVariable @UUID String assignmentId,
+    public ResponseEntity<?> getAssignmentQuestions(@PathVariable @ULID String courseId,
+                                                    @PathVariable @ULID String assignmentId,
                                                     @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
                                                     @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
         return assessmentService.getAssessmentQuestionsForStudent(assignmentId, AssessmentType.ASSIGNMENT, page, size);
@@ -65,9 +65,9 @@ public class StudentAssignmentController {
             @authorizationService.isEnrolled(#courseId)
             AND @authorizationService.containsAssessment(#courseId, #assignmentId, "Assignment")
             """)
-    public ResponseEntity<?> submitAssignmentAnswers(@PathVariable @UUID String courseId,
-                                                     @PathVariable @UUID String assignmentId,
-                                                     @PathVariable @UUID String attemptId,
+    public ResponseEntity<?> submitAssignmentAnswers(@PathVariable @ULID String courseId,
+                                                     @PathVariable @ULID String assignmentId,
+                                                     @PathVariable @ULID String attemptId,
                                                      @RequestBody @Valid List<AnswerRequestDto> answers) {
 
         return answerService.submitAnswers(

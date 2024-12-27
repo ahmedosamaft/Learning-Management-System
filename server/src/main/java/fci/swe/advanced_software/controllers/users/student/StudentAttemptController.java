@@ -4,13 +4,13 @@ import fci.swe.advanced_software.models.users.Roles;
 import fci.swe.advanced_software.services.assessments.IAttemptService;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.validators.internal.ULID;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Normalized;
 import org.hibernate.validator.constraints.Range;
-import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class StudentAttemptController {
 
     @GetMapping
     @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
-    public ResponseEntity<?> getAttempts(@PathVariable @UUID String courseId,
+    public ResponseEntity<?> getAttempts(@PathVariable @ULID String courseId,
                                          @RequestParam(required = false) @Normalized @Pattern(regexp = "assignment|quiz") String type,
                                          @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
                                          @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
@@ -35,8 +35,8 @@ public class StudentAttemptController {
 
     @GetMapping("/{attemptId}")
     @PreAuthorize("@authorizationService.isEnrolled(#courseId)")
-    public ResponseEntity<?> getAttempt(@PathVariable @UUID String courseId,
-                                        @PathVariable @UUID String attemptId) {
+    public ResponseEntity<?> getAttempt(@PathVariable @ULID String courseId,
+                                        @PathVariable @ULID String attemptId) {
         return attemptService.getAttemptByIdForStudent(courseId, attemptId);
     }
 

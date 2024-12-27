@@ -1,5 +1,6 @@
 package fci.swe.advanced_software.dtos.users;
 
+import fci.swe.advanced_software.utils.validators.internal.ULID;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.UUID;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +18,7 @@ public class StudentRequestDto {
 
     @NotBlank(message = "ID cannot be blank.")
     @NotNull(message = "ID is required.")
-    @UUID(message = "ID must be a valid UUID.")
+    @ULID(message = "ID must be a valid UUID.")
     private String id;
 
     @NotBlank(message = "Name cannot be blank.")

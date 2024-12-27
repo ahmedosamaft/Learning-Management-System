@@ -1,21 +1,21 @@
 package fci.swe.advanced_software.dtos.course;
 
+import fci.swe.advanced_software.utils.validators.internal.ULID;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class EnrollmentDto {
-    @UUID
+    @ULID
     @NotNull(message = "Student ID is required")
     private String studentId;
-    @UUID
+    @ULID
     @NotNull(message = "Course ID is required")
     private String courseId;
 
