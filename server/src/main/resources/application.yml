@@ -3,12 +3,27 @@ security:
     secret-key: 406a970f5fdd329ef30bb1b0e6205f7692d69647322a926bd30ac84ab1c6b8fa
     expiration-time: 3600000
 
+media:
+  upload-dir: "uploads"
+  max-file-size: 5242880
+  supported-types: "image/jpeg,image/png,application/pdf"
+
+notifications:
+  broadcast:
+    batch-size: 250
+    thread-pool-size: 5
+
 spring:
   profiles:
-    active: db-docker
+    active: db-cloud
 
   application:
     name: advanced-software
+
+  elasticsearch:
+    uris: http://host.docker.internal:9200
+    connection-timeout: 1000
+    socket-timeout: 3000
 
   jpa:
     #    show-sql: true

@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class MediaDto {
+    private String id;
+
     @NotBlank(message = "Real name is required.")
     private String realName;
 

@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                        .requestMatchers("/api/v1/media/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/students/**").hasAnyRole(Roles.STUDENT, Roles.ADMIN, Roles.INSTRUCTOR)
                         .requestMatchers("/api/v1/instructors/**").hasAnyRole(Roles.INSTRUCTOR, Roles.ADMIN)
