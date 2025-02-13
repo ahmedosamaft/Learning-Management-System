@@ -15,7 +15,7 @@ notifications:
 
 spring:
   profiles:
-    active: db-cloud
+    active: db-docker
 
   application:
     name: advanced-software
@@ -36,11 +36,11 @@ spring:
 logging:
   level:
     "fci.swe.advanced_software": trace
-#    org:
-#      hibernate:
-#        orm:
-#          jdbc:
-#            bind: trace
+    org:
+      hibernate:
+        orm:
+          jdbc:
+            bind: trace
 #        SQL: DEBUG
 #        type.descriptor.sql.BasicBinder: trace
 

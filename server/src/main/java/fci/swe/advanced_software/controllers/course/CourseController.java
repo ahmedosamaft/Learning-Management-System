@@ -27,7 +27,7 @@ public class CourseController {
         return courseService.getCourseById(id);
     }
 
-    @GetMapping("/courses/search")
+    @GetMapping("/search")
     public ResponseEntity<?> searchCourses(@RequestParam String query,
                                            @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
                                            @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size) {
