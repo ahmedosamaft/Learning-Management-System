@@ -56,7 +56,8 @@ services:
       - xpack.monitoring.ui.enabled=false
 
   server1:
-    image: lms
+    build:
+      context: ./server
     depends_on:
       - lms_db
     environment:
@@ -66,7 +67,8 @@ services:
 
 
   server2:
-    image: lms
+    build:
+      context: ./server
     depends_on:
       - lms_db
     environment:
