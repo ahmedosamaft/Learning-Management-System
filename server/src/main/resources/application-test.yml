@@ -1,17 +1,17 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1  # Ensure the database stays open
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
     username: sa
-    password: password
+    password:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop  # Automatically creates and drops tables on startup/exit
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
     show-sql: true
 
   flyway:
-    enabled: false  # Disable Flyway for tests to prevent any migration conflicts
+    enabled: false

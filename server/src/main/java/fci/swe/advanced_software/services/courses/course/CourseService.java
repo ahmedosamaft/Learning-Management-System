@@ -8,7 +8,7 @@ import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.courses.Enrollment;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.repositories.course.CourseSearchRepository;
+// import fci.swe.advanced_software.repositories.course.CourseSearchRepository;
 import fci.swe.advanced_software.repositories.course.EnrollmentRepository;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.RepositoryUtils;
@@ -33,7 +33,7 @@ public class CourseService implements ICourseService {
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
-    private final CourseSearchRepository courseSearchRepository;
+    // private final CourseSearchRepository courseSearchRepository;
     private final CourseToElasticsearchMapper courseToElasticsearchMapper;
     private final RepositoryUtils repositoryUtils;
     private final EnrollmentRepository enrollmentRepository;
@@ -74,8 +74,8 @@ public class CourseService implements ICourseService {
         Instructor instructor = course.getInstructor();
 
         Course savedCourse = courseRepository.save(course);
-        CourseSearchDto esCourse = courseToElasticsearchMapper.toES(savedCourse);
-        courseSearchRepository.save(esCourse);
+        // CourseSearchDto esCourse = courseToElasticsearchMapper.toES(savedCourse);
+        // courseSearchRepository.save(esCourse);
         String location = Constants.API_VERSION + "/courses/" + savedCourse.getId();
 
         courseDto = courseMapper.toDto(savedCourse);
@@ -108,9 +108,9 @@ public class CourseService implements ICourseService {
 
         Course updatedCourse = courseRepository.save(course);
 
-        courseSearchRepository.deleteById(id);
-        CourseSearchDto esCourse = courseToElasticsearchMapper.toES(updatedCourse);
-        courseSearchRepository.save(esCourse);
+        // courseSearchRepository.deleteById(id);
+        // CourseSearchDto esCourse = courseToElasticsearchMapper.toES(updatedCourse);
+        // courseSearchRepository.save(esCourse);
 
         return buildSuccessResponse("Course updated successfully", courseMapper.toDto(updatedCourse), HttpStatus.OK);
     }
@@ -123,7 +123,7 @@ public class CourseService implements ICourseService {
         }
 
         courseRepository.deleteById(id);
-        courseSearchRepository.deleteById(id);
+        // courseSearchRepository.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

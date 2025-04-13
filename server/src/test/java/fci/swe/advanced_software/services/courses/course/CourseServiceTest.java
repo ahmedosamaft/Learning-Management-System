@@ -4,7 +4,7 @@ import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.models.courses.Course;
 import fci.swe.advanced_software.models.users.Instructor;
 import fci.swe.advanced_software.repositories.course.CourseRepository;
-import fci.swe.advanced_software.repositories.course.CourseSearchRepository;
+// import fci.swe.advanced_software.repositories.course.CourseSearchRepository;
 import fci.swe.advanced_software.repositories.users.InstructorRepository;
 import fci.swe.advanced_software.utils.RepositoryUtils;
 import fci.swe.advanced_software.utils.mappers.courses.CourseMapper;
@@ -34,8 +34,8 @@ class CourseServiceTest {
     @Mock
     private CourseRepository courseRepository;
 
-    @Mock
-    private CourseSearchRepository courseSearchRepository;
+    // @Mock
+    // private CourseSearchRepository courseSearchRepository;
 
     @Mock
     private InstructorRepository instructorRepository;
@@ -119,7 +119,7 @@ class CourseServiceTest {
         when(courseMapper.toEntity(courseDto)).thenReturn(course);
         when(courseRepository.save(course)).thenReturn(course);
         when(courseToElasticsearchMapper.toES(course)).thenReturn(null);
-        when(courseSearchRepository.save(any())).thenReturn(null);
+        // when(courseSearchRepository.save(any())).thenReturn(null);
         when(courseMapper.toDto(course)).thenReturn(courseDto); // Ensure DTO mapping
 
         ResponseEntity<?> response = courseService.createCourse(courseDto);
@@ -136,7 +136,7 @@ class CourseServiceTest {
         when(courseMapper.toEntity(courseDto)).thenReturn(course);
         when(courseRepository.save(course)).thenReturn(course);
         when(courseToElasticsearchMapper.toES(course)).thenReturn(null);
-        when(courseSearchRepository.save(any())).thenReturn(null);
+        // when(courseSearchRepository.save(any())).thenReturn(null);
 
         ResponseEntity<?> response = courseService.updateCourse("CS101", courseDto);
         assertNotNull(response);
