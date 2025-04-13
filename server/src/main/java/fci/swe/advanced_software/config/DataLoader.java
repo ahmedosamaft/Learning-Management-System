@@ -14,6 +14,7 @@ import fci.swe.advanced_software.utils.mappers.courses.CourseToElasticsearchMapp
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -24,12 +25,13 @@ import java.util.Set;
 import java.util.random.RandomGenerator;
 
 @Component
+@Profile("!test")
 @AllArgsConstructor
 public class DataLoader implements CommandLineRunner {
     private final MediaRepository mediaRepository;
     private final AnnouncementRepository announcementRepository;
     private final CommentRepository commentRepository;
-    private final CourseSearchRepository courseSearchRepository;
+    // private final CourseSearchRepository courseSearchRepository;
     private final CourseToElasticsearchMapper courseToElasticsearchMapper;
     private CourseRepository courseRepository;
     private LessonRepository lessonRepository;
@@ -136,9 +138,7 @@ public class DataLoader implements CommandLineRunner {
                     .build()
             );
 
-            courseSearchRepository.save(courseToElasticsearchMapper.toES(softwareEngineering));
-            courseSearchRepository.save(courseToElasticsearchMapper.toES(oop));
-            courseSearchRepository.save(courseToElasticsearchMapper.toES(os));
+
 
             loadLessonsToCourse(softwareEngineering);
             loadLessonsToCourse(oop);

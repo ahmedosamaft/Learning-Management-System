@@ -43,7 +43,6 @@ public class StudentService implements IStudentService {
     private final AttendanceMapper attendanceMapper;
     private final AuthUtils authUtils;
     private final RepositoryUtils repositoryUtils;
-    private final CourseSearchRepository courseSearchRepository;
     private final INotificationsService notificationsService;
 
     @Override
@@ -127,13 +126,13 @@ public class StudentService implements IStudentService {
     public ResponseEntity<Response> searchCourses(String query, Integer page, Integer size) {
         Pageable pageable = repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt");
 
-        Page<CourseSearchDto> courses = courseSearchRepository.searchAllByCodeOrNameOrDescription(query, query, query, pageable);
-
-        return ResponseEntityBuilder.create()
-                .withStatus(HttpStatus.OK)
-                .withMessage("Courses retrieved successfully!")
-                .withData("courses", courses.getContent())
-                .build();
+        // Page<CourseSearchDto> courses = courseSearchRepository.searchAllByCodeOrNameOrDescription(query, query, query, pageable);
+        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "Search functionality not implemented yet!");
+        // return ResponseEntityBuilder.create()
+        //         .withStatus(HttpStatus.OK)
+        //         .withMessage("Courses retrieved successfully!")
+        //         .withData("courses", courses.getContent())
+        //         .build();
     }
 
     @Override

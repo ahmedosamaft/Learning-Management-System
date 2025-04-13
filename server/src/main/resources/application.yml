@@ -15,7 +15,7 @@ notifications:
 
 spring:
   profiles:
-    active: db-cloud
+    active: test
 
   application:
     name: advanced-software

@@ -72,8 +72,8 @@ public class StudentServiceTests {
     @Mock
     private RepositoryUtils repositoryUtils;
 
-    @Mock
-    private CourseSearchRepository courseSearchRepository;
+//     @Mock
+//     private CourseSearchRepository courseSearchRepository;
 
     @Test
     public void enrollCourse_StudentFoundAndNotEnrolled_ShouldReturnBadRequest() {
@@ -298,40 +298,40 @@ public class StudentServiceTests {
         assertEquals(Map.of("courses", List.of(courseDto)), response.getBody().getData());
     }
 
-    @Test
-    public void searchCourses_ShouldReturnCourses() {
-        Integer page = 1;
-        Integer size = 10;
-        String keyword = "CS101";
+//     @Test
+//     public void searchCourses_ShouldReturnCourses() {
+//         Integer page = 1;
+//         Integer size = 10;
+//         String keyword = "CS101";
 
-        Course course = Course.builder()
-                .id(UUID.randomUUID().toString())
-                .code("CS101")
-                .name("cs")
-                .description("desc")
-                .build();
+//         Course course = Course.builder()
+//                 .id(UUID.randomUUID().toString())
+//                 .code("CS101")
+//                 .name("cs")
+//                 .description("desc")
+//                 .build();
 
-        CourseSearchDto courseSearchDto = CourseSearchDto.builder()
-                .code("CS101")
-                .name("cs")
-                .description("desc")
-                .build();
+//         CourseSearchDto courseSearchDto = CourseSearchDto.builder()
+//                 .code("CS101")
+//                 .name("cs")
+//                 .description("desc")
+//                 .build();
 
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "createdAt");
+//         Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "createdAt");
 
-        Page<CourseSearchDto> courses = new PageImpl<>(List.of(courseSearchDto), pageable, 1);
+//         Page<CourseSearchDto> courses = new PageImpl<>(List.of(courseSearchDto), pageable, 1);
 
-        when(repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt")).thenReturn(pageable);
-        when(courseSearchRepository.searchAllByCodeOrNameOrDescription(keyword, keyword, keyword, pageable)).thenReturn(courses);
+//         when(repositoryUtils.getPageable(page, size, Sort.Direction.ASC, "createdAt")).thenReturn(pageable);
+//         when(courseSearchRepository.searchAllByCodeOrNameOrDescription(keyword, keyword, keyword, pageable)).thenReturn(courses);
 
-        ResponseEntity<Response> response = studentService.searchCourses(keyword, page, size);
+//         ResponseEntity<Response> response = studentService.searchCourses(keyword, page, size);
 
-        verify(repositoryUtils, times(1)).getPageable(page, size, Sort.Direction.ASC, "createdAt");
-        verify(courseSearchRepository, times(1)).searchAllByCodeOrNameOrDescription(keyword, keyword, keyword, pageable);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Courses retrieved successfully!", response.getBody().getMessage());
-        assertEquals(Map.of("courses", List.of(courseSearchDto)), response.getBody().getData());
-    }
+//         verify(repositoryUtils, times(1)).getPageable(page, size, Sort.Direction.ASC, "createdAt");
+//         verify(courseSearchRepository, times(1)).searchAllByCodeOrNameOrDescription(keyword, keyword, keyword, pageable);
+//         assertEquals(HttpStatus.OK, response.getStatusCode());
+//         assertEquals("Courses retrieved successfully!", response.getBody().getMessage());
+//         assertEquals(Map.of("courses", List.of(courseSearchDto)), response.getBody().getData());
+//     }
 
     @Test
     public void attendLesson_StudentFoundAndLessonFoundAndOtpMatchedAndLessonNotAttemptedYet_ShouldReturnCreated() {

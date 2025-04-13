@@ -28,9 +28,6 @@ import java.util.Optional;
 public class AuthService implements IAuthService {
 
     private final AbstractUserRepository<AbstractUser> userRepository;
-    private final AdminRepository adminRepository;
-    private final StudentRepository studentRepository;
-    private final InstructorRepository instructorRepository;
     private final UserResponseMapper userResponseMapper;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthUtils authUtils;
