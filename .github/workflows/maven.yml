@@ -30,4 +30,4 @@ jobs:
 
     - name: Run Maven tests
       working-directory: ./server
-      run: mvn clean install
+      run: mvn clean verify install
