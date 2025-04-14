@@ -7,13 +7,19 @@ import fci.swe.advanced_software.config.SecurityConfig;
 import fci.swe.advanced_software.controllers.users.instructor.InstructorCoursesController;
 import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.models.courses.Course;
+import fci.swe.advanced_software.security.JwtAuthentication;
+import fci.swe.advanced_software.security.JwtAuthenticationConverter;
+import fci.swe.advanced_software.services.auth.AuthorizationService;
 import fci.swe.advanced_software.services.auth.JwtService;
 import fci.swe.advanced_software.services.courses.course.ICourseService;
 import fci.swe.advanced_software.services.users.instructor.IInstructorService;
 import fci.swe.advanced_software.services.users.student.IStudentService;
+import fci.swe.advanced_software.services.users.student.StudentService;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
+import fci.swe.advanced_software.utils.adapters.UserDetailsAdapter;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,9 +27,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -37,9 +48,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(InstructorCoursesController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class InstructorCoursesControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -54,19 +64,19 @@ public class InstructorCoursesControllerTest {
     private IInstructorService instructorService;
 
     @MockBean
-    private AuthUtils authUtils;
+    private AuthorizationService authorizationService;
 
     @MockBean
-    private IStudentService studentService;
-
-    @MockBean
-    private JwtService jwtService;
+    private StudentService studentService; // TODO: Fix this to use IStudentService
 
     CourseDto courseDto;
 
     Course course;
+ 
     @BeforeEach
     public void Init() {
+        when(authorizationService.isTeaching(any())).thenReturn(true);
+
         courseDto = CourseDto.builder()
                 .name("course")
                 .code("code")
@@ -74,9 +84,11 @@ public class InstructorCoursesControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorCoursesController_GetCourses_ReturnsCourses() throws Exception {
+
         when(instructorService
-                .getCourses(eq(1), eq(10))
+                .getCourses(any(), any())
         ).thenReturn(ResponseEntityBuilder.create()
                 .withStatus(HttpStatus.OK)
                 .withData("testing", "course")
@@ -97,6 +109,7 @@ public class InstructorCoursesControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorCoursesController_CreateCourse_ReturnsCourse() throws Exception {
         when(courseService.createCourse(any())
         ).thenReturn(ResponseEntityBuilder.create()
@@ -119,6 +132,7 @@ public class InstructorCoursesControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorCoursesController_GetCourse_ReturnsCourse() throws Exception {
         String courseId = UUID.randomUUID().toString();
 
@@ -143,6 +157,7 @@ public class InstructorCoursesControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorCoursesController_UpdateCourse_ReturnsCourse() throws Exception {
         String courseId = UUID.randomUUID().toString();
 
@@ -167,6 +182,7 @@ public class InstructorCoursesControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorCoursesController_DeleteCourse_ReturnsCourse() throws Exception {
         String courseId = UUID.randomUUID().toString();
 
@@ -189,6 +205,7 @@ public class InstructorCoursesControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorCoursesController_GetStudents_ReturnsStudents() throws Exception {
         String courseId = UUID.randomUUID().toString();
 
@@ -213,6 +230,7 @@ public class InstructorCoursesControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorCoursesController_AddStudentToCourse_ReturnsStudent() throws Exception {
         String courseId = UUID.randomUUID().toString();
         String studentId = UUID.randomUUID().toString();
@@ -236,6 +254,7 @@ public class InstructorCoursesControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorCoursesController_RemoveStudentFromCourse_ReturnsStudent() throws Exception {
         String courseId = UUID.randomUUID().toString();
         String studentId = UUID.randomUUID().toString();
