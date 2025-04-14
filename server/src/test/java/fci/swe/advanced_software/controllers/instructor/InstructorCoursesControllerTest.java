@@ -1,6 +1,9 @@
 package fci.swe.advanced_software.controllers.instructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fci.swe.advanced_software.AdvancedSoftwareApplication;
+import fci.swe.advanced_software.config.SecurityConfig;
 import fci.swe.advanced_software.controllers.users.instructor.InstructorCoursesController;
 import fci.swe.advanced_software.dtos.course.CourseDto;
 import fci.swe.advanced_software.models.courses.Course;
@@ -21,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;

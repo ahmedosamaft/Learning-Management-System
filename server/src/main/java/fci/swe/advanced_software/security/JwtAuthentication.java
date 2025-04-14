@@ -2,54 +2,41 @@ package fci.swe.advanced_software.security;
 
 import java.util.Collection;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+public class JwtAuthentication extends AbstractAuthenticationToken {
 
-public record JwtAuthentication(UserDetails authUser, boolean authenticated, String jwtToken)
-        implements Authentication {
+    private final UserDetails authUser;
+    private final String jwtToken;
+
+    private JwtAuthentication(
+            Collection<? extends GrantedAuthority> authorities,
+            UserDetails authUser,
+            boolean authenticated,
+            String jwtToken) {
+        super(authorities);
+        super.setAuthenticated(authenticated);
+        this.authUser = authUser;
+        this.jwtToken = jwtToken;
+    }
 
     public static JwtAuthentication unauthenticated(String jwtToken) {
-        return new JwtAuthentication(null, false, jwtToken);
+        return new JwtAuthentication(null, null, false, jwtToken);
     }
 
     public static JwtAuthentication authenticated(UserDetails authUser) {
-        return new JwtAuthentication(authUser, true, null);
+        return new JwtAuthentication(authUser.getAuthorities(), authUser, true, null);
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authUser.getAuthorities();
-    }
-
-    @Override
-    public Object getCredentials() {
+    public String getCredentials() {
         return jwtToken;
-    }
-
-    @Override
-    public Object getDetails() {
-        return null;
     }
 
     @Override
     public Object getPrincipal() {
         return authUser;
-    }
-
-    @Override
-    public boolean isAuthenticated() {
-        return authenticated;
-    }
-
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getName() {
-        return null;
     }
 }

@@ -1,6 +1,9 @@
 package fci.swe.advanced_software.controllers.student;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fci.swe.advanced_software.AdvancedSoftwareApplication;
+import fci.swe.advanced_software.config.SecurityConfig;
 import fci.swe.advanced_software.controllers.users.student.StudentAnnouncementController;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementListDto;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
@@ -22,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
@@ -40,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(StudentAnnouncementController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
+@ContextConfiguration(classes = {SecurityConfig.class, AdvancedSoftwareApplication.class})
 public class StudentAnnouncementControllerTest {
 
     @Autowired

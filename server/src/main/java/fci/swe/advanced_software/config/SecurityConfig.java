@@ -1,12 +1,14 @@
 package fci.swe.advanced_software.config;
 
 import fci.swe.advanced_software.models.users.Roles;
-import fci.swe.advanced_software.security.JwtTokenFilter;
-import fci.swe.advanced_software.security.SecurityAuthenticationFilter;
+import fci.swe.advanced_software.security.JwtAuthenticationFilter;
 import jakarta.servlet.DispatcherType;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,21 +26,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EnableMethodSecurity(
         securedEnabled = true,
         jsr250Enabled = true
 )
 public class SecurityConfig {
     private final AuthenticationEntryPoint authenticationEntryPoint;
-    private final SecurityAuthenticationFilter securityAuthenticationFilter;
-    private final JwtTokenFilter jwtTokenFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .addFilterBefore(securityAuthenticationFilter, AuthorizationFilter.class)
-                .addFilterBefore(jwtTokenFilter, SecurityAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorize -> authorize
