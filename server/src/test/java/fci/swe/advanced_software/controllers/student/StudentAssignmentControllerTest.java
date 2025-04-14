@@ -1,6 +1,9 @@
 package fci.swe.advanced_software.controllers.student;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fci.swe.advanced_software.AdvancedSoftwareApplication;
+import fci.swe.advanced_software.config.SecurityConfig;
 import fci.swe.advanced_software.controllers.users.student.StudentAssignmentController;
 import fci.swe.advanced_software.dtos.assessments.assessment.AssessmentDto;
 import fci.swe.advanced_software.dtos.users.UserResponseDto;
@@ -12,6 +15,7 @@ import fci.swe.advanced_software.models.users.Role;
 import fci.swe.advanced_software.services.assessments.IAnswerService;
 import fci.swe.advanced_software.services.assessments.IAttemptService;
 import fci.swe.advanced_software.services.assessments.assessment.IAssessmentService;
+import fci.swe.advanced_software.services.auth.AuthorizationService;
 import fci.swe.advanced_software.services.auth.JwtService;
 import fci.swe.advanced_software.utils.AuthUtils;
 import fci.swe.advanced_software.utils.Constants;
@@ -23,9 +27,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
@@ -34,22 +42,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(StudentAssignmentController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class StudentAssignmentControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private JwtService jwtService;
+    private AuthorizationService authorizationService;
 
     @MockBean
     private IAssessmentService assessmentService;
@@ -82,6 +90,9 @@ public class StudentAssignmentControllerTest {
 
     @BeforeEach
     public void Init() {
+        when(authorizationService.isEnrolled(any())).thenReturn(true);
+        when(authorizationService.containsAssessment(any(), any(), any())).thenReturn(true);
+
         user = AbstractUser.builder()
                 .id(UUID.randomUUID().toString())
                 .email("test@test.com")
@@ -133,6 +144,7 @@ public class StudentAssignmentControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "STUDENT")
     void StudentAssignmentController_GetAssignments_ReturnsAssignments() throws Exception {
         String courseId = course.getId();
 

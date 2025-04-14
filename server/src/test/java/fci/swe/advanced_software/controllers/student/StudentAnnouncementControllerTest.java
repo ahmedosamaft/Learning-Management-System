@@ -1,6 +1,9 @@
 package fci.swe.advanced_software.controllers.student;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fci.swe.advanced_software.AdvancedSoftwareApplication;
+import fci.swe.advanced_software.config.SecurityConfig;
 import fci.swe.advanced_software.controllers.users.student.StudentAnnouncementController;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementListDto;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
@@ -8,10 +11,14 @@ import fci.swe.advanced_software.dtos.users.UserResponseDto;
 import fci.swe.advanced_software.models.courses.Announcement;
 import fci.swe.advanced_software.models.users.AbstractUser;
 import fci.swe.advanced_software.models.users.Role;
+import fci.swe.advanced_software.security.JwtAuthentication;
+import fci.swe.advanced_software.services.auth.AuthorizationService;
 import fci.swe.advanced_software.services.auth.JwtService;
 import fci.swe.advanced_software.services.courses.announcement.IAnnouncementService;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
+import fci.swe.advanced_software.utils.adapters.UserDetailsAdapter;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,9 +26,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
@@ -37,9 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest(StudentAnnouncementController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class StudentAnnouncementControllerTest {
 
     @Autowired
@@ -47,6 +57,9 @@ public class StudentAnnouncementControllerTest {
 
     @MockBean
     private IAnnouncementService announcementService;
+
+    @MockBean
+    private AuthorizationService authorizationService;
 
     @MockBean
     private JwtService jwtService;
@@ -68,6 +81,8 @@ public class StudentAnnouncementControllerTest {
 
     @BeforeEach
     public void Init() {
+        when(authorizationService.isEnrolled(any())).thenReturn(true);
+
         user = AbstractUser.builder()
                 .id(UUID.randomUUID().toString())
                 .email("test@test.com")
@@ -110,7 +125,8 @@ public class StudentAnnouncementControllerTest {
     @Test
     void StudentAnnouncementController_GetAnnouncementWithCourseId_ReturnAnnouncements() throws Exception {
         String courseId = UUID.randomUUID().toString();
-
+        user.setRole(Role.STUDENT);
+        SecurityContextHolder.getContext().setAuthentication(JwtAuthentication.authenticated(new UserDetailsAdapter(user)));
         when(announcementService.getAnnouncements(eq(courseId), eq(1), eq(10)))
                 .thenReturn(ResponseEntityBuilder.create()
                         .withStatus(HttpStatus.OK)
@@ -132,6 +148,7 @@ public class StudentAnnouncementControllerTest {
 
 
     @Test
+    @WithMockUser(roles = "STUDENT")
     void StudentAnnouncementController_GetAnnouncementWithCourseIdNotUUID_ReturnValidationError() throws Exception {
         when(announcementService.getAnnouncements(String.valueOf(any(UUID.class)), eq(1), eq(10)))
                 .thenReturn(ResponseEntityBuilder.create()
@@ -152,6 +169,7 @@ public class StudentAnnouncementControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "STUDENT")
     void StudentAnnouncementController_GetAnnouncementWithCourseIdNegativePageNumber_ReturnValidationError() throws Exception {
         when(announcementService.getAnnouncements(String.valueOf(any(UUID.class)), anyInt(), eq(10)))
                 .thenReturn(ResponseEntityBuilder.create()
@@ -173,6 +191,7 @@ public class StudentAnnouncementControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "STUDENT")
     void StudentAnnouncementController_GetAnnouncementWithCourseIdNegativeSize_ReturnValidationError() throws Exception {
         when(announcementService.getAnnouncements(String.valueOf(any(UUID.class)), eq(1), anyInt()))
                 .thenReturn(ResponseEntityBuilder.create()
@@ -194,6 +213,7 @@ public class StudentAnnouncementControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "STUDENT")
     void StudentAnnouncementController_GetAnnouncementWithValidUUIDs_ReturnsAnnouncement() throws Exception {
         String courseId = UUID.randomUUID().toString();
         String announcementId = UUID.randomUUID().toString();
@@ -215,6 +235,7 @@ public class StudentAnnouncementControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "STUDENT")
     void StudentAnnouncementController_GetAnnouncementWithInvalidCourseId_ReturnsValidationError() throws Exception {
         String announcementId = UUID.randomUUID().toString();
 
@@ -230,6 +251,7 @@ public class StudentAnnouncementControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "STUDENT")
     void StudentAnnouncementController_GetAnnouncementWithInvalidAnnouncementId_ReturnsValidationError() throws Exception {
         String courseId = UUID.randomUUID().toString();
 

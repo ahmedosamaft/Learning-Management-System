@@ -1,11 +1,16 @@
 package fci.swe.advanced_software.controllers.instructor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fci.swe.advanced_software.AdvancedSoftwareApplication;
+import fci.swe.advanced_software.config.SecurityConfig;
 import fci.swe.advanced_software.controllers.users.instructor.InstructorAnnouncementController;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementRequestDto;
 import fci.swe.advanced_software.dtos.course.announcement.AnnouncementResponseDto;
+import fci.swe.advanced_software.services.auth.AuthorizationService;
 import fci.swe.advanced_software.services.auth.JwtService;
 import fci.swe.advanced_software.services.courses.IMediaService;
+import fci.swe.advanced_software.services.courses.MediaService;
 import fci.swe.advanced_software.services.courses.announcement.IAnnouncementService;
 import fci.swe.advanced_software.utils.Constants;
 import fci.swe.advanced_software.utils.ResponseEntityBuilder;
@@ -16,9 +21,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
@@ -31,9 +39,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(InstructorAnnouncementController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class InstructorAnnouncementsControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -42,10 +49,7 @@ public class InstructorAnnouncementsControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private JwtService jwtService;
-
-    @MockBean
-    private IMediaService mediaService;
+    private MediaService mediaService;
 
     @MockBean
     private AnnouncementResponseDto announcementResponseDto;
@@ -53,10 +57,15 @@ public class InstructorAnnouncementsControllerTest {
     @MockBean
     private IAnnouncementService announcementService;
 
+    @MockBean
+    private AuthorizationService authorizationService;
+
     AnnouncementRequestDto announcementRequestDto;
 
     @BeforeEach
     void init() {
+        when(authorizationService.isTeaching(any())).thenReturn(true);
+ 
         announcementRequestDto = AnnouncementRequestDto.builder()
                 .title("title")
                 .content("content")
@@ -69,6 +78,7 @@ public class InstructorAnnouncementsControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorAnnouncementsController_CreateAnnouncement_ReturnsCreated() throws Exception {
 
         String courseId = UUID.randomUUID().toString();
@@ -92,6 +102,7 @@ public class InstructorAnnouncementsControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorAnnouncementsController_GetAnnouncements_ReturnsAnnouncements() throws Exception {
         String courseId = UUID.randomUUID().toString();
 
@@ -115,6 +126,7 @@ public class InstructorAnnouncementsControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorAnnouncementsController_DeleteAnnouncement_ReturnsDeleted() throws Exception {
         String courseId = UUID.randomUUID().toString();
         String announcementId = UUID.randomUUID().toString();
@@ -137,6 +149,7 @@ public class InstructorAnnouncementsControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorAnnouncementsController_UpdateAnnouncement_ReturnsUpdated() throws Exception {
         String courseId = UUID.randomUUID().toString();
         String announcementId = UUID.randomUUID().toString();
@@ -161,6 +174,7 @@ public class InstructorAnnouncementsControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "INSTRUCTOR")
     void InstructorAnnouncementsController_GetAnnouncement_ReturnsAnnouncement() throws Exception {
         String courseId = UUID.randomUUID().toString();
         String announcementId = UUID.randomUUID().toString();
