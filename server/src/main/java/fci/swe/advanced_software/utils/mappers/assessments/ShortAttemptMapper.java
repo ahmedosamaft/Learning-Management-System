@@ -4,8 +4,9 @@ import fci.swe.advanced_software.dtos.assessments.Attempt.AttemptShortDto;
 import fci.swe.advanced_software.models.assessments.Attempt;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class ShortAttemptMapper {
 
     @Mapping(target = "answers", ignore = true)

@@ -1,9 +1,9 @@
 package fci.swe.advanced_software.dtos.course;
 
+import fci.swe.advanced_software.utils.validators.internal.ULID;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.*;
-import org.hibernate.validator.constraints.UUID;
 
 import java.sql.Timestamp;
 
@@ -16,15 +16,15 @@ public class AttendanceDto {
     private String id;
 
     @NotNull
-    @UUID
+    @ULID
     private String studentId;
 
     @NotNull
-    @UUID
+    @ULID
     private String lessonId;
 
     @NotNull
-    @UUID
+    @ULID
     private String courseId;
 
     @NotNull

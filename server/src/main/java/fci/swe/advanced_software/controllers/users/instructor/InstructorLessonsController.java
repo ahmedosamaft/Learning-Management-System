@@ -6,12 +6,12 @@ import fci.swe.advanced_software.services.courses.IMediaService;
 import fci.swe.advanced_software.services.courses.ResourceType;
 import fci.swe.advanced_software.services.courses.lesson.ILessonService;
 import fci.swe.advanced_software.utils.Constants;
+import fci.swe.advanced_software.utils.validators.internal.ULID;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
-import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +27,13 @@ public class InstructorLessonsController {
 
     @PostMapping
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
-    public ResponseEntity<?> createLesson(@PathVariable @UUID String courseId,@Valid @RequestBody LessonDto lessonDto) {
+    public ResponseEntity<?> createLesson(@PathVariable @ULID String courseId, @Valid @RequestBody LessonDto lessonDto) {
         return lessonService.createLesson(lessonDto, courseId);
     }
 
     @GetMapping
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
-    public ResponseEntity<?> getAllLessons(@PathVariable @UUID String courseId,
+    public ResponseEntity<?> getAllLessons(@PathVariable @ULID String courseId,
                                            @RequestParam(required = false, defaultValue = "1") @Min(value = 1) Integer page,
                                            @RequestParam(required = false, defaultValue = "10") @Range(min = 1, max = 100) Integer size){
         return lessonService.getAllLessons(courseId, page, size);
@@ -41,19 +41,19 @@ public class InstructorLessonsController {
 
     @GetMapping("/{lessonId}")
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
-    public ResponseEntity<?> getLessonById(@PathVariable @UUID String courseId, @PathVariable @UUID String lessonId) {
+    public ResponseEntity<?> getLessonById(@PathVariable @ULID String courseId, @PathVariable @ULID String lessonId) {
         return lessonService.getLessonById(lessonId);
     }
 
     @DeleteMapping("/{lessonId}")
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
-    public ResponseEntity<?> deleteLesson(@PathVariable @UUID String courseId,@PathVariable @UUID String lessonId) {
+    public ResponseEntity<?> deleteLesson(@PathVariable @ULID String courseId,@PathVariable @ULID String lessonId) {
         return lessonService.deleteLesson(lessonId);
     }
 
     @PutMapping("/{lessonId}")
     @PreAuthorize("@authorizationService.isTeaching(#courseId)")
-    public ResponseEntity<?> updateLesson(@PathVariable @UUID String courseId,@PathVariable @UUID String lessonId,@Valid @RequestBody LessonDto lessonDto) {
+    public ResponseEntity<?> updateLesson(@PathVariable @ULID String courseId,@PathVariable @ULID String lessonId,@Valid @RequestBody LessonDto lessonDto) {
         return lessonService.updateLesson(lessonId, lessonDto);
     }
 
